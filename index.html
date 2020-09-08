@@ -125,11 +125,11 @@
 	
 	<div id="ytplayer"></div>
 </body >
-//<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
 <script>
   // Load the IFrame Player API code asynchronously.
   var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/player_api";
+  tag.src = "https://www.youtube.com/iframe_api";
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
@@ -227,7 +227,9 @@
 		try{
 		var arr = data.split('=');
 		if (arr[0]=="https://www.youtube.com/watch?v"){
-			player.loadVideoById(arr[1], 0);
+			if(arr.length > 3) player.loadPlaylist({list:arr[2].substr(0,34),listType:"playlist",index:parseInt(arr[3].split('&')[0])-2,startSeconds:0});
+			else if(arr.length > 2) {player.loadPlaylist({list:arr[2].substr(0,34),listType:"playlist",index:0,startSeconds:0});}
+			else { player.loadVideoById(arr[1].substr(0,11),0);}
 		}}
 		catch(error){}
 	}
