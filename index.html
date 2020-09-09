@@ -155,7 +155,7 @@
 		  rel: 0,
 		  enablejsapi: 1,
 		  start: 0,
-		  cc_lang_pref: 'cv';
+		  cc_lang_pref: 'cv'
 	  }
     });
   }
@@ -227,8 +227,8 @@
 		try{
 		var arr = data.split('=');
 		if (arr[0]=="https://www.youtube.com/watch?v"){
-			if(arr.length > 3) player.loadPlaylist({list:arr[2].substr(0,34),listType:"playlist",index:parseInt(arr[3].split('&')[0])-2,startSeconds:0});
-			else if(arr.length > 2) {player.loadPlaylist({list:arr[2].substr(0,34),listType:"playlist",index:0,startSeconds:0});}
+			if(arr.length > 3) {player.loadPlaylist({list:arr[2].substr(0,34),listType:"playlist",index:parseInt(arr[3].split('&')[0])-2,startSeconds:0}); console.log(arr[2].substr(0,34));}
+			else if(arr.length > 2) {player.loadPlaylist({list:arr[2].substr(0,34),listType:"playlist",index:0,startSeconds:0}); console.log(arr[2].substr(0,34));}
 			else { player.loadVideoById(arr[1].substr(0,11),0);}
 		}}
 		catch(error){}
