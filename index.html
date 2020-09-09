@@ -80,7 +80,7 @@
 	}
 	
 	.xtraBtns{
-		color: orange;
+		color: darkorange;
 		font-size: 20px;
 		text-align: center;
 		cursor: pointer;
@@ -235,11 +235,11 @@
 	}
 
 //autohide cursor after 3 sec
-var tim = setTimeout(function(){hideUnhide("hide")}, 5000);
+var tim = setTimeout(function(){hideUnhide("hide");document.body.style.cursor="none"}, 3000);
 function showStuff(){
-	hideUnhide('unhide');
+	hideUnhide('unhide'); document.body.style.cursor="default";
 	clearTimeout(tim);
-	tim = setTimeout(function(){hideUnhide('hide')}, 5000);
+	tim = setTimeout(function(){hideUnhide('hide');document.body.style.cursor="none"}, 3000);
 }
 
 </script>
