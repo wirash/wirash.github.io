@@ -3,12 +3,14 @@
 <html>
 <head>
 <title>Mini YT Player</title>
-<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<!-- <script src="https://kit.fontawesome.com/a076d05399.js"></script> -->
+<script src="fontawesome.js"></script>
 <style>
 	body{
 	margin:0;
 	padding:0;
 	overflow: hidden;
+	background-color: black;
 	}
 
 	.lrContainer{
@@ -58,6 +60,27 @@
 		box-shadow: -2px 10px 20px 1px #222, 1px 1px 10px 1px #222;
 	}
 	
+	#playlistBtn, .playlistMore{
+		font-size: 20px;
+		text-align: center;
+		padding-top: 10px;
+		cursor: pointer;
+		width: 40px;
+		height: 40px;
+		color: #333;
+		background-color: white;
+		box-sizing: border-box;
+		position: absolute;
+		left: calc(50% + 105px);
+		bottom: 25px;
+		transform: translateX(-50%);
+		border-radius: 50%;
+		z-index: 1000;
+		transition: 300ms;
+		box-shadow: -2px 10px 20px 1px #222, 1px 1px 10px 1px #222;
+		opacity: 0;
+	}
+	
 	.btns{
 		font-size: 20px;
 		text-align: center;
@@ -74,7 +97,7 @@
 	.btns:nth-child(2){float:middle; border-left: 1px solid grey; border-right: 1px solid grey;}
 	.btns:last-child{float:right;}
 	
-	.btns:hover, .lrContainer:hover, .xtraBtns:hover{
+	.btns:hover, .lrContainer:hover, .xtraBtns:hover, #playlistBtn:hover{
 		background-color: rgba(255,255,255,0.3);
 		color: red;
 	}
@@ -116,6 +139,11 @@
 		<div class='btns fas fa-stop' onclick='player.stopVideo();'></div>
 		<div class='btns fas fa-expand' onclick='setTimeout(function(){console.log("fullscreen");},350);'></div>
 	</div>
+	<div id='showPlaylist' class='playlistMore fas fa-eye' on='false' onclick='toggle(this); console.log("playlistToggle");'></div>
+	<div id='shufflePlaylist' class='playlistMore fas fa-random' on='false' onclick='toggle(this);player.setShuffle(this.getAttribute("on")=="true");'></div>
+	<div id='loopPlaylist' class='playlistMore fas fa-infinity' on='false' onclick='toggle(this);player.setLoop(this.getAttribute("on")=="true");'></div>
+	<div id='playlistBtn' class='fas fa-stream' onclick='playlistMore()'></div>
+	
 	<div id='rContainer' class='lrContainer fas fa-forward' oncontextmenu='event.preventDefault(); player.nextVideo();' onclick="player.seekTo(player.getCurrentTime() + 10, true);"></div>
 	<div id='lContainer' class='lrContainer fas fa-backward' oncontextmenu='event.preventDefault(); player.previousVideo();' onclick='player.seekTo(player.getCurrentTime() - 10, true);'></div>
 	<div id='mContainer' ondrop="drop(event)" ondragover="allowDrop(event)" onclick='vpp();'></div>
@@ -179,7 +207,7 @@
     //event.target.pauseVideo();
 	if (event.data == -1){
 		var pli = player.getPlaylistIndex();
-		if(pli == -1) console.log('video');
+		if(pli == -1) {console.log('video'); if(playlistVisible == true) playlistMore(); playlistBtn.style.opacity = '0';}
 		else{ console.log(player.getVideoUrl().split('=')[1].substr(0,34)+'.'+pli);}
 	}
   }
@@ -246,17 +274,26 @@
 			{var l = arr[2].substr(0,34);
 			var ind = parseInt(arr[3].split('&')[0])-2;
 			player.loadPlaylist({list:l,listType:"playlist",index:ind,startSeconds:0});
+			ifPlaylist();
 			}
 			
 			else if(arr.length > 2)
 			{var l = arr[2].substr(0,34);
 			player.loadPlaylist({list:l,listType:"playlist",index:0,startSeconds:0});
+			ifPlaylist();
 			}
 			
 			else { player.loadVideoById(arr[1].substr(0,11),0); //console.log('video');
 			}
 		}}
 		catch(error){}
+	}
+	
+	function ifPlaylist(){
+		if(playlistVisible == true) playlistMore();
+		playlistBtn.style.opacity = '1';
+		shufflePlaylist.style.color = '#222'; shufflePlaylist.style.background = 'white';
+		loopPlaylist.style.color = '#222'; loopPlaylist.style.background = 'white';
 	}
 
 //autohide cursor after 3 sec
@@ -265,6 +302,33 @@ function showStuff(){
 	hideUnhide('unhide'); document.body.style.cursor="default";
 	clearTimeout(tim);
 	tim = setTimeout(function(){hideUnhide('hide');document.body.style.cursor="none"}, 3000);
+}
+
+var playlistVisible = false;
+function playlistMore(){
+	playlistVisible = !playlistVisible;
+	if (playlistVisible == true){
+		showPlaylist.style.opacity = '1';
+		showPlaylist.style.bottom = '70px';
+		shufflePlaylist.style.opacity = '1';
+		shufflePlaylist.style.bottom = '115px';
+		loopPlaylist.style.opacity = '1';
+		loopPlaylist.style.bottom = '160px';
+	}
+	else{
+		showPlaylist.style.bottom = '25px';
+		showPlaylist.style.opacity = '0';
+		shufflePlaylist.style.bottom = '25px';
+		shufflePlaylist.style.opacity = '0';
+		loopPlaylist.style.bottom = '25px';
+		loopPlaylist.style.opacity = '0';
+	}
+}
+
+function toggle(el)
+{
+	if(el.getAttribute('on') == 'false') {el.setAttribute('on','true'); el.style.color = 'white'; el.style.background = 'red';}
+	else {el.setAttribute('on','false'); el.style.color = '#222'; el.style.background = 'white';}
 }
 
 </script>
