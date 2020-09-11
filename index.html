@@ -60,7 +60,7 @@
 		box-shadow: -2px 10px 20px 1px #222, 1px 1px 10px 1px #222;
 	}
 	
-	#playlistBtn, .playlistMore{
+	#playlistBtn, .playlistMoreBtns{
 		font-size: 20px;
 		text-align: center;
 		padding-top: 10px;
@@ -71,7 +71,7 @@
 		background-color: white;
 		box-sizing: border-box;
 		position: absolute;
-		left: calc(50% + 105px);
+		left: calc(50% + 110px);
 		bottom: 25px;
 		transform: translateX(-50%);
 		border-radius: 50%;
@@ -139,9 +139,9 @@
 		<div class='btns fas fa-stop' onclick='player.stopVideo();'></div>
 		<div class='btns fas fa-expand' onclick='setTimeout(function(){console.log("fullscreen");},350);'></div>
 	</div>
-	<div id='showPlaylist' class='playlistMore fas fa-eye' on='false' onclick='toggle(this); console.log("playlistToggle");'></div>
-	<div id='shufflePlaylist' class='playlistMore fas fa-random' on='false' onclick='toggle(this);player.setShuffle(this.getAttribute("on")=="true");'></div>
-	<div id='loopPlaylist' class='playlistMore fas fa-infinity' on='false' onclick='toggle(this);player.setLoop(this.getAttribute("on")=="true");'></div>
+	<div id='showPlaylist' class='playlistMoreBtns fas fa-eye' on='false' onclick='toggle(this);playlistMore();console.log("playlistToggle");'></div>
+	<div id='shufflePlaylist' class='playlistMoreBtns fas fa-random' on='false' onclick='toggle(this);playlistMore();player.setShuffle(this.getAttribute("on")=="true");'></div>
+	<div id='loopPlaylist' class='playlistMoreBtns fas fa-infinity' on='false' onclick='toggle(this);playlistMore();player.setLoop(this.getAttribute("on")=="true");'></div>
 	<div id='playlistBtn' class='fas fa-stream' onclick='playlistMore()'></div>
 	
 	<div id='rContainer' class='lrContainer fas fa-forward' oncontextmenu='event.preventDefault(); player.nextVideo();' onclick="player.seekTo(player.getCurrentTime() + 10, true);"></div>
@@ -241,6 +241,9 @@
 		closeBtn.style.right = '-85px';
 		moveBtn.style.bottom = '-85px';
 		moveBtn.style.right = '-85px';
+		
+		if(playlistVisible == true) playlistMore();
+		playlistBtn.style.bottom = '-50px';
 	  }
 	  else{
 		btnContainer.style.top = 'calc(100vh - 65px)';
@@ -251,6 +254,8 @@
 		closeBtn.style.right = '-40px';
 		moveBtn.style.bottom = '-40px';
 		moveBtn.style.right = '-40px';
+		
+		playlistBtn.style.bottom = '25px';
 	  }
   }
   
@@ -309,11 +314,11 @@ function playlistMore(){
 	playlistVisible = !playlistVisible;
 	if (playlistVisible == true){
 		showPlaylist.style.opacity = '1';
-		showPlaylist.style.bottom = '70px';
+		showPlaylist.style.bottom = '75px';
 		shufflePlaylist.style.opacity = '1';
-		shufflePlaylist.style.bottom = '115px';
+		shufflePlaylist.style.bottom = '125px';
 		loopPlaylist.style.opacity = '1';
-		loopPlaylist.style.bottom = '160px';
+		loopPlaylist.style.bottom = '175px';
 	}
 	else{
 		showPlaylist.style.bottom = '25px';
