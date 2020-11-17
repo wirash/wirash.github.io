@@ -151,7 +151,7 @@
                         #reloadIframe{
                                 right: 10px;
                         }
-                        #musicMode{left:50vw;transform:translateX(-50%);}
+                        #musicMode{left:50vw;transform:translateX(-50%);display:none;}
                         
                         #musicContainer{
                         display:none;
@@ -332,14 +332,14 @@
                                         
 					player.src="https://www.youtube.com/embed/"+param+"enablejsapi=1&version=3&playerapiid=ytplayer&autoplay=1&rel=1&modestbranding=1";
                                         //player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                                        
+                                        musicMode.style.display = "block";
                                         document.querySelector("link[rel*='icon']").href = "https://www.youtube.com/s/desktop/b4620429/img/favicon.ico";
                                     }
 				catch(error){console.log(error); return;}
 			}
                         else if(data.startsWith("https://www.twitch.tv/"))
                         {
-				try{
+				try{					if (data.length <=  22) return;
                                         var arr = data.split('/');
                                         switch(arr.length)
                                         {
@@ -350,6 +350,8 @@
                                                         player.src = "https://player.twitch.tv/?parent=wirash.github.io&video=" + arr[4];
                                                         break;
                                         }
+										musicMode.style.display = "none";
+										if (musicContainer.style.display == "block") exitMusicMode(musicContainer);
                                         window.document.title = "Twitch PiP";
                                         document.querySelector("link[rel*='icon']").href = "https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png";
                                 }
