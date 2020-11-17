@@ -442,8 +442,8 @@
                   
                   var playing = 1;
                   function plah(el){
-                          if (playing == 1) {player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');}
-                          else {player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');}
+                          if (playing == 1) {player.contentWindow.postMessage('{"event":"command","func":"pause","args":""}', '*');}
+                          else {player.contentWindow.postMessage('{"event":"command","func":"play","args":""}', '*');}
                           playing = Math.abs(playing - 1);
                           playPause.classList.toggle('playPause');
                   }
