@@ -93,6 +93,51 @@
 		box-sizing: border-box;
 	}
 	
+	#search{
+		width: 300px;
+		height: 40px;
+		padding: 5px;
+		position: absolute;
+		top: 0px;
+		left: 50%;
+		transform: translateX(-50%);
+		box-sizing: border-box;
+		border-radius: 0 0 40px 40px;
+		background-color: white;
+		font-size: 14px;
+		font-weight: bold;
+		font-family: 'Trebuchet MS';
+		box-shadow: -2px 10px 20px 1px #222, 1px 1px 10px 1px #222;
+		overflow: hidden;
+		transition: 300ms;
+	}
+	#search input{
+		height: 100%;
+		box-sizing: border-box;
+		font-size: inherit;
+		font-family: inherit;
+		font-weight: inherit;
+		text-align: center;
+		outline: none;
+	}
+	
+	#search input:first-child{
+		border: 0px;
+		float: left;
+		width: 75%;
+		padding: 5px;
+		color: #222;
+	}
+	
+	#searchOption{
+		float: right;
+		padding-right: 5px;
+		width: 25%;
+		border: 0px;
+		border-left: 2px solid red;
+		color: red;
+	}
+	
 	.btns:first-child{float:left;}
 	.btns:nth-child(2){float:middle; border-left: 1px solid grey; border-right: 1px solid grey;}
 	.btns:last-child{float:right;}
@@ -137,19 +182,24 @@
 	<div id='btnContainer'>
 		<div class='btns fas fa-redo-alt' onclick='player.seekTo(0,true);'></div>
 		<div class='btns fas fa-stop' onclick='player.stopVideo();'></div>
-		<div class='btns fas fa-expand' onclick='setTimeout(function(){console.log("fullscreen");},350);'></div>
+		<div class='btns fas fa-expand' onclick='console.log("fullscreen");'></div>
 	</div>
 	<div id='showPlaylist' class='playlistMoreBtns fas fa-eye' on='false' onclick='toggle(this);playlistMore();console.log("playlistToggle");'></div>
 	<div id='shufflePlaylist' class='playlistMoreBtns fas fa-random' on='false' onclick='toggle(this);playlistMore();player.setShuffle(this.getAttribute("on")=="true");'></div>
 	<div id='loopPlaylist' class='playlistMoreBtns fas fa-infinity' on='false' onclick='toggle(this);playlistMore();player.setLoop(this.getAttribute("on")=="true");'></div>
 	<div id='playlistBtn' class='fas fa-stream' onclick='playlistMore()'></div>
-	
+		
 	<div id='rContainer' class='lrContainer fas fa-forward' oncontextmenu='event.preventDefault(); player.nextVideo();' onclick="player.seekTo(player.getCurrentTime() + 10, true);"></div>
 	<div id='lContainer' class='lrContainer fas fa-backward' oncontextmenu='event.preventDefault(); player.previousVideo();' onclick='player.seekTo(player.getCurrentTime() - 10, true);'></div>
 	<div id='mContainer' ondrop="drop(event)" ondragover="allowDrop(event)" onclick='vpp();'></div>
 	
 	<div id='moveBtn' class='xtraBtns fas fa-arrows-alt' onclick='hideUnhide("hide");setTimeout(function(){ console.log("move"); }, 350);'></div>
 	<div id='closeBtn' class='xtraBtns fas fa-times' onclick='window.close();'></div>
+	
+	<div id='search'>
+		<input type='text' placeholder='Search for videos by' onkeyup="searchVideo(this.value, event)" onclick='clearTimeout(tim);'>
+		<input type='text' value='Titel' id='searchOption' readonly=1 onwheel='if(event.deltaY>0){this.value="Titel";}else{this.value="Channel";}'>
+	</div>
 	
 	<div id="ytplayer"></div>
 </body >
@@ -244,6 +294,8 @@
 		
 		if(playlistVisible == true) playlistMore();
 		playlistBtn.style.bottom = '-50px';
+		
+		search.style.top = '-45px';
 	  }
 	  else{
 		btnContainer.style.top = 'calc(100vh - 65px)';
@@ -256,6 +308,8 @@
 		moveBtn.style.right = '-40px';
 		
 		playlistBtn.style.bottom = '25px';
+		
+		search.style.top = '0px';
 	  }
   }
   
@@ -336,5 +390,15 @@ function toggle(el)
 	else {el.setAttribute('on','false'); el.style.color = '#222'; el.style.background = 'white';}
 }
 
+function searchVideo(s, event){
+	if (event.key === "Enter") {
+		if(s==null) return false;
+		var p = 'search';
+		if(searchOption.value == 'Channel') p = 'user_uploads';
+		player.loadPlaylist({list:s,listType:p,index:0,startSeconds:0});
+		ifPlaylist();
+	}
+	else {clearTimeout(tim);}
+}
 </script>
 </html>
