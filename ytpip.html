@@ -367,8 +367,9 @@
                         }
                 }
 				
-				window.addEventListener('dragenter', (event) => {
+				window.addEventListener('drop', (event) => {
 					window.document.title = "yaha";
+					drop(event);
 				});
                 
                   gapi.load("client");
