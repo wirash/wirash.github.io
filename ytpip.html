@@ -50,9 +50,11 @@
 			}
 			
 			#player{
-				width:100%;
+				width:80%;
 				height:100vh;
                                 display: none;
+								left: 20%;
+								position:absolute;
 			}
                         #positionerContainer{
                                 display:none;
@@ -334,9 +336,7 @@
                                         //player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
                                         musicMode.style.display = "block";
                                         document.querySelector("link[rel*='icon']").href = "https://www.youtube.com/s/desktop/b4620429/img/favicon.ico";
-                                    setTimeout(function(){ addListeners(); }, 5000);
-									console.log("i did it");
-									}
+                                    }
 				catch(error){console.log(error); return;}
 			}
                         else if(data.startsWith("https://www.twitch.tv/"))
@@ -377,18 +377,6 @@
 				//	window.document.title = "yaha2";
 				//	drop(event);
 				//});
-				
-				
-				function addListeners(){
-					player.contentWindow.addEventListener('dragover', (event) => {
-						allowDrop(event);
-					});
-					
-					player.contentWindow.addEventListener('drop', (event) => {
-						window.document.title = "yaha3";
-						drop(event);
-					});
-				}
                 
                   gapi.load("client");
                 
