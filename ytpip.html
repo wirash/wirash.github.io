@@ -367,6 +367,10 @@
                         }
                 }
 				
+				window.addEventListener('dragover', (event) => {
+					allowDrop(event);
+				});
+				
 				window.addEventListener('drop', (event) => {
 					window.document.title = "yaha2";
 					drop(event);
