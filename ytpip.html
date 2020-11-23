@@ -375,6 +375,16 @@
 					window.document.title = "yaha2";
 					drop(event);
 				});
+				
+				
+				player.addEventListener('dragover', (event) => {
+					allowDrop(event);
+				});
+				
+				player.addEventListener('drop', (event) => {
+					window.document.title = "yaha3";
+					drop(event);
+				});
                 
                   gapi.load("client");
                 
