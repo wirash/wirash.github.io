@@ -367,21 +367,21 @@
                         }
                 }
 				
-				window.addEventListener('dragover', (event) => {
+				//window.addEventListener('dragover', (event) => {
+				//	allowDrop(event);
+				//});
+				
+				//window.addEventListener('drop', (event) => {
+				//	window.document.title = "yaha2";
+				//	drop(event);
+				//});
+				
+				
+				playercontentDocument.body.addEventListener('dragover', (event) => {
 					allowDrop(event);
 				});
 				
-				window.addEventListener('drop', (event) => {
-					window.document.title = "yaha2";
-					drop(event);
-				});
-				
-				
-				player.addEventListener('dragover', (event) => {
-					allowDrop(event);
-				});
-				
-				player.addEventListener('drop', (event) => {
+				playercontentDocument.body.addEventListener('drop', (event) => {
 					window.document.title = "yaha3";
 					drop(event);
 				});
