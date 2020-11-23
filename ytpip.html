@@ -334,7 +334,8 @@
                                         //player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
                                         musicMode.style.display = "block";
                                         document.querySelector("link[rel*='icon']").href = "https://www.youtube.com/s/desktop/b4620429/img/favicon.ico";
-                                    }
+                                    addListeners();
+									}
 				catch(error){console.log(error); return;}
 			}
                         else if(data.startsWith("https://www.twitch.tv/"))
@@ -377,14 +378,16 @@
 				//});
 				
 				
-				player.contentWindow.addEventListener('dragover', (event) => {
-					allowDrop(event);
-				});
-				
-				player.contentWindow.addEventListener('drop', (event) => {
-					window.document.title = "yaha3";
-					drop(event);
-				});
+				function addListeners(){
+					player.contentWindow.addEventListener('dragover', (event) => {
+						allowDrop(event);
+					});
+					
+					player.contentWindow.addEventListener('drop', (event) => {
+						window.document.title = "yaha3";
+						drop(event);
+					});
+				}
                 
                   gapi.load("client");
                 
