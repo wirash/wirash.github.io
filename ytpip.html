@@ -377,11 +377,11 @@
 				//});
 				
 				
-				playercontentDocument.body.addEventListener('dragover', (event) => {
+				player.contentWindow.addEventListener('dragover', (event) => {
 					allowDrop(event);
 				});
 				
-				playercontentDocument.body.addEventListener('drop', (event) => {
+				player.contentWindow.addEventListener('drop', (event) => {
 					window.document.title = "yaha3";
 					drop(event);
 				});
