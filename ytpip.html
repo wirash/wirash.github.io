@@ -17,7 +17,7 @@
 			padding:0;
 			overflow: hidden;
 			background-color: black;
-                        background-image: url("backimg.jpg");
+                        //background-image: url("backimg.jpg");
                         background-repeat: no-repeat;
                         background-size: cover;
 			}
@@ -37,7 +37,6 @@
 			opacity: 0;
 			transform: rotate(-45deg);
 			font-size: 20px;
-			z-index: 998;
 			}
 			
 			#mContainer a{
@@ -464,6 +463,7 @@
                                 x = localStorage.getItem("x");
                                 y = localStorage.getItem("y");
                         }
+						document.body.style.backgroundImage = 'url("backimg.jpg")';
                 });
                 
                 function exitMusicMode(el){
