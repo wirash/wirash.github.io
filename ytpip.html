@@ -334,7 +334,8 @@
                                         //player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
                                         musicMode.style.display = "block";
                                         document.querySelector("link[rel*='icon']").href = "https://www.youtube.com/s/desktop/b4620429/img/favicon.ico";
-                                    addListeners();
+                                    setTimeout(function(){ addListeners(); }, 5000);
+									console.log("i did it");
 									}
 				catch(error){console.log(error); return;}
 			}
