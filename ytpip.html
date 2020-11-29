@@ -252,7 +252,7 @@
 		<iframe id="player" src="about:blank" allowfullscreen="true" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"></iframe>
 	</body >
 	<script>
-				window.addEventListener("storage", processLink(localStorage.getItem("ytpip")));
+				window.addEventListener("storage", function (){processLink(localStorage.getItem("ytpip")}));
 	
                 function reloadIframe(){
                         if(player.src != 'about:blank') player.src+='';
