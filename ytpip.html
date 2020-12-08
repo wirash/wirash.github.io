@@ -252,7 +252,7 @@
 		<iframe id="player" src="about:blank" allowfullscreen="true" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"></iframe>
 	</body >
 	<script>
-				window.addEventListener("storage", function (){processLink(localStorage.getItem("ytpip"))});
+				//window.addEventListener("storage", function (){processLink(localStorage.getItem("ytpip"))});
 	
                 function reloadIframe(){
                         if(player.src != 'about:blank') player.src+='';
@@ -356,6 +356,9 @@
                                                         break;
                                                 case 5:
                                                         player.src = "https://player.twitch.tv/?parent=wirash.github.io&video=" + arr[4];
+                                                        break;
+												case 6:
+														player.src = "https://player.twitch.tv/?parent=wirash.github.io&video=" + arr[5];
                                                         break;
                                         }
 										musicMode.style.display = "none";
