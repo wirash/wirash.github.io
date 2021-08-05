@@ -1,0 +1,488 @@
+<!doctype html>
+<html>
+	<head>
+		<title>YouTube PiP</title>
+		<link rel="shortcut icon" href="logo.png" type="image/x-icon" >
+		<style>
+                        *{
+                                box-sizing:border-box;
+                                user-select: none;
+                                font-family: Trebuchet MS;
+                                font-size: 28px;
+                                font-weight: bold;
+                        }
+                        
+			body{
+			margin:0;
+			padding:0;
+			overflow: hidden;
+                        background-color: black;
+						background-image: url("backimg.jpg");
+                        background-repeat: no-repeat;
+                        background-size: cover;
+						top:0;
+						left:0;
+						width:100%;
+						height: 100vh;
+						position:absolute;
+			}
+			
+			#mContainer{
+			display:flex;
+			align-items: center;
+			justify-content: center;
+			flex-wrap: wrap;
+			position:fixed;
+			top: -100px;
+			right: -100px;
+			height:200px;
+			width:200px;
+			color: white;
+			background-color: rgba(0,0,0,0.7);
+			border-left: 2.5px dashed white;
+			opacity: 0;
+			transform: rotate(-45deg);
+			}
+			
+			#mContainer a{
+				writing-mode: vertical-rl;
+				height:100%;
+				position: absolute;
+				left:20px;
+				top:0;
+				text-align: center;
+				pointer-events: none;
+			font-size: 20px;
+			}
+			
+			#player{
+				width:100%;
+				height:100vh;
+                                display: none;
+			}
+                        #positionerContainer{
+                                display:none;
+                                position:fixed;
+                                width:100vw;
+                                height: 100vh;
+                                background-color: rgba(0,0,0,0.5);
+                                z-index: 999;
+                        }
+                        .positioner{
+                                position:absolute;
+                                width:25vw;
+                                height:25vh;
+                                background-color: white;
+                                opacity: 0.7;
+                                //border: 2px solid #333;
+                                margin: 2px;
+                                cursor: pointer;
+                                transition:300ms;
+                        }
+                        
+                        .positioner:hover{transform:scale(1.2); opacity: 0.9; transition:300ms;}
+                        
+                        #tl{
+                                bottom:50vh;
+                                right:50vw;
+                                transform-origin: 100% 100%;
+                                //border-radius: 0 15px 0 15px;
+                        }
+                        #tr{
+                                left:50vw;
+                                bottom:50vh;
+                                transform-origin: 0 100%;
+                                //border-radius: 15px 0 15px 0;
+                        }
+                        #bl{
+                                top:50vh;
+                                right:50vw;
+                                transform-origin: 100% 0;
+                                //border-radius: 15px 0 15px 0;
+                        }
+                        #br{
+                                top:50vh;
+                                left:50vw;
+                                transform-origin: 0 0;
+                                //border-radius: 0 15px 0 15px;
+                        }
+                        
+                        .btnStyle{
+                                position:absolute;
+                                border: 2px solid white;
+                                background-color: red;
+                                cursor:pointer;
+                                color: white;
+                                text-align:center;
+                                z-index:1000;
+                        }
+                        
+                        #cancelPositioning{
+                                top:50vh;
+                                left:50vw;
+                                width:40px;
+                                height:40px;
+                                border-radius:50%;
+                                transform:translate(-50%,-50%);
+                        }
+                        
+                        .btnStyle:hover{
+                                background-color: white;
+                                color: red;
+                                border: 2px solid red;
+                        }
+                        
+                        .extraBtns{
+                                position:absolute;
+                                cursor:pointer;
+                                text-align:center;
+                                z-index:1000;
+                                padding: 5px;
+                                font-size: 12px;
+                                color: white;
+                                background-color: red;
+                                border-radius: 3px;
+                                border: 2px solid red;
+                                bottom: 10px;
+                        }
+                        
+                        .extraBtns:hover{
+                                border-color: white;
+                        }
+                        
+                        #resetSize{
+                                left: 10px;
+                        }
+                        
+                        #reloadIframe{
+                                right: 10px;
+                        }
+                        #musicMode{left:50vw;transform:translateX(-50%);display:none;}
+                        
+                        #musicContainer{
+                        display:none;
+                        height: 100%;
+                        width: 100%;
+                        position:fixed;
+                        top:0;
+                        left:0;
+                        z-index:1001;
+                        background-color: #000;
+                        }
+                        
+                        #btnContainer{
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-wrap: wrap;
+                        position: absolute;
+                        right: 0px;
+                        height: 100%;
+                        width: 50%;
+                        }
+                        
+                        #musicOverlay{
+                        position:absolute;
+                        left:0px;
+                        width:60%;
+                        height:100%;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        background-size: cover;
+                        box-shadow: -70px 0 70px -25px inset;
+                        }
+                        
+                        #musicOverlay svg{
+                                display: block;
+                                width: 30%;
+                                height: 100%;
+                                fill: white;
+                                margin:auto;
+                        }
+                        
+                        .playerBtns{
+                        display: inline-block;
+                        width: 15%;
+                        margin: 0 5%;
+                        height: 100%;
+                        fill: rgba(255,255,255,0.7);
+                        box-sizing:border-box;
+                        cursor:pointer;
+                        z-index:1002;
+                        }
+                        
+                        .playerBtns:nth-child(2){
+                                width: 25% !important;
+                        }
+                        
+                        .playerBtns:hover{fill: red;}
+                        
+                        #playPause{
+                                //d: path('M6 4h7v24h-7z M20 4h7v24h-7z');
+                                d: path('M16 0c-8.837 0-16 7.163-16 16s7.163 16 16 16 16-7.163 16-16-7.163-16-16-16zM16 29c-7.18 0-13-5.82-13-13s5.82-13 13-13 13 5.82 13 13-5.82 13-13 13zM10 10h4v12h-4zM18 10h4v12h-4z');
+                        }
+                        
+                        .playPause{
+                                //d: path('M6 4l20 12-20 12z') !important;
+                                d: path('M16 0c-8.837 0-16 7.163-16 16s7.163 16 16 16 16-7.163 16-16-7.163-16-16-16zM16 29c-7.18 0-13-5.82-13-13s5.82-13 13-13 13 5.82 13 13-5.82 13-13 13zM12 9l12 7-12 7z') !important;
+                        }
+		</style>
+                <script src="https://apis.google.com/js/api.js"></script>
+	</head>
+	<body>        
+                <div id="musicContainer" oncontextmenu="exitMusicMode(this)" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="musicOverlay.firstElementChild.style.fill='red'" ondragleave="if(!event.currentTarget.contains(event.relatedTarget))musicOverlay.firstElementChild.style.fill='#fff'">
+                        <div id="btnContainer">
+                                <svg class="playerBtns" onclick="prev()" viewBox="0 0 32 32"><path d="M8 28v-24h4v11l10-10v22l-10-10v11z"></path></svg>
+                                <svg class="playerBtns" onclick="plah(this)" viewBox="0 0 32 32"><path id='playPause' d=""></path></svg>
+                                <svg class="playerBtns" onclick="nxt()" viewBox="0 0 32 32"><path d="M24 4v24h-4v-11l-10 10v-22l10 10v-11z"></path></svg>
+                        </div>
+                        <div id="musicOverlay"><svg viewBox="0 0 32 32"><path d="M31.681 9.6c0 0-0.313-2.206-1.275-3.175-1.219-1.275-2.581-1.281-3.206-1.356-4.475-0.325-11.194-0.325-11.194-0.325h-0.012c0 0-6.719 0-11.194 0.325-0.625 0.075-1.987 0.081-3.206 1.356-0.963 0.969-1.269 3.175-1.269 3.175s-0.319 2.588-0.319 5.181v2.425c0 2.587 0.319 5.181 0.319 5.181s0.313 2.206 1.269 3.175c1.219 1.275 2.819 1.231 3.531 1.369 2.563 0.244 10.881 0.319 10.881 0.319s6.725-0.012 11.2-0.331c0.625-0.075 1.988-0.081 3.206-1.356 0.962-0.969 1.275-3.175 1.275-3.175s0.319-2.587 0.319-5.181v-2.425c-0.006-2.588-0.325-5.181-0.325-5.181zM12.694 20.15v-8.994l8.644 4.513-8.644 4.481z"></path></svg></div>
+                </div>
+                <div id="positionerContainer" onclick="positionerContainer.style.display='none'">
+                        <div id="musicMode" class="extraBtns" onclick="enterMusicMode()">Music Mode</div>
+                        <div id="reloadIframe" class="extraBtns" onclick="reloadIframe()">Reload Video</div>
+                        <div id="resetSize" class="extraBtns" onclick="window.resizeTo(464,291)">Reset Size</div>
+                        <div id="cancelPositioning" class="btnStyle">&times;</div>
+                        <div class="positioner" id="tl" onclick="window.moveBy(-10000,-10000);window.moveBy(0,8)"></div>
+                        <div class="positioner" id="tr" onclick="window.moveBy(10000,-10000);window.moveBy(0,8)"></div>
+                        <div class="positioner" id="bl" onclick="window.moveBy(-10000,10000)"></div>
+                        <div class="positioner" id="br" onclick="window.moveBy(10000,10000)"></div>
+                </div>
+		<div id='mContainer' oncontextmenu='doStuff(event)' ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="this.style.opacity='1'" ondragleave="this.style.opacity='0'"><a>drop here</a></div>
+		<iframe id="player" src="about:blank" allowfullscreen="true" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+	</body >
+	<script>
+				//window.addEventListener("storage", function (){processLink(localStorage.getItem("ytpip"))});
+	
+                function reloadIframe(){
+                        if(player.src != 'about:blank') player.src+='';
+                }
+                function doStuff(ev)
+                {
+                        //window.resizeTo(464,291); //+14,+7 to compensate for scrollbars, actual values = 450,284
+                        if (screen.availWidth - window.innerWidth !== 0) positionerContainer.style.display='block';
+			ev.preventDefault();
+			ev.stopPropagation();
+                }
+                
+                document.querySelectorAll("#positionerContainer, #positionerContainer div").forEach( el => 
+                 el.addEventListener('contextmenu', e => e.preventDefault())
+                );
+                
+                window.addEventListener("blur", function(){
+                  positionerContainer.style.display='none';
+                });
+        
+		function allowDrop(ev) {
+			ev.stopPropagation();
+			ev.preventDefault();
+		}
+
+		function drop(ev) {
+			ev.stopPropagation();
+			ev.preventDefault();
+                        if(ev.target.id == "mContainer") ev.target.style.opacity='0';
+			var data = ev.dataTransfer.getData("text");
+			
+			processLink(data);
+		}
+                
+                async function processLink(data)
+                {
+                        var prevsrc = player.src;
+                        
+                        if(data.startsWith("https://www.youtube.com/"))
+			{
+				var param = '';
+				try{
+					var arr = data.split('=');
+                                        if (arr.length > 1){
+                                                if (arr[0]=="https://www.youtube.com/watch?v"){
+                                                        switch(arr.length){
+                                                                case 2:
+                                                                        //when just video
+                                                                        var id = arr[1].substr(0,11);
+                                                                        param = id + "?";
+                                                                        getTitleFromId(id);
+                                                                        break;
+                                                                default:
+                                                                        //when video in playlist
+                                                                        var playlistId = arr[2].substr(0,34);
+                                                                        param = arr[1].substr(0,11) + "?list=" + playlistId + "&";
+                                                                        getTitleFromId(playlistId);
+                                                                        break;
+                                                        }
+                                                }
+                                                else if (arr[0]=="https://www.youtube.com/playlist?list"){
+                                                        var playlistId = arr[1].substr(0,34);
+                                                        param = "videoseries?list=" + playlistId + "&";
+                                                        getTitleFromId(playlistId);
+                                                }
+                                        }
+                                        else if (data.startsWith("https://www.youtube.com/channel/"))
+                                        {
+                                                //when channel
+                                                var playlistId = "UU" + data.slice(data.lastIndexOf("/")+3);
+                                                param = "videoseries?list=" + playlistId + "&";
+                                                getTitleFromId(playlistId);
+                                        }
+                                        else if (data.startsWith("https://www.youtube.com/user/") | data.startsWith("https://www.youtube.com/c/"))
+                                        {
+                                                //when channel
+                                                var uname = data.slice(data.lastIndexOf("/")+1)
+                                                //param = "playlist?list=" + uname + "&listType=user_uploads&";
+                                                //window.document.title = "Uploads from " + uname;
+                                                var channelId = await getChannelId(uname);
+                                                var playlistId = "UU" + channelId.slice(2);
+                                                param = "videoseries?list=" + playlistId + "&";
+                                        }
+                                        else return;
+                                        
+					player.src="https://www.youtube.com/embed/"+param+"enablejsapi=1&version=3&playerapiid=ytplayer&autoplay=1&rel=1&modestbranding=1";
+                                        //player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                                        musicMode.style.display = "block";
+                                        document.querySelector("link[rel*='icon']").href = "https://www.youtube.com/s/desktop/b4620429/img/favicon.ico";
+                                    }
+				catch(error){console.log(error); return;}
+			}
+                        else if(data.startsWith("https://www.twitch.tv/"))
+                        {
+				try{					if (data.length <=  22) return;
+                                        var arr = data.split('/');
+                                        switch(arr.length)
+                                        {
+                                                case 4:
+                                                        player.src = "https://player.twitch.tv/?parent=wirash.github.io&channel=" + arr[3];
+                                                        break;
+                                                case 5:
+                                                        player.src = "https://player.twitch.tv/?parent=wirash.github.io&video=" + arr[4];
+                                                        break;
+												case 6:
+														player.src = "https://player.twitch.tv/?parent=wirash.github.io&video=" + arr[5];
+                                                        break;
+                                        }
+										musicMode.style.display = "none";
+										if (musicContainer.style.display == "block") exitMusicMode(musicContainer);
+                                        window.document.title = "Twitch PiP";
+                                        document.querySelector("link[rel*='icon']").href = "https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png";
+                                }
+				catch(error){console.log(error); return;}
+                        }
+                        
+                        if(prevsrc == "about:blank" && player.src != "about:blank")
+                        {
+                                player.style.display = "block";
+                                document.body.style.backgroundImage = "none";
+                                musicOverlay.firstElementChild.remove();
+                                _once = false;
+                        }
+                }
+                
+                  gapi.load("client");
+                
+                //load api when document loaded
+		  window.addEventListener('load', (event) => {
+			gapi.client.setApiKey("AIzaSyDTme-QS_5OyrXPdDjaPoK8UJFpJnXO-KE");
+			return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+				.then(function() {},
+					  function(err) { console.error("Error loading GAPI client for API", err); });
+		  });
+                  
+                  async function getTitleFromId(id) {		  
+                        var requestOptions ={
+				  part: 'snippet',
+				  id: id,
+				  fields: 'items(snippet(title)), items(snippet(thumbnails(standard(url))))',
+                        };
+                        
+                        var request;
+                        if(id.length <= 11) request = gapi.client.youtube.videos.list(requestOptions);
+                        else {request = gapi.client.youtube.playlists.list(requestOptions);}
+                        request.execute(response =>{
+                                var video = response.result.items;
+                                if(video){
+                                        var a = "";
+                                        if(id.length > 11) a = "Playlist: "
+                                        window.document.title = a + video[0].snippet.title;
+                                        musicOverlay.style.backgroundImage = 'url('+video[0].snippet.thumbnails.standard.url+')';
+                                }
+                        });
+                  }
+                  
+                  function getChannelId(name) {
+                    return gapi.client.youtube.search.list({
+                      "part": ["snippet"],
+                      "maxResults": 1,
+                      "q": name,
+                      "type": ["channel"],
+                      "fields": "items(snippet(title,channelId,thumbnails(high(url))))"
+                    })
+                        .then(function(response) {
+                                var channel = response.result.items;
+                                if (channel){
+                                        window.document.title = "Playlist: Uploads from " + channel[0].snippet.title;
+                                        var o = channel[0].snippet.channelId;
+                                        musicOverlay.style.backgroundImage = 'url(' + channel[0].snippet.thumbnails.high.url + ')';
+                                        return o;
+                                }
+                              },
+                              function(err) { console.error("Execute getChannelId error", err); });
+                  }
+                  
+                  var w;
+                  var h;
+                  var x;
+                  var y;
+                  function enterMusicMode(){
+                          w = window.innerWidth + 16; //width + compensation for title bar
+                          localStorage.setItem('w',w);
+                          h = window.innerHeight + 39; //height + compensation for title bar
+                          localStorage.setItem('h',h);
+                          x = window.screenX;
+                          localStorage.setItem('x',x);
+                          y = window.screenY;
+                          localStorage.setItem('y',y);
+                          
+                          window.resizeTo(350,100+39); //100 + compensation for title bar
+                          window.moveBy(10000,10000);
+                          musicContainer.style.display='block'
+                          localStorage.setItem('musicModeOn','true');
+                          
+                          player.style.display = "none";
+                  }
+                  
+                  function prev(){player.contentWindow.postMessage('{"event":"command","func":"previousVideo","args":""}', '*');}
+                  
+                  var playing = 1;
+                  function plah(el){
+                          if (playing == 1) {player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');}
+                          else {player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');}
+                          playing = Math.abs(playing - 1);
+                          playPause.classList.toggle('playPause');
+                  }
+                  
+                  function nxt(){player.contentWindow.postMessage('{"event":"command","func":"nextVideo","args":""}', '*');}
+                  
+                //display musicContainer depending on local data state
+                document.addEventListener("DOMContentLoaded", function(event) {
+                        //update from local storage
+                        if( localStorage.getItem("musicModeOn") === 'true')
+                        {
+                                musicContainer.style.display = 'block';
+                                w = localStorage.getItem("w");
+                                h = localStorage.getItem("h");
+                                x = localStorage.getItem("x");
+                                y = localStorage.getItem("y");
+                        }
+                });
+                
+                function exitMusicMode(el){
+                        el.style.display='none';
+                        window.resizeTo(w,h);
+                        window.moveTo(x,y);
+                        player.style.display = 'block';
+                        localStorage.setItem('musicModeOn','false');
+                        event.preventDefault()
+                }
+	</script>
+</html>
