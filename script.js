@@ -41,8 +41,7 @@ function listFilesOnScreen() {
   $(".pdf-file").remove();
   if (window.arrayOfPdf.length > 0) {
     $.each(window.arrayOfPdf, function (i, v) {
-      $(".list-files").append(` 
-           <div class="pdf-file">
+      $(".list-files").append(`<div class="pdf-file">
            <div onclick="moveLeft(this.parentElement)" class="btn-remove move">&#10094;</div>
            <div onclick="removePdf(this.parentNode)" class="btn-remove">&times;</div>
            <div onclick="moveRight(this.parentElement)" class="btn-remove move">&#10095;</div>
