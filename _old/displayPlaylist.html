@@ -1,0 +1,156 @@
+<html>
+	<head>
+		<style>
+                        *{
+                        font-family: Trebuchet MS;
+                        font-size: 16px;
+                        font-weight: bold;
+                        }
+                        
+                        body{
+                        background-color: #222;
+                        padding: 0px;
+                        margin: 0px;
+                        }
+                        
+                        table{
+                        width: 100%;
+                        }
+                        
+                        tr{height: 80px; cursor: pointer;
+                        color: white;}
+                        
+                        td:first-child{padding: 0 15px 0 10px;}
+                        td:last-child{text-align:center; padding: 0 10px 0 15px;}
+                        
+                        img{width: 100px;
+                        border-radius: 5px;}
+                        
+                        tr:hover{color: red !important;}
+                        
+                        a{color: grey; font-size: 14px;}
+                        
+                        body::-webkit-scrollbar-track{
+                        background:transparent;
+                        }
+                        
+                        body::-webkit-scrollbar{
+                        width: 10px;background-color: transparent;
+                        }
+                        
+                        body::-webkit-scrollbar-thumb{
+                        border-radius: 10px;
+                        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,1);
+                        background-color: red;
+                        }
+                        
+                        .btns{
+                        position:fixed;
+                        background-color:white;
+                        color:#222;
+                        border-radius:50%;
+                        width:80px;
+                        height:80px;
+                        font-size:30px;
+                        text-align:center;
+                        box-sizing:border-box;
+                        transition:300ms;
+                        left:-40px;
+                        cursor:pointer;
+                        }
+                        
+                        #hideBtn{
+                        top:-40px;
+                        box-shadow:1px 1px 10px 1px #222;
+                        padding-top:35px;
+                        padding-left:30px;
+                        }
+                        
+                        .btns:hover{
+                        color:white;
+                        background-color:red;
+                        }
+                        
+                        #moveBtn{
+                        padding-left:30px;
+                        padding-top:10px;
+                        bottom:-40px;
+                        box-shadow: -2px 10px 20px 1px #222, 1px 1px 10px 1px #222;
+                        }
+                        
+                        #moveBtn:hover svg{
+                        fill:white;
+                        transition:300ms;
+                        }
+		</style>
+		<script src="https://apis.google.com/js/api.js"></script>
+	</head>
+	<body>
+                <div id="hideBtn" class="btns" onclick="console.log('hide')">&times;</div>
+                <div id="moveBtn" class="btns" onclick="console.log('move')">
+                        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' width='20px' fill='#222'>
+                                <path d='M507.353 245.245l-83.692-78.769a14.768 14.768 0 00-24.891 10.755v34.462h-98.462v-98.462h34.462a14.77 14.77 0 0010.755-24.891l-78.77-83.693a14.772 14.772 0 00-21.51 0L166.476 88.34a14.767 14.767 0 0010.755 24.891h34.462v98.462h-98.462v-34.462a14.77 14.77 0 00-24.891-10.755L4.647 245.245a14.772 14.772 0 000 21.51l83.692 78.769a14.768 14.768 0 0024.891-10.755v-34.462h98.462v98.462H177.23a14.77 14.77 0 00-10.755 24.891l78.769 83.692a14.766 14.766 0 0021.51 0l78.769-83.692a14.767 14.767 0 00-10.755-24.891h-34.462v-98.462h98.462v34.462a14.77 14.77 0 0024.891 10.755l83.692-78.769a14.77 14.77 0 00.002-21.51z'/>
+                        </svg>
+                </div>
+                <table id='contentTable'></table>
+		<script>
+                  //load api when document loaded
+		  window.addEventListener('load', (event) => {
+			gapi.client.setApiKey("AIzaSyA2bb5-ltkcsYmNsh7yertdUbudJN_7aN4");
+			return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+				.then(function() { execute(); },
+					  function(err) { console.error("Error loading GAPI client for API", err); });
+		  });
+		  
+		  // Make sure the client is loaded before calling this method.
+		  function execute() {
+                          const queryString = window.location.search;
+                          const urlParams = new URLSearchParams(queryString);
+                          const ids = urlParams.get('id')
+                          if(ids){
+                                  const requestOptions ={
+                                          part: 'snippet, contentDetails',
+                                          id: ids
+                                  };
+                                
+                                  const request = gapi.client.youtube.videos.list(requestOptions);
+                                  request.execute(response =>{
+                                          //console.log(response);
+                                          const videos = response.result.items;
+                                          if(videos){
+                                                  var content = '';
+                                                  videos.forEach((item,index) => {
+                                                          var time = convertYouTubeDuration(item.contentDetails.duration);
+                                                          
+                                                          content += `
+                                                          <tr onclick='console.log(${index})' id='tr${index}'>
+                                                                  <td><img src=${item.snippet.thumbnails.medium.url}></td>
+                                                                  <td>${item.snippet.localized.title}<br><a>by ${item.snippet.channelTitle}</a></td>
+                                                                  <td><a>${time}</a></td>
+                                                          </tr>
+                                                          `;
+                                                  });
+                                                  contentTable.innerHTML = content;
+                                          }else{console.log('no videos');}
+                                  });
+                          }
+		  }
+		  gapi.load("client");
+                  
+                  function convertYouTubeDuration(yt_duration){
+                    const time_extractor = /([0-9]*H)?([0-9]*M)?([0-9]*S)?$/;
+                    const extracted = time_extractor.exec(yt_duration);
+                    const hours = parseInt(extracted[1], 10) || 0;
+                    const minutes = parseInt(extracted[2], 10) || 0;
+                    const seconds = parseInt(extracted[3], 10) || 0;
+                    var totalSeconds = (hours * 3600) + (minutes * 60) + (seconds);
+                        
+                        return [hours,minutes,seconds]
+                        .map(v => v < 10 ? "0" + v : v)
+                        .filter((v,i) => v !== "00" || i > 0)
+                        .join(":")
+                  }
+                  
+		</script>
+	</body>
+</html>
