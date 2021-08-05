@@ -50,6 +50,8 @@ function listFilesOnScreen() {
            <br><br>
            <span title="${v.name}">${v.name}</span></div>`);
     });
+  }
+  if (window.arrayOfPdf.length > 1) {
     mergeBtn.removeAttribute("disabled");
   } else {
     mergeBtn.setAttribute("disabled", "");
@@ -60,11 +62,12 @@ function removePdf(el) {
   var i = Array.from(el.parentNode.children).indexOf(el);
   window.arrayOfPdf.splice(i, 1);
   //listFilesOnScreen();
+  if (arrayOfPdf.length <= 1) mergeBtn.setAttribute("disabled", "");
   el.remove();
 }
 
 async function joinPdf() {
-  if (arrayOfPdf.length == 0) return;
+  if (arrayOfPdf.length <= 1) return;
   const mergedPdf = await PDFDocument.create();
   for (let document of window.arrayOfPdf) {
     document = await PDFDocument.load(document.bytes);
