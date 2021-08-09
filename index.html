@@ -1,41 +1,150 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+    <!-- <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
     <script src="https://unpkg.com/downloadjs@1.4.7"></script>
     <script
       src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous"
-    ></script>
+    ></script> -->
+
+    <script src="pdf-lib.min.js"></script>
+    <script src="download.js"></script>
+    <script src="jquery-3.6.0.min.js"></script>
+
     <link rel="stylesheet" href="style.css" />
+    <title>PDF+</title>
   </head>
 
   <body>
-    <div>
-      <h1>PDF+</h1>
-      <h3>Merge PDF's quickly without uploading</h3>
-      <h5>&copy; 2021 - Wirash Ganesh</h5>
-    </div>
     <div
-      class="list-files"
-      ondrop="dropHandler(event);this.toggleAttribute('dropping')"
-      ondragover="dragOverHandler(event)"
-      ondragenter="this.toggleAttribute('dropping')"
-      ondragleave="this.toggleAttribute('dropping')"
-    ></div>
-    <input
-      type="file"
-      id="pdf-file"
-      accept="application/pdf"
-      multiple
-      onclick="this.value=null"
-    />
-    <div class="center-btn">
-      <button class="btn-join" onclick="$('#pdf-file').click()">ADD PDF</button>
-      <button class="btn-join" id="mergeBtn" disabled onclick="joinPdf()">
-        MERGE & DOWNLOAD
-      </button>
+      id="pc_split"
+      class="popup-container"
+      onclick="hideAllPopups(this, event)"
+      hidden
+    >
+      <div class="popup" id="split" hidden popupTitle="Split PDF">
+        <div>
+          <input type="radio" name="option_split" id="o1" checked /><label
+            for="o1"
+          >
+            From page number <input type="number" value="2" />
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="option_split" id="o2" /><label for="o2">
+            Every <input type="number" value="1" /> pages
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="option_split" id="o3" /><label for="o3">
+            Every odd number of pages
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="option_split" id="o4" /><label for="o4">
+            Every even number of pages
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="option_split" id="o5" /><label for="o5">
+            Using these page values<br />
+            <input
+              type="text"
+              title="Comma separated page # values"
+              value="1,4,9"
+            />
+          </label>
+        </div>
+        <div>
+          <button onclick="splitPdf(this.closest('.popup#split'))">OK</button
+          ><button>Cancel</button>
+        </div>
+      </div>
+      <div class="popup" id="extract" popupTitle="Extract Pages" hidden>
+        <div class="input_div">
+          <label
+            ><input
+              class="normal_input"
+              type="text"
+              placeholder="Pages to extract"
+              title="Comma separated page # values"
+          /></label>
+        </div>
+        <div>
+          <button onclick="extractPages(this.closest('.popup#extract'))">
+            OK</button
+          ><button>Cancel</button>
+        </div>
+      </div>
+      <div class="popup" id="remove" popupTitle="Remove Pages" hidden>
+        <div class="input_div">
+          <label
+            ><input
+              class="normal_input"
+              type="text"
+              placeholder="Pages to remove"
+              title="Comma separated page # values"
+          /></label>
+        </div>
+        <div>
+          <button onclick="removePages(this.closest('.popup#remove'))">
+            OK</button
+          ><button>Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div id="main-container">
+      <div>
+        <h1>PDF+</h1>
+        <h3>Modify PDF's quickly without uploading</h3>
+        <h5>&copy; 2021 - Wirash Ganesh</h5>
+      </div>
+      <div
+        class="list-files"
+        ondrop="dropHandler(event);this.toggleAttribute('dropping')"
+        ondragover="dragOverHandler(event)"
+        ondragenter="this.toggleAttribute('dropping')"
+        ondragleave="this.toggleAttribute('dropping')"
+      ></div>
+      <input
+        type="file"
+        id="pdf-file"
+        accept="application/pdf"
+        multiple
+        onclick="this.value=null"
+      />
+      <div class="center-btn">
+        <button class="btn" onclick="$('#pdf-file').click()">ADD PDF</button>
+      </div>
+      <div class="btn-container">
+        <button class="btn" onclick="mergePdf()">merge</button>
+        <button
+          class="btn"
+          onclick="pc_split.removeAttribute('hidden');split.removeAttribute('hidden')"
+        >
+          split
+        </button>
+        <button
+          class="btn"
+          onclick="pc_split.removeAttribute('hidden');extract.removeAttribute('hidden')"
+        >
+          extract
+        </button>
+        <button
+          class="btn"
+          onclick="pc_split.removeAttribute('hidden');remove.removeAttribute('hidden')"
+        >
+          remove
+        </button>
+        <button class="btn" onclick="" off>join</button>
+        <button class="btn" onclick="" off>rotate</button>
+      </div>
+      <div
+        class="darkmode-btn"
+        onclick="document.body.toggleAttribute('darkmode')"
+      ></div>
     </div>
     <script src="script.js"></script>
   </body>
