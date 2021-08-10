@@ -1,8 +1,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <!-- <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
-    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+    <!-- <script src="https://unpkg.com/pdf-lib"></script>
+    <script src="https://unpkg.com/downloadjs"></script>
     <script
       src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
@@ -12,7 +12,6 @@
     <script src="pdf-lib.min.js"></script>
     <script src="download.js"></script>
     <script src="jquery-3.6.0.min.js"></script>
-
     <link rel="stylesheet" href="style.css" />
     <title>PDF+</title>
   </head>
@@ -94,6 +93,31 @@
           ><button>Cancel</button>
         </div>
       </div>
+      <div class="popup" id="rotate" popupTitle="Rotate Pages" hidden>
+        <div class="input_div">
+          <label
+            ><input
+              class="normal_input"
+              type="text"
+              placeholder="Pages to rotate"
+              title="Comma separated page # values, empty means all pages"
+          /></label>
+        </div>
+        <div class="input_div">
+          <label
+            ><input
+              class="normal_input"
+              type="number"
+              placeholder="Rotation angle"
+              title="In multiple of 90 degrees (0, 90, 180, 270, -90, etc.)"
+          /></label>
+        </div>
+        <div>
+          <button onclick="rotatePages(this.closest('.popup#rotate'))">
+            OK</button
+          ><button>Cancel</button>
+        </div>
+      </div>
     </div>
     <div id="main-container">
       <div>
@@ -139,7 +163,12 @@
           remove
         </button>
         <button class="btn" onclick="" off>join</button>
-        <button class="btn" onclick="" off>rotate</button>
+        <button
+          class="btn"
+          onclick="pc_split.removeAttribute('hidden');rotate.removeAttribute('hidden')"
+        >
+          rotate
+        </button>
       </div>
       <div
         class="darkmode-btn"

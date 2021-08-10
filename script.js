@@ -3,7 +3,9 @@
   (hr >= 19 || hr <= 7) && document.body.toggleAttribute("darkmode");
 })();
 
-const { PDFDocument } = PDFLib;
+// const { PDFDocument } = PDFLib;
+const { degrees, PDFDocument, rgb, StandardFonts } = PDFLib;
+
 window.arrayOfPdf = [];
 var input = document.getElementById("pdf-file");
 
@@ -330,6 +332,51 @@ async function removePages(el) {
     download(
       pdfBytes,
       "remainingPages" + "_" + new Date().getTime() + ".pdf",
+      "application/pdf"
+    );
+  }
+}
+
+async function rotatePages(el) {
+  var selel = document.querySelector(".pdf-file[selected]");
+  if (selel) {
+    var ind = Array.from(selel.parentNode.children).indexOf(selel);
+
+    let document = await PDFDocument.load(arrayOfPdf[ind].bytes);
+    var pageIndices = document.getPageIndices();
+    var rotatedPages = await PDFDocument.create();
+
+    var rotateArray = [];
+    var iValue = el.querySelector("input[type='text']").value;
+    if (iValue == "") rotateArray = pageIndices;
+    iValue != "" &&
+      iValue.split(",").forEach((item) => {
+        console.log(item);
+        !isNaN(item) &&
+          pageIndices.includes(item - 1) &&
+          rotateArray.push(item - 1);
+      });
+    if (rotateArray.length == 0) {
+      alert("PDF does not contain given page number values!");
+      return;
+    }
+    var r_angle = el.querySelector("input[type='number']").value;
+    if (isNaN(r_angle)) return;
+    if (r_angle % 90 != 0) {
+      alert(`${r_angle} is not a multiple of 90!`);
+      return;
+    }
+    var copiedPages = await rotatedPages.copyPages(document, pageIndices);
+    copiedPages.forEach((page, index) => {
+      // console.log(page.getRotation().angle);
+      rotateArray.includes(index) &&
+        page.setRotation(degrees(-90 + parseInt(r_angle)));
+      rotatedPages.addPage(page);
+    });
+    var pdfBytes = await rotatedPages.save();
+    download(
+      pdfBytes,
+      "rotatedPages" + "_" + new Date().getTime() + ".pdf",
       "application/pdf"
     );
   }

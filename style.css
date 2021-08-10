@@ -374,9 +374,11 @@ input#pdf-file {
   margin-bottom: 50px;
 }
 .popup div.input_div {
-  margin-bottom: 10px;
   display: block;
   text-align: center;
+}
+.popup div.input_div:nth-last-child(2) {
+  margin-bottom: 10px;
 }
 .popup div:last-child {
   /* margin-top: 50px; */
