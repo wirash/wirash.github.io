@@ -19,22 +19,40 @@ async function addFiles(files) {
     // Pass getBuffer to promise.
     var promise = (i) => new Promise(getBuffer(fileData));
     await promise(i)
-      .then(function (data) {
+      .then(async function (data) {
         window.arrayOfPdf.push({
           bytes: data,
           name: files[i].name,
+          size: returnFileSize(files[i].size),
+          pagecount: await getNumPages(data),
         });
         //listFilesOnScreen();
       })
       .then(() => {
-        addFileOnScreen(files[i]);
+        addFileOnScreen(arrayOfPdf[arrayOfPdf.length - 1]);
       })
       .catch(function (err) {
-        console.log("Error: ", err);
+        //console.log("Error: ", err);
+        alert(err);
       });
   }
   // listFilesOnScreen();
   updateSelectedPdf();
+}
+
+async function getNumPages(arrayBuffer) {
+  const pdf = await PDFDocument.load(arrayBuffer);
+  return pdf.getPageCount();
+}
+
+function returnFileSize(number) {
+  if (number < 1024) {
+    return number + "bytes";
+  } else if (number >= 1024 && number < 1048576) {
+    return (number / 1024).toFixed(0) + " kB";
+  } else if (number >= 1048576) {
+    return (number / 1048576).toFixed(1) + " MB";
+  }
 }
 
 function updateSelectedPdf() {
@@ -44,13 +62,22 @@ function updateSelectedPdf() {
 }
 
 function getBuffer(fileData) {
-  return function (resolve) {
+  return function (resolve, reject) {
     var reader = new FileReader();
     reader.readAsArrayBuffer(fileData);
     reader.onload = function () {
       var arrayBuffer = reader.result;
       var bytes = new Uint8Array(arrayBuffer);
-      resolve(bytes);
+
+      //check if valid pdf using signatures
+      //https://en.wikipedia.org/wiki/List_of_file_signatures
+      var validPdf_sig = [0x25, 0x50, 0x44, 0x46, 0x2d];
+      var bytes_sig = bytes.slice(0, 5);
+      //if all first 5 elements are equal then return bytes else error
+      if (bytes_sig.every((v, i) => v === validPdf_sig[i])) resolve(bytes);
+      else {
+        reject("Selected file is not a valid PDF file!");
+      }
     };
   };
 }
@@ -78,7 +105,9 @@ function getBuffer(fileData) {
 // }
 function addFileOnScreen(file) {
   $(".list-files")
-    .append(`<div class="pdf-file" onclick="$('.pdf-file').removeAttr('selected');this.toggleAttribute('selected')">
+    .append(`<div class="pdf-file" onclick="$('.pdf-file').removeAttr('selected');this.toggleAttribute('selected')" size="${
+    file.size
+  }, ${file.pagecount} pages">
            <div onclick="moveLeft(this.parentElement);event.stopPropagation()" class="btn-remove move">&#10094;</div>
            <div onclick="removePdf(this.parentNode);event.stopPropagation()" class="btn-remove">&times;</div>
            <div onclick="moveRight(this.parentElement);event.stopPropagation()" class="btn-remove move">&#10095;</div>
@@ -103,7 +132,7 @@ function removePdf(el) {
 
 async function mergePdf() {
   if (arrayOfPdf.length <= 1) {
-    alert("At least 2 PDF files are needed to be able merge!");
+    alert("At least 2 PDF files are needed to merge into one!");
     return;
   }
   const mergedPdf = await PDFDocument.create();
@@ -134,9 +163,10 @@ async function splitPdf(el) {
     let document = await PDFDocument.load(arrayOfPdf[ind].bytes);
     var pageIndices = document.getPageIndices();
 
+    var iValue = parseInt(lbl.querySelector("input")?.value);
     switch (lbl.getAttribute("for")) {
       case "o1":
-        var iValue = lbl.querySelector("input").value;
+        if (isNaN(iValue) || iValue == 0) return;
         if (pageIndices.length <= iValue) {
           alert(`The selected PDF does not have more than ${iValue} pages!`);
           return;
@@ -146,7 +176,7 @@ async function splitPdf(el) {
         splitArray.push(pageIndices.filter((x) => !arr.includes(x)));
         break;
       case "o2":
-        var iValue = lbl.querySelector("input").value;
+        if (isNaN(iValue) || iValue == 0) return;
         if (pageIndices <= iValue) {
           alert(`The selected PDF does not have more than ${iValue} pages!`);
           return;
@@ -168,11 +198,10 @@ async function splitPdf(el) {
           });
         break;
       case "o5":
-        var iValue = lbl.querySelector("input").value;
-        iValue != "" &&
-          iValue.split(",").forEach((item) => {
-            !isNaN(item) && splitArray.push([item - 1]);
-          });
+        if (isNaN(iValue) || iValue == 0) return;
+        iValue.split(",").forEach((item) => {
+          !isNaN(item) && splitArray.push([item - 1]);
+        });
         break;
     }
     console.log(splitArray);
@@ -377,6 +406,40 @@ async function rotatePages(el) {
     download(
       pdfBytes,
       "rotatedPages" + "_" + new Date().getTime() + ".pdf",
+      "application/pdf"
+    );
+  }
+}
+
+async function protectPdf() {
+  var selel = document.querySelector(".pdf-file[selected]");
+  if (selel) {
+    var ind = Array.from(selel.parentNode.children).indexOf(selel);
+
+    let document = await PDFDocument.load(arrayOfPdf[ind].bytes);
+    var protectedPages = await PDFDocument.create();
+    var copiedPages = await protectedPages.copyPages(
+      document,
+      document.getPageIndices()
+    );
+    copiedPages.forEach(async (page, index) => {
+      protectedPages.addPage(page);
+      const [embeddedPage] = await protectedPages.embedPdf(document, [index]);
+
+      page.drawPage(embeddedPage, {
+        x: page.getWidth(),
+        y: 0,
+        xScale: 1,
+        yScale: 1,
+        rotate: degrees(90),
+        opacity: 1,
+      });
+    });
+
+    var pdfBytes = await protectedPages.save();
+    download(
+      pdfBytes,
+      "protectedPages" + "_" + new Date().getTime() + ".pdf",
       "application/pdf"
     );
   }

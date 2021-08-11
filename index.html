@@ -17,12 +17,7 @@
   </head>
 
   <body>
-    <div
-      id="pc_split"
-      class="popup-container"
-      onclick="hideAllPopups(this, event)"
-      hidden
-    >
+    <div id="popup_container" onclick="hideAllPopups(this, event)" hidden>
       <div class="popup" id="split" hidden popupTitle="Split PDF">
         <div>
           <input type="radio" name="option_split" id="o1" checked /><label
@@ -119,11 +114,41 @@
         </div>
       </div>
     </div>
+    <div class="header">
+      <h1>PDF+</h1>
+      <h3>Modify PDF's quickly without uploading</h3>
+      <h5>&copy; 2021 - Wirash Ganesh</h5>
+    </div>
     <div id="main-container">
-      <div>
-        <h1>PDF+</h1>
-        <h3>Modify PDF's quickly without uploading</h3>
-        <h5>&copy; 2021 - Wirash Ganesh</h5>
+      <div class="btn-container">
+        <button class="btn" onclick="mergePdf()">merge</button>
+        <button
+          class="btn"
+          onclick="popup_container.removeAttribute('hidden');split.removeAttribute('hidden')"
+        >
+          split
+        </button>
+        <button
+          class="btn"
+          onclick="popup_container.removeAttribute('hidden');extract.removeAttribute('hidden')"
+        >
+          extract
+        </button>
+        <button
+          class="btn"
+          onclick="popup_container.removeAttribute('hidden');remove.removeAttribute('hidden')"
+        >
+          remove
+        </button>
+        <button
+          class="btn"
+          onclick="popup_container.removeAttribute('hidden');rotate.removeAttribute('hidden')"
+        >
+          rotate
+        </button>
+        <button class="btn" onclick="" off>join</button>
+        <button class="btn" off>insert</button>
+        <button class="btn" off onclick="protectPdf()">protect</button>
       </div>
       <div
         class="list-files"
@@ -142,39 +167,11 @@
       <div class="center-btn">
         <button class="btn" onclick="$('#pdf-file').click()">ADD PDF</button>
       </div>
-      <div class="btn-container">
-        <button class="btn" onclick="mergePdf()">merge</button>
-        <button
-          class="btn"
-          onclick="pc_split.removeAttribute('hidden');split.removeAttribute('hidden')"
-        >
-          split
-        </button>
-        <button
-          class="btn"
-          onclick="pc_split.removeAttribute('hidden');extract.removeAttribute('hidden')"
-        >
-          extract
-        </button>
-        <button
-          class="btn"
-          onclick="pc_split.removeAttribute('hidden');remove.removeAttribute('hidden')"
-        >
-          remove
-        </button>
-        <button class="btn" onclick="" off>join</button>
-        <button
-          class="btn"
-          onclick="pc_split.removeAttribute('hidden');rotate.removeAttribute('hidden')"
-        >
-          rotate
-        </button>
-      </div>
-      <div
-        class="darkmode-btn"
-        onclick="document.body.toggleAttribute('darkmode')"
-      ></div>
     </div>
+    <div
+      class="darkmode-btn"
+      onclick="document.body.toggleAttribute('darkmode')"
+    ></div>
     <script src="script.js"></script>
   </body>
 </html>
