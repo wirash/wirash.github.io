@@ -107,7 +107,7 @@ function addFileOnScreen(file) {
   $(".list-files")
     .append(`<div class="pdf-file" onclick="$('.pdf-file').removeAttr('selected');this.toggleAttribute('selected')" size="${
     file.size
-  }, ${file.pagecount} pages">
+  }, ${file.pagecount + (file.pagecount > 1 ? " pages" : " page")}">
            <div onclick="moveLeft(this.parentElement);event.stopPropagation()" class="btn-remove move">&#10094;</div>
            <div onclick="removePdf(this.parentNode);event.stopPropagation()" class="btn-remove">&times;</div>
            <div onclick="moveRight(this.parentElement);event.stopPropagation()" class="btn-remove move">&#10095;</div>
