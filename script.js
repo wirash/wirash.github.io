@@ -164,7 +164,7 @@ async function splitPdf(el) {
     let document = await PDFDocument.load(arrayOfPdf[ind].bytes);
     var pageIndices = document.getPageIndices();
 
-    var iValue = parseInt(lbl.querySelector("input")?.value);
+    var iValue = lbl.querySelector("input")?.value;
     switch (lbl.getAttribute("for")) {
       case "o1":
         if (isNaN(iValue) || iValue == 0) return;
@@ -199,13 +199,16 @@ async function splitPdf(el) {
           });
         break;
       case "o5":
-        if (isNaN(iValue) || iValue == 0) return;
+        if (/[a-zA-Z]/g.test(iValue)) {
+          alert("Page values cannot contain letters!");
+          return;
+        }
         iValue.split(",").forEach((item) => {
           !isNaN(item) && splitArray.push([item - 1]);
         });
         break;
     }
-    console.log(splitArray);
+    // console.log(splitArray);
     // return;
     // for (var a = 0; a > 0; a++) {
     splitArray.forEach(async (item, index) => {

@@ -4,7 +4,7 @@
     --shadow-color: rgba(0, 0, 0, 0.4);
   }
   body:not([darkmode]) {
-    --pdf-back-color: #ccc;
+    --pdf-back-color: #eee;
   }
   .header {
     grid-template-columns: auto auto auto;
@@ -33,6 +33,9 @@
     height: 100%;
     margin: 0;
     box-shadow: 2px 2px 8px 2px var(--pdf-shadow-color);
+  }
+  .pdf-file:last-child {
+    margin-bottom: 2vw;
   }
   #main-container {
     grid-template-rows: 10vh 76vh;
