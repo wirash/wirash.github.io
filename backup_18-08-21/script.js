@@ -7,7 +7,7 @@
 const { degrees, PDFDocument, rgb, StandardFonts } = PDFLib;
 
 window.arrayOfPdf = [];
-var input = document.getElementById("pdf_file_input");
+var input = document.getElementById("pdf-file");
 
 function openfile(evt) {
   addFiles(input.files);
@@ -108,9 +108,11 @@ function addFileOnScreen(file) {
     .append(`<div class="pdf-file" onclick="$('.pdf-file').removeAttr('selected');this.toggleAttribute('selected')" size="${
     file.size
   }, ${file.pagecount + (file.pagecount > 1 ? " pages" : " page")}">
-           <div onclick="moveLeft(this.parentElement);event.stopPropagation()" class="action-btn move"></div>
-           <div onclick="removePdf(this.parentNode);event.stopPropagation()" class="action-btn remove"></div>
-           <div onclick="moveRight(this.parentElement);event.stopPropagation()" class="action-btn move"></div>
+           <div onclick="moveLeft(this.parentElement);event.stopPropagation()" class="btn-remove move">&#10094;</div>
+           <div onclick="removePdf(this.parentNode);event.stopPropagation()" class="btn-remove">&times;</div>
+           <div onclick="moveRight(this.parentElement);event.stopPropagation()" class="btn-remove move">&#10095;</div>
+           <img/>
+           <br>
            <span title="${file.name}">${file.name
     .split(".")
     .slice(0, -1)

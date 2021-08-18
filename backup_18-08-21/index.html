@@ -1,7 +1,6 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <script src="https://unpkg.com/pdf-lib"></script>
     <script src="https://unpkg.com/downloadjs"></script>
     <script
@@ -117,12 +116,8 @@
     </div>
     <div class="header">
       <a href="index.html">PDF+</a>
-      <a>Modify PDF's quickly without uploading</a>
-      <a>&copy; 2021 Wirash Ganesh</a>
-      <a
-        class="darkmode-btn"
-        onclick="document.body.toggleAttribute('darkmode')"
-      ></a>
+      <h3>Modify PDF's quickly without uploading</h3>
+      <h5>&copy; 2021 Wirash Ganesh</h5>
     </div>
     <div id="main-container">
       <div class="btn-container">
@@ -155,25 +150,28 @@
         <button class="btn" off>insert</button>
         <button class="btn" off onclick="protectPdf()">protect</button>
       </div>
-      <div class="list-files-container">
-        <div
-          class="list-files"
-          ondrop="dropHandler(event);this.toggleAttribute('dropping')"
-          ondragover="dragOverHandler(event)"
-          ondragenter="this.toggleAttribute('dropping')"
-          ondragleave="this.toggleAttribute('dropping')"
-          onclick="if(event.target == this)pdf_file_input.click()"
-        ></div>
-      </div>
+      <div
+        class="list-files"
+        ondrop="dropHandler(event);this.toggleAttribute('dropping')"
+        ondragover="dragOverHandler(event)"
+        ondragenter="this.toggleAttribute('dropping')"
+        ondragleave="this.toggleAttribute('dropping')"
+      ></div>
       <input
         type="file"
-        id="pdf_file_input"
+        id="pdf-file"
         accept="application/pdf"
         multiple
         onclick="this.value=null"
       />
-      <!-- <button class="btn" onclick="$('#pdf-file').click()">ADD PDF</button> -->
+      <div class="center-btn">
+        <button class="btn" onclick="$('#pdf-file').click()">ADD PDF</button>
+      </div>
     </div>
+    <div
+      class="darkmode-btn"
+      onclick="document.body.toggleAttribute('darkmode')"
+    ></div>
     <script src="script.js"></script>
   </body>
 </html>
