@@ -1,0 +1,49 @@
+/*always keep at end*/
+@media only screen and (max-width: 1080px) {
+  body {
+    --shadow-color: rgba(0, 0, 0, 0.4);
+  }
+  body:not([darkmode]) {
+    --pdf-back-color: #ccc;
+  }
+  .header {
+    grid-template-columns: auto auto auto;
+    font-weight: normal;
+    box-shadow: 0 0 12px 1px var(--shadow-color);
+  }
+  .list-files-container {
+    margin: 0 2%;
+    max-height: calc(100% - 2vh);
+  }
+  .list-files {
+    display: grid !important;
+    grid-template-columns: repeat(3, calc((100vw - 12vw - 6px) / 3));
+    grid-auto-rows: calc((100vw - 12vw - 6px) / 3);
+    column-gap: 2vw;
+    row-gap: 2vw;
+    padding: 2vw;
+    max-height: calc(100% - 6px);
+    min-height: unset;
+  }
+  .list-files:empty::after {
+    font-weight: bold;
+  }
+  .pdf-file {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    box-shadow: 2px 2px 8px 2px var(--pdf-shadow-color);
+  }
+  #main-container {
+    grid-template-rows: 10vh 76vh;
+    row-gap: 2vh;
+    margin: 2vh 0;
+  }
+  .btn-container {
+    row-gap: 2vw;
+    column-gap: 2vw;
+    grid-template-columns: repeat(4, 16vw);
+    grid-template-rows: repeat(auto-fit, 4.5vh);
+    /* padding: 6vw 0; */
+  }
+}

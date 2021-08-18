@@ -33,7 +33,7 @@ async function addFiles(files) {
       })
       .catch(function (err) {
         //console.log("Error: ", err);
-        if (arr != "abort") alert(err);
+        alert(err);
       });
   }
   // listFilesOnScreen();
@@ -78,9 +78,6 @@ function getBuffer(fileData) {
       else {
         reject("Selected file is not a valid PDF file!");
       }
-    };
-    reader.onerror = function () {
-      reject("abort");
     };
   };
 }
@@ -393,7 +390,7 @@ async function rotatePages(el) {
     var r_angle = el.querySelector("input[type='number']").value;
     if (isNaN(r_angle)) return;
     if (r_angle % 90 != 0) {
-      alert(`Page rotation angle must be a multiple of 90, ${r_angle} is not!`);
+      alert(`${r_angle} is not a multiple of 90!`);
       return;
     }
     var copiedPages = await rotatedPages.copyPages(document, pageIndices);
@@ -445,7 +442,3 @@ async function protectPdf() {
     );
   }
 }
-
-$("#popup_container input").focus(function () {
-  $(this).select();
-});
