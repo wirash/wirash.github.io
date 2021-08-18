@@ -153,7 +153,7 @@ body[darkmode] .darkmode-btn {
   overflow: hidden scroll;
 
   /*firefox compat*/
-  scrollbar-width: 5px;
+  scrollbar-width: auto;
   scrollbar-color: var(--pdf-color) transparent;
 }
 .list-files:not(:empty) {
