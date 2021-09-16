@@ -108,7 +108,7 @@ function getBuffer(fileData) {
 // }
 function addFileOnScreen(file) {
   $(".list-files")
-    .append(`<div class="pdf-file" onclick="$('.pdf-file').removeAttr('selected');this.toggleAttribute('selected')" size="${
+    .append(`<div class="pdf-file" ondblclick="readyPdf(null, this);openPdfBlob()" onclick="$('.pdf-file').removeAttr('selected');this.toggleAttribute('selected')" size="${
     file.size
   }, ${file.pagecount + (file.pagecount > 1 ? " pages" : " page")}">
            <div onclick="moveLeft(this.parentElement);event.stopPropagation();this.blur()" class="action-btn move"></div>
@@ -131,6 +131,9 @@ function removePdf(el) {
   }, 300);
 }
 
+var blobUrl;
+var blob;
+var blobName;
 async function mergePdf() {
   if (arrayOfPdf.length <= 1) {
     alert("At least 2 PDF files are needed to merge into one!");
@@ -146,11 +149,40 @@ async function mergePdf() {
     copiedPages.forEach((page) => mergedPdf.addPage(page));
   }
   var pdfBytes = await mergedPdf.save();
-  download(
+  readyPdf(pdfBytes, null, "mergedPdf");
+
+  /* download(
     pdfBytes,
     "mergedpdf_" + new Date().getTime() + ".pdf",
     "application/pdf"
-  );
+  ); */
+  // window.open(docUrl);
+}
+
+function readyPdf(pdfBytes, pdfEl, name) {
+  if (pdfEl) {
+    var ind = Array.from(pdfEl.parentNode.children).indexOf(pdfEl);
+    pdfBytes = arrayOfPdf[ind].bytes;
+  } else {
+    popup_container.removeAttribute("hidden");
+    after_action.removeAttribute("hidden");
+  }
+
+  blobName = name ?? "";
+
+  blob = new Blob([pdfBytes], { type: "application/pdf" });
+  blobUrl = URL.createObjectURL(blob);
+}
+
+function openPdfBlob() {
+  if (!blobUrl) return;
+  iframe_container.toggleAttribute("hidden");
+  pdfframe.src = blobUrl;
+}
+
+function downloadBlob() {
+  if (!blobUrl) return;
+  download(blob, blobName + new Date().getTime() + ".pdf", "application/pdf");
 }
 
 async function splitPdf(el) {
@@ -161,8 +193,8 @@ async function splitPdf(el) {
     var splitArray = [];
 
     var ind = Array.from(selel.parentNode.children).indexOf(selel);
-    let document = await PDFDocument.load(arrayOfPdf[ind].bytes);
-    var pageIndices = document.getPageIndices();
+    let doc = await PDFDocument.load(arrayOfPdf[ind].bytes);
+    var pageIndices = doc.getPageIndices();
 
     var iValue = lbl.querySelector("input")?.value;
     switch (lbl.getAttribute("for")) {
@@ -178,7 +210,7 @@ async function splitPdf(el) {
         break;
       case "o2":
         if (isNaN(iValue) || iValue == 0) return;
-        if (pageIndices <= iValue) {
+        if (pageIndices.length <= iValue) {
           alert(`The selected PDF does not have more than ${iValue} pages!`);
           return;
         }
@@ -208,20 +240,31 @@ async function splitPdf(el) {
         });
         break;
     }
-    // console.log(splitArray);
-    // return;
-    // for (var a = 0; a > 0; a++) {
-    splitArray.forEach(async (item, index) => {
-      var splitPdf = await PDFDocument.create();
-      var copiedPages = await splitPdf.copyPages(document, item);
-      copiedPages.forEach((page) => splitPdf.addPage(page));
 
-      var pdfBytes = await splitPdf.save();
-      download(
-        pdfBytes,
-        "split" + (index + 1) + "_" + new Date().getTime() + ".pdf",
-        "application/pdf"
-      );
+    var ziparray = [];
+
+    //wait for foreach to complete using promise
+    new Promise((resolve, reject) => {
+      splitArray.forEach(async (item, index, array) => {
+        var splitPdf = await PDFDocument.create();
+        var copiedPages = await splitPdf.copyPages(doc, item);
+        copiedPages.forEach((page) => splitPdf.addPage(page));
+
+        var pdfBytes = await splitPdf.save();
+        ziparray.push({
+          name: "split" + (index + 1) + ".pdf",
+          lastModified: new Date(),
+          input: pdfBytes,
+        });
+        if (index === array.length - 1) resolve();
+      });
+    }).then(() => {
+      // get the ZIP stream in a Blob then download it
+      downloadZip(ziparray)
+        .blob()
+        .then((data) => {
+          download(data, "pdfSplit.zip", "application/zip");
+        });
     });
   }
 }
@@ -258,11 +301,13 @@ async function extractPages(el) {
     copiedPages.forEach((page) => extractedPages.addPage(page));
 
     var pdfBytes = await extractedPages.save();
-    download(
-      pdfBytes,
-      "extractedPages" + "_" + new Date().getTime() + ".pdf",
-      "application/pdf"
-    );
+
+    readyPdf(pdfBytes, null, "extractedPages");
+    // download(
+    //   pdfBytes,
+    //   "extractedPages" + "_" + new Date().getTime() + ".pdf",
+    //   "application/pdf"
+    // );
   }
 }
 
@@ -326,9 +371,15 @@ function swapArrayElements(a, x, y) {
 }
 
 function hideAllPopups(popup_container, event) {
-  if (event.target == popup_container || event.target.tagName == "BUTTON") {
+  if (
+    (event.target.tagName == "BUTTON" &&
+      event.target.classList.contains("cancelBtn")) ||
+    (event.target == popup_container && after_action.hasAttribute("hidden"))
+  ) {
     popup_container.setAttribute("hidden", "");
-    $(".popup").attr("hidden", "");
+    $(".popup:not(#after_action)").attr("hidden", "");
+    if (event.target.classList.contains("after_action_cancel"))
+      after_action.setAttribute("hidden", "");
   }
 }
 
@@ -345,7 +396,7 @@ async function removePages(el) {
     var iValue = el.querySelector("input").value;
     iValue != "" &&
       iValue.split(",").forEach((item) => {
-        console.log(item);
+        //console.log(item);
         !isNaN(item) &&
           pageIndices.includes(item - 1) &&
           removeArray.push(item - 1);
@@ -362,11 +413,12 @@ async function removePages(el) {
     copiedPages.forEach((page) => remainingPages.addPage(page));
 
     var pdfBytes = await remainingPages.save();
-    download(
-      pdfBytes,
-      "remainingPages" + "_" + new Date().getTime() + ".pdf",
-      "application/pdf"
-    );
+    readyPdf(pdfBytes, null, "remainingPages");
+    // download(
+    //   pdfBytes,
+    //   "remainingPages" + "_" + new Date().getTime() + ".pdf",
+    //   "application/pdf"
+    // );
   }
 }
 
@@ -384,7 +436,7 @@ async function rotatePages(el) {
     if (iValue == "") rotateArray = pageIndices;
     iValue != "" &&
       iValue.split(",").forEach((item) => {
-        console.log(item);
+        //console.log(item);
         !isNaN(item) &&
           pageIndices.includes(item - 1) &&
           rotateArray.push(item - 1);
@@ -407,11 +459,12 @@ async function rotatePages(el) {
       rotatedPages.addPage(page);
     });
     var pdfBytes = await rotatedPages.save();
-    download(
-      pdfBytes,
-      "rotatedPages" + "_" + new Date().getTime() + ".pdf",
-      "application/pdf"
-    );
+    readyPdf(pdfBytes, null, "rotatedPages");
+    // download(
+    //   pdfBytes,
+    //   "rotatedPages" + "_" + new Date().getTime() + ".pdf",
+    //   "application/pdf"
+    // );
   }
 }
 

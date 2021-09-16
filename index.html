@@ -13,6 +13,7 @@
     <script src="pdf-lib.min.js"></script>
     <script src="download.js"></script>
     <script src="jquery-3.6.0.min.js"></script>
+    <script src="client-zip.js"></script>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="mobile_style.css" />
     <title>PDF+</title>
@@ -20,6 +21,28 @@
 
   <body>
     <div id="popup_container" onclick="hideAllPopups(this, event)" hidden>
+      <div class="popup" id="after_action" popupTitle="PDF Ready" hidden>
+        <div class="input_div">
+          <label>Your PDF is ready, now what?</label>
+        </div>
+        <div>
+          <button class="oIcon" onclick="openPdfBlob()" title="Open"></button
+          ><button
+            class="ontIcon"
+            onclick="window.open(blobUrl,'_blank')"
+            title="Open in new tab"
+          ></button
+          ><button
+            class="dIcon"
+            onclick="downloadBlob()"
+            title="Download"
+          ></button
+          ><button
+            class="cancelBtn after_action_cancel cIcon"
+            title="Cancel"
+          ></button>
+        </div>
+      </div>
       <div class="popup" id="split" hidden popupTitle="Split PDF">
         <div>
           <input type="radio" name="option_split" id="o1" checked /><label
@@ -55,7 +78,7 @@
         </div>
         <div>
           <button onclick="splitPdf(this.closest('.popup#split'))">OK</button
-          ><button>Cancel</button>
+          ><button class="cancelBtn">Cancel</button>
         </div>
       </div>
       <div class="popup" id="extract" popupTitle="Extract Pages" hidden>
@@ -71,7 +94,7 @@
         <div>
           <button onclick="extractPages(this.closest('.popup#extract'))">
             OK</button
-          ><button>Cancel</button>
+          ><button class="cancelBtn">Cancel</button>
         </div>
       </div>
       <div class="popup" id="remove" popupTitle="Remove Pages" hidden>
@@ -87,7 +110,7 @@
         <div>
           <button onclick="removePages(this.closest('.popup#remove'))">
             OK</button
-          ><button>Cancel</button>
+          ><button class="cancelBtn">Cancel</button>
         </div>
       </div>
       <div class="popup" id="rotate" popupTitle="Rotate Pages" hidden>
@@ -112,7 +135,7 @@
         <div>
           <button onclick="rotatePages(this.closest('.popup#rotate'))">
             OK</button
-          ><button>Cancel</button>
+          ><button class="cancelBtn">Cancel</button>
         </div>
       </div>
     </div>
@@ -174,6 +197,31 @@
         onclick="this.value=null"
       />
       <!-- <button class="btn" onclick="$('#pdf-file').click()">ADD PDF</button> -->
+    </div>
+    <div id="iframe_container" hidden>
+      <div>
+        <button
+          class="dIcon"
+          onclick="download(blob, (blobName ?? 'new') + '.pdf', 'application/pdf')"
+          title="Download"
+        ></button>
+        <button
+          class="ontIcon"
+          onclick="window.open(pdfframe.src)"
+          title="Open in new tab"
+        ></button>
+        <button
+          class="cIcon"
+          onclick="iframe_container.toggleAttribute('hidden')"
+          title="Close"
+        ></button>
+      </div>
+      <iframe
+        id="pdfframe"
+        src=""
+        frameborder="0"
+        onload="this.contentWindow.onbeforeunload=()=>{return}"
+      ></iframe>
     </div>
     <script src="script.js"></script>
   </body>
