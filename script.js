@@ -177,7 +177,7 @@ function readyPdf(pdfBytes, pdfEl, name) {
 function openPdfBlob() {
   if (!blobUrl) return;
   iframe_container.toggleAttribute("hidden");
-  pdfframe.src = blobUrl;
+  pdfframe.src = "pdfjs/web/viewer.html?file=" + blobUrl;
 }
 
 function downloadBlob() {
