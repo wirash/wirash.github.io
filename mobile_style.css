@@ -46,4 +46,12 @@
     grid-template-rows: repeat(auto-fit, 4.5vh);
     /* padding: 6vw 0; */
   }
+
+  #iframe_container:not([hidden]) {
+    padding: 10px 0 0 0;
+  }
+  iframe {
+    width: 100vw;
+    height: calc(100vh - 55px);
+  }
 }

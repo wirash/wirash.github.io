@@ -355,7 +355,7 @@ body[darkmode] .darkmode-btn {
 .list-files:not(:empty)::after {
   content: "+";
   display: inline-block;
-  color: var(--back-color);
+  color: var(--button-text-color);
   text-transform: uppercase;
   text-align: center;
   font-size: 34px;
@@ -614,12 +614,12 @@ input[type="number"] {
   display: grid;
   place-items: center;
   row-gap: 0;
+  padding: 10px;
 }
 
 iframe {
-  width: 95vw;
-  height: 92vh;
-  /* border: 1px solid red; */
+  width: calc(95vw - 20px);
+  height: calc(100vh - 65px);
 }
 
 #iframe_container button {

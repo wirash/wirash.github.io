@@ -174,10 +174,11 @@ function readyPdf(pdfBytes, pdfEl, name) {
   blobUrl = URL.createObjectURL(blob);
 }
 
+var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 function openPdfBlob() {
   if (!blobUrl) return;
   iframe_container.toggleAttribute("hidden");
-  pdfframe.src = "pdfjs/web/viewer.html?file=" + blobUrl;
+  pdfframe.src = (isMobile ? "pdfjs/web/viewer.html?file=" : "") + blobUrl;
 }
 
 function downloadBlob() {
