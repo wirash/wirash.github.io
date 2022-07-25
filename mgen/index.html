@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rijschool Maquette Generator</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <page size="A4" layout="portrait"></page>
+    <div class="settings_container" open>
+      <div class="title">SETTINGS</div>
+      <settings>
+        <setting>
+          <label>Page size:</label
+          ><select id="psize" value="1cm">
+            <option value="A4">A4</option>
+            <option value="A3">A3</option>
+          </select>
+        </setting>
+        <setting>
+          <label>Page orientation:</label
+          ><select id="porientation">
+            <option value="portrait">Portrait</option>
+            <option value="landscape">Landscape</option>
+          </select>
+        </setting>
+        <setting>
+          <label>Page margin:</label
+          ><input type="text" id="pmargin" value="1cm" />
+        </setting>
+        <hr />
+        <setting>
+          <label>Grid size:</label>
+          <input type="text" id="gsize" value="3x4" autofocus />
+        </setting>
+        <setting>
+          <label>
+            <input type="checkbox" id="mborder" checked />Maquette border
+          </label>
+        </setting>
+        <setting>
+          <label>
+            <input type="checkbox" id="mcinput" checked />Code Input Box
+          </label>
+        </setting>
+        <hr />
+        <setting
+          ><label>Font size:</label><input type="text" id="fsize" value="9pt"
+        /></setting>
+        <setting>
+          <label>Arrow size:</label>
+          <input type="text" id="asize" value="0.25rem" />
+        </setting>
+        <setting
+          ><label>Arrow width:</label
+          ><input type="text" id="awidth" value="0.1rem"
+        /></setting>
+        <hr />
+        <setting><button id="cmc">Copy Maquette Codes</button></setting>
+        <setting
+          ><button
+            id="imc"
+            title="Import from clipboard: Codes should be separated by newline"
+          >
+            Import Maquette Codes
+          </button></setting
+        >
+        <setting
+          ><button id="draw_empty_maquettes">
+            Draw Empty Maquettes
+          </button></setting
+        >
+        <setting><button id="mprint">Print Maquettes</button></setting>
+        <setting
+          ><button id="insert_blank_page">Insert Blank Page</button></setting
+        >
+      </settings>
+      <div class="about">
+        Maquette Generator
+        <div>By Ganesh W.</div>
+      </div>
+      <div class="toggler"></div>
+    </div>
+    <div id="page-count">
+      Page <a class="current">1</a> of <a class="total">1</a>
+    </div>
+    <dialog id="instructions">
+      <div>Instructions</div>
+      <b
+        >The value to be entered in the input boxes should be based on the
+        follow:</b
+      >
+      <ul>
+        <li>Value starts at top left corner and continues clockwise</li>
+        <li>
+          First comes a letter indicating the direction of the vehicle: left,
+          right or straight (l,r,d)
+        </li>
+        <li>
+          Then a dot (".") after which follows the name, usually a number (ex.
+          r.1)
+        </li>
+        <li>
+          Then follows a comma (",") indicating we're switching to the next
+          vehicle.<br />Vehicles are left to right and at most two vehicles per
+          corner
+        </li>
+        <li>
+          Then follows a semicolon (";") indicating we're switching to the next
+          corner.<br />At most four corners
+        </li>
+        <li>Vehicles, names and even corners can be omitted</li>
+      </ul>
+      <u>Complete Maquette Code example:</u><br />
+      l.1,r.2;l.3,d.4;d.5,d.6;r.7<br />
+      <form method="dialog">
+        <button>Got it</button>
+      </form>
+    </dialog>
+  </body>
+</html>

@@ -1,0 +1,452 @@
+:root {
+  --color0: #555;
+  --color1: #000;
+  --color2: #fff;
+  --color3: #888;
+
+  --mborder: 1px solid var(--color3);
+  --mcinput: visible;
+  --grid-h: 3;
+  --grid-v: 4;
+  --pmargin: 1cm;
+  --fsize: 9pt;
+  --awidth: 0.1rem;
+  --asize: 0.25rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  background-color: rgb(204, 204, 204);
+  font-family: sans-serif;
+  scroll-behavior: smooth;
+}
+
+page {
+  background: white;
+  display: grid;
+  margin: 0 0 0.5cm 0;
+  box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+  place-items: center;
+  padding: var(--pmargin);
+  gap: 10px;
+  transition: 0.3s;
+  overflow: hidden;
+}
+
+page[layout="portrait"] {
+  grid: repeat(var(--grid-v), minmax(0, 1fr)) / repeat(
+      var(--grid-h),
+      minmax(0, 1fr)
+    );
+}
+
+page[layout="landscape"] {
+  grid: repeat(var(--grid-h), minmax(0, 1fr)) / repeat(
+      var(--grid-v),
+      minmax(0, 1fr)
+    );
+}
+
+page[size="A4"][layout="portrait"] {
+  width: 21cm;
+  height: 29.7cm;
+}
+page[size="A4"][layout="landscape"] {
+  width: 29.7cm;
+  height: 21cm;
+}
+page[size="A3"][layout="portrait"] {
+  width: 29.7cm;
+  height: 42cm;
+}
+page[size="A3"][layout="landscape"] {
+  width: 42cm;
+  height: 29.7cm;
+}
+
+@media print {
+  body,
+  page {
+    background-color: #fff;
+    margin: 0;
+    box-shadow: unset;
+  }
+  body > :not(page) {
+    display: none !important;
+  }
+
+  .maquette > input {
+    display: none !important;
+  }
+}
+
+.maquette {
+  aspect-ratio: 1;
+  font-size: var(--fsize);
+  position: relative;
+  outline: var(--mborder);
+}
+
+page[layout="portrait"] .maquette {
+  width: 100%;
+}
+
+page[layout="landscape"] .maquette {
+  height: 100%;
+}
+
+.maquette > .content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.maquette .c {
+  display: inline-block;
+  width: 27.5%;
+  aspect-ratio: 1;
+  border-width: 3px;
+  border-style: solid;
+  position: absolute;
+  border-color: var(--color0) var(--color0) transparent transparent;
+  border-top-right-radius: 5px;
+}
+
+.maquette .tl {
+  top: 0;
+  left: 0;
+  transform: rotate(90deg);
+  --r: 90deg;
+}
+.maquette .tr {
+  top: 0;
+  right: 0;
+  transform: rotate(180deg);
+  --r: 180deg;
+}
+.maquette .br {
+  bottom: 0;
+  right: 0;
+  transform: rotate(-90deg);
+  --r: -90deg;
+}
+.maquette .bl {
+  bottom: 0;
+  left: 0;
+  --r: 0deg;
+}
+
+.maquette .c > .v {
+  position: absolute;
+  --t: var(--asize);
+  --w: var(--awidth);
+  /* --t: 8px;
+  --w: 3px; */
+  border-right: var(--w) solid var(--color1);
+  transform: translateX(-50%);
+}
+
+.maquette .c > .v:nth-child(1) {
+  left: calc(130% - (var(--w) / 2));
+}
+
+.maquette .c > .v:nth-child(2) {
+  left: calc(170% - (var(--w) / 2));
+}
+
+.maquette .c > .v.d {
+  top: var(--t);
+  width: var(--w);
+  height: calc(50% - var(--t));
+}
+
+.maquette .c > .v.l,
+.maquette .c > .v.r {
+  top: 0;
+  width: calc(20% - var(--t));
+  height: calc(50%);
+  border-top: var(--w) solid var(--color1);
+  border-top-right-radius: var(--t);
+}
+.maquette .c > .v.r {
+  transform: scaleX(-1);
+}
+
+.maquette .c > .v::before {
+  content: "";
+  position: absolute;
+  display: inline-block;
+}
+
+.maquette .c > .v.d::before {
+  border-left: var(--t) solid transparent;
+  border-right: var(--t) solid transparent;
+  border-bottom: var(--t) solid var(--color1);
+  top: calc(-1 * var(--t));
+  left: calc(50% + (var(--w) / 2));
+  transform: translateX(-50%);
+}
+
+.maquette .c > .v.l::before,
+.maquette .c > .v.r::before {
+  border-top: var(--t) solid transparent;
+  border-right: var(--t) solid var(--color1);
+  border-bottom: var(--t) solid transparent;
+  top: calc((-1 * var(--t)) - (var(--w) / 2));
+  left: calc(-1 * var(--t));
+}
+
+.maquette .c > .v::after {
+  content: attr(value);
+  position: absolute;
+  font-weight: bold;
+  color: var(--color3);
+}
+
+.maquette .c.bl > .v::after {
+  top: calc(100% + var(--t));
+  left: 50%;
+  transform: rotate(calc(-1 * var(--r))) translateX(-50%);
+}
+
+.maquette .c.bl > .v.r::after {
+  transform: rotate(calc(-1 * var(--r))) translateX(-50%) scaleX(-1);
+}
+
+.maquette .c.tl > .v::after {
+  left: -0.25rem;
+  top: calc(100% + var(--t));
+  transform: rotate(calc(-1 * var(--r))) translateX(50%);
+}
+
+.maquette .c.tl > .v.r::after {
+  transform: rotate(calc(-1 * var(--r))) translateX(50%) scaleY(-1);
+}
+
+.maquette .c.tr > .v::after {
+  left: 0.1rem;
+  top: calc(100% + var(--t));
+  transform: rotate(calc(-1 * var(--r))) translateX(50%);
+}
+
+.maquette .c.tr > .v.r::after {
+  transform: rotate(calc(-1 * var(--r))) translateX(50%) scaleX(-1);
+}
+
+.maquette .c.br > .v::after {
+  left: -0.25rem;
+  top: calc(100%);
+  transform: rotate(calc(-1 * var(--r))) translateX(50%);
+}
+.maquette .c.br > .v.r::after {
+  transform: rotate(calc(-1 * var(--r))) translateX(50%) scaleY(-1);
+}
+
+.maquette > input {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  appearance: none;
+  display: inline-block;
+  width: 85%;
+  border-radius: 5px;
+  color: var(--color1);
+  text-align: center;
+  border: 2px solid var(--color0);
+  line-height: 1.5rem;
+  opacity: 0.4;
+  visibility: var(--mcinput);
+}
+
+.maquette > input:focus {
+  outline: 2px solid orangered;
+  opacity: 1;
+}
+
+.settings_container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: max(200px, 15vw);
+  background-color: rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  display: grid;
+  grid: min-content auto min-content / auto;
+  transform: translateX(-100%);
+  transition: transform 0.3s;
+}
+
+.settings_container[open] {
+  transform: none;
+}
+
+.settings_container > .title,
+.settings_container > .about {
+  background-color: rgba(119, 119, 119, 0.8);
+  color: var(--color2);
+  text-align: center;
+  padding: 10px 0;
+  box-shadow: -2px 0 0 2px #000;
+  z-index: 1;
+}
+
+.settings_container > .title {
+  font-size: 1.2rem;
+}
+
+settings {
+  display: block;
+  height: 100%;
+  overflow-y: scroll;
+  padding: 15px;
+}
+
+setting {
+  display: block;
+  margin-block: 10px;
+}
+
+setting > input,
+setting > select {
+  border-radius: 5px;
+  line-height: 1.5;
+  text-align: center;
+  width: 100%;
+  border: none;
+}
+
+setting > button,
+#instructions button {
+  appearance: none;
+  border-radius: 5px;
+  line-height: 1.5;
+  background-color: #333;
+  cursor: pointer;
+  color: var(--color2);
+  border: 1px solid #fff;
+}
+
+setting label {
+  user-select: none;
+}
+
+.settings_container > .about {
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.settings_container > .about:hover {
+  background-color: rgba(100, 100, 100, 0.8);
+}
+
+.toggler {
+  display: grid;
+  width: 40px;
+  aspect-ratio: 1;
+  box-shadow: 0 0 25px 0 #000;
+  background-color: var(--color2);
+  border: 3px solid #333;
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translate(-30%, -50%);
+  border-radius: 0 999px 999px 0;
+  place-items: center;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.toggler::before {
+  content: "";
+  width: 30%;
+  aspect-ratio: 1;
+  border: 3px solid #000;
+  border-bottom-width: 0;
+  border-left-width: 0;
+  transform-origin: center center;
+  transform: rotate(45deg) translate(-15%, 15%);
+}
+
+.settings_container[open] .toggler::before {
+  transform: rotate(-135deg) translate(-15%, 15%);
+}
+
+.settings_container[open] .toggler {
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+}
+
+#page-count {
+  position: fixed;
+  width: auto;
+  padding: 5px 10px;
+  background-color: #222;
+  color: var(--color2);
+  bottom: 10px;
+  right: 10px;
+  border-radius: 5px;
+  cursor: default;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #666;
+  border-radius: 999px;
+}
+
+#instructions::backdrop {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+#instructions {
+  animation: zoom_in 0.3s;
+}
+
+@keyframes zoom_in {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+#instructions > div {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+#instructions form {
+  text-align: center;
+  margin-top: 20px;
+}
+#instructions button {
+  font-size: 1rem;
+  padding: 5px 10px;
+}
+
+button:hover {
+  background-color: var(--color2) !important;
+  color: var(--color1) !important;
+  border-color: var(--color1) !important;
+}
