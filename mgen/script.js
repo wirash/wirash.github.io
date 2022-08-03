@@ -1,27 +1,60 @@
+maquetteB = `
+        <div class="content" type="B">
+          <div class="c tl">
+            <div class="f"></div>
+            <div class="v"></div>
+            <div class="v"></div>
+            <div class="v b"></div>
+          </div>
+          <div class="c tr">
+            <div class="f"></div>
+            <div class="v"></div>
+            <div class="v"></div>
+            <div class="v b"></div>
+          </div>
+          <div class="c br">
+            <div class="f"></div>
+            <div class="v"></div>
+            <div class="v"></div>
+            <div class="v b"></div>
+          </div>
+          <div class="c bl">
+            <div class="f"></div>
+            <div class="v"></div>
+            <div class="v"></div>
+            <div class="v b"></div>
+          </div>
+        </div>`;
+
 const maquette = document.createElement("div");
 maquette.classList.add("maquette");
-maquette.innerHTML = `
-    <div class="content">
-        <div class="c tl"></div>
-        <div class="c tr"></div>
-        <div class="c br"></div>
-        <div class="c bl"></div>
-        <a>S</a>
-    </div>
-    <input
-        type="text"
-        placeholder="Maquette Code"
-    />
-`;
+maquette.style = "display:grid";
+maquette.innerHTML = "<button>+ B</button><button>+ S</button>";
+
+const bcolArr = [
+  "lightblue",
+  "lightgoldenrodyellow",
+  "lightgreen",
+  "lightsalmon",
+  "lightcoral",
+  "lightseagreen",
+  "lightpink",
+  "lightslategrey",
+];
+
+const fInnerHTML = "<a></a><wb></wb><wf></wf>";
+const vInnerHTML = "<a></a>";
+const vbInnerHTML = "<a></a><i></i>";
+
 let r = document.querySelector(":root");
 const gsize = document.getElementById("gsize");
 const pmargin = document.getElementById("pmargin");
 const mborder = document.getElementById("mborder");
-const mcinput = document.getElementById("mcinput");
 const fsize = document.getElementById("fsize");
 const awidth = document.getElementById("awidth");
 const asize = document.getElementById("asize");
 const cmc = document.getElementById("cmc");
+const emc = document.getElementById("emc");
 const imc = document.getElementById("imc");
 const mprint = document.getElementById("mprint");
 const settings = document.querySelector(".settings");
@@ -36,6 +69,7 @@ const settings_container = document.querySelector(".settings_container");
 const toggler = document.querySelector(".toggler");
 const instructions = document.getElementById("instructions");
 const about = document.querySelector(".about");
+const mce_downloader = document.getElementById("mce_downloader");
 var observer = new IntersectionObserver(
   function (entries) {
     if (entries[0].isIntersecting === true) {
@@ -77,11 +111,6 @@ mborder.onchange = () => {
   else r.style.setProperty("--mborder", "none");
 };
 
-mcinput.onchange = () => {
-  if (event.target.checked) r.style.setProperty("--mcinput", "visible");
-  else r.style.setProperty("--mcinput", "hidden");
-};
-
 fsize.onkeypress = () => {
   if (event.key === "Enter") {
     r.style.setProperty("--fsize", event.target.value);
@@ -99,42 +128,109 @@ asize.onkeypress = () => {
   }
 };
 
-cmc.onclick = () => {
+function getMC() {
   let strArr = [];
-  document.querySelectorAll("page input").forEach((item, index) => {
-    if (item.value != "") strArr[index] = item.value;
+  document.querySelectorAll(".content").forEach((item) => {
+    let strArrM = [];
+    item.querySelectorAll(".c").forEach((item2) => {
+      let strArrC = [];
+      item2.querySelectorAll("div").forEach((item3) => {
+        if (item3.hasChildNodes()) {
+          let ldr = item3
+            .getAttribute("class")
+            .replace("v ", "")
+            .replace("f ", "")
+            .replace("b ", "");
+          strArrC.push(ldr + "." + item3.querySelector("a").innerText);
+        } else {
+          strArrC.push("");
+        }
+      });
+      strArrM.push(strArrC.join(","));
+    });
+    strArr.push(
+      strArrM.join(";") +
+        "@" +
+        item.getAttribute("name") +
+        "|" +
+        item.getAttribute("type")
+    );
   });
-  let str = strArr.join("\r\n");
+  return strArr.join("\r\n");
+}
+
+cmc.onclick = () => {
+  let str = getMC();
   if (str != "") {
-    navigator.clipboard.writeText(str);
-    alert("Maquette Codes copied to clipboard");
+    navigator.clipboard.writeText(str).then(() => {
+      alert("Maquette Codes copied to clipboard");
+    });
+  }
+};
+
+function download(content, mimeType, filename) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  mce_downloader.setAttribute("href", url);
+  mce_downloader.setAttribute("download", filename);
+  mce_downloader.click();
+}
+
+emc.onclick = () => {
+  let str = getMC();
+  if (str != "") {
+    download(str, "text/plain", "Maquette Codes Export");
   }
 };
 
 imc.onclick = () => {
   if (confirm("Overwrite current Maquette Codes?")) {
-    navigator.clipboard
-      .readText()
-      .then((text) => {
-        let strArr = text.split("\r\n");
-        generateGridItems(strArr.length);
-        let inputs = document.querySelectorAll("page input");
-        if (inputs.length > 0) {
-          strArr.forEach((item, index) => {
-            inputs[index].value = item;
-            inputs[index].dispatchEvent(
-              new KeyboardEvent("keypress", {
-                key: "Enter",
-              })
-            );
+    setTimeout(() => {
+      navigator.clipboard
+        .readText()
+        .then((text) => {
+          let strArr = text.split("\r\n");
+          generateGridItems(strArr.length);
+          // let inputs = document.querySelectorAll("page input");
+          // if (inputs.length > 0) {
+          //   strArr.forEach((item, index) => {
+          //     inputs[index].value = item;
+          //     inputs[index].dispatchEvent(
+          //       new KeyboardEvent("keypress", {
+          //         key: "Enter",
+          //       })
+          //     );
+          //   });
+          //   console.log("Maquette Codes imported from clipboard");
+          // }
+          document.querySelectorAll(".maquette").forEach((item, index) => {
+            if (!strArr[index]) return;
+            const b = item.querySelector("button");
+            if (b) b.click();
+            let strArrH1 = strArr[index].split("|");
+            let strArrH2 = strArrH1[0].split("@");
+            let strArrC = strArrH2[0].split(";");
+            let c = item.querySelector(".content");
+            c.setAttribute("name", strArrH2[1] ?? "");
+            c.setAttribute("type", strArrH1[1] ?? "B");
+            item.querySelectorAll(".c").forEach((item2, index2) => {
+              let strArrD = strArrC[index2].split(",");
+              item2.querySelectorAll("div").forEach((item3, index3) => {
+                if (!strArrD[index3].includes(".")) return;
+                let strArrE = strArrD[index3].split(".");
+                if (!item3.hasChildNodes()) item3.click();
+                item3.classList.remove("d");
+                item3.classList.add(strArrE[0]);
+                item3.querySelector("a").innerText = strArrE[1];
+              });
+            });
           });
-          console.log("Maquette Codes imported from clipboard");
-        }
-      })
-      .catch((err) => {
-        alert("Failed to read Maquette Codes from clipboard");
-        console.error(err);
-      });
+        })
+        .catch((err) => {
+          alert("Failed to read Maquette Codes from clipboard");
+          console.error(err);
+        });
+    }, 1000);
   }
 };
 
@@ -163,9 +259,10 @@ function createPages(count) {
   let newpage = document.createElement("page");
   newpage.setAttribute("size", psize.value);
   newpage.setAttribute("layout", porientation.value);
+  newpage.innerHTML = "<div class='maquettecontainer'></div>";
 
   for (let i = 1; i <= count; i++) {
-    let newnewpage = newpage.cloneNode();
+    let newnewpage = newpage.cloneNode(true);
     document.body.insertBefore(newnewpage, settings);
     observer.observe(newnewpage);
   }
@@ -175,7 +272,8 @@ function createPages(count) {
 }
 
 mprint.onclick = () => {
-  if (pages[0].querySelectorAll(".maquette").length >= 1) window.print();
+  if (pages[0].querySelectorAll(".maquette:not([default])").length >= 1)
+    window.print();
   else alert("No maquettes available to print");
 };
 
@@ -197,39 +295,114 @@ function generateGridItems(count, gic) {
   if (newpages >= 0) {
     createPages(newpages);
     pages.forEach((page) => {
-      page.innerHTML = "";
-      for (let i = 1; i <= gic; i++) {
+      let l = page.querySelectorAll(".maquette").length;
+      // page.innerHTML = "";
+      let mc = page.querySelector(".maquettecontainer");
+      for (let i = 1; i <= gic - l; i++) {
         let m2 = maquette.cloneNode(true);
-        m2.querySelector("input[type=text]").onkeypress = () => {
-          if (event.key === "Enter") {
-            let maquette_content =
-              event.target.parentElement.querySelector(".content");
-            let value = event.target.value;
-            const cs_loc = ["tl", "tr", "br", "bl"];
-            let html = "";
-            let cs = value.split(";");
-            for (let i = 0; i < 4; i++) {
-              html += `<div class="c ${cs_loc[i]}">`;
-              let c = cs[i];
-              if (c) {
-                let vs = c.split(",");
-                vs.forEach((v) => {
-                  let vdata = v.split(".");
-                  html += `<div class="v ${vdata[0]}" value="${
-                    vdata[1] ?? ""
-                  }"></div>`;
-                });
-              }
-              html += `</div>`;
-            }
-            html += `<a>S</a>`;
-            maquette_content.innerHTML = html;
-          }
-        };
-        page.appendChild(m2);
+        setButtonEvents(m2);
+        m2.toggleAttribute("default");
+        mc.appendChild(m2);
       }
     });
   }
 }
 
-// l.1,r.2;l.3,d.4;d.5,d.6;r.7
+// set button events
+function setButtonEvents(m) {
+  m.querySelectorAll("button").forEach((item) => {
+    item.addEventListener("click", () => {
+      m.removeAttribute("style");
+      m.removeAttribute("default");
+      m.innerHTML = maquetteB;
+      setEvents(m);
+    });
+  });
+  m.querySelector("button:last-child").addEventListener("click", () => {
+    m.querySelector(".content").setAttribute("type", "S");
+  });
+}
+
+//set v,f event
+function setEvents(m) {
+  m.querySelector(".content").oncontextmenu = () => {
+    event.preventDefault();
+    const t = event.target;
+    if (t.classList.contains("content")) {
+      let txt = prompt("Enter a name for the selected Maquette");
+      if (txt != null && txt != "") {
+        t.setAttribute("name", txt);
+      }
+    }
+  };
+  m.querySelectorAll(".c").forEach((item) => {
+    item.oncontextmenu = () => {
+      event.preventDefault();
+      const t = event.target;
+      if (t.classList.contains("c")) {
+        t.classList.remove("zw");
+        t.classList.toggle("no");
+      }
+    };
+    item.onmousedown = () => {
+      if (event.button === 1) {
+        event.preventDefault();
+        const t = event.target;
+        if (t.classList.contains("c")) {
+          t.classList.remove("no");
+          t.classList.toggle("zw");
+        }
+      }
+    };
+  });
+  m.querySelectorAll(".c > div").forEach((item) => {
+    item.onclick = () => {
+      const t = event.target;
+      if (t.hasChildNodes()) t.replaceChildren();
+      else {
+        t.classList.remove("l", "r");
+        if (t.classList.contains("f")) t.innerHTML = fInnerHTML;
+        else if (t.classList.contains("v")) {
+          if (t.classList.contains("b")) t.innerHTML = vbInnerHTML;
+          else t.innerHTML = vInnerHTML;
+        }
+        t.classList.add("d");
+      }
+    };
+    item.oncontextmenu = () => {
+      event.preventDefault();
+      const t = event.target;
+      if (t.hasChildNodes()) {
+        if (t.classList.contains("d")) {
+          t.classList.toggle("d");
+          t.classList.add("l");
+        } else if (t.classList.contains("l")) {
+          t.classList.toggle("l");
+          t.classList.add("r");
+        } else if (t.classList.contains("r")) {
+          t.classList.toggle("r");
+          t.classList.add("d");
+        }
+      }
+    };
+    item.onmousedown = () => {
+      if (event.button === 1) {
+        event.preventDefault();
+        const t = event.target;
+        if (t.hasChildNodes()) {
+          let txt = prompt("Enter a name for the selected vehicle");
+          if (txt != null && txt != "") {
+            if (txt.length <= 3) t.querySelector("a").innerText = txt;
+            else alert("Name cannot be longer than 3 characters");
+          }
+        }
+      }
+    };
+    if (item.classList.contains("v"))
+      item.style.setProperty("--bcol", bcolArr.random());
+  });
+}
+
+Array.prototype.random = function () {
+  return this[Math.floor(Math.random() * this.length)];
+};

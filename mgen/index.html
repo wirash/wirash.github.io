@@ -9,8 +9,10 @@
     <script src="script.js" defer></script>
   </head>
   <body>
-    <page size="A4" layout="portrait"></page>
-    <div class="settings_container" open>
+    <page size="A4" layout="portrait"
+      ><div class="maquettecontainer"></div
+    ></page>
+    <div class="settings_container">
       <div class="title">SETTINGS</div>
       <settings>
         <setting>
@@ -41,14 +43,9 @@
             <input type="checkbox" id="mborder" checked />Maquette border
           </label>
         </setting>
-        <setting>
-          <label>
-            <input type="checkbox" id="mcinput" checked />Code Input Box
-          </label>
-        </setting>
         <hr />
         <setting
-          ><label>Font size:</label><input type="text" id="fsize" value="9pt"
+          ><label>Font size:</label><input type="text" id="fsize" value="7pt"
         /></setting>
         <setting>
           <label>Arrow size:</label>
@@ -59,7 +56,19 @@
           ><input type="text" id="awidth" value="0.1rem"
         /></setting>
         <hr />
-        <setting><button id="cmc">Copy Maquette Codes</button></setting>
+        <setting
+          ><button id="cmc" title="Copy to clipboard">
+            Copy Maquette Codes
+          </button></setting
+        >
+        <setting
+          ><button
+            id="emc"
+            title="Download text file containing Maquette Codes"
+          >
+            Export Maquette Codes
+          </button></setting
+        >
         <setting
           ><button
             id="imc"
@@ -70,7 +79,7 @@
         >
         <setting
           ><button id="draw_empty_maquettes">
-            Draw Empty Maquettes
+            Fill with placeholders
           </button></setting
         >
         <setting><button id="mprint">Print Maquettes</button></setting>
@@ -89,36 +98,39 @@
     </div>
     <dialog id="instructions">
       <div>Instructions</div>
-      <b
-        >The value to be entered in the input boxes should be based on the
-        follow:</b
-      >
-      <ul>
-        <li>Value starts at top left corner and continues clockwise</li>
+      <b>To use the Maquette Generator, please follow these instructions:</b>
+      <ol>
+        <li>Fill with placeholders or Import codes from clipboard to start.</li>
+        <li>When filled with placeholders, click on one of the two buttons in each Maquette to specify which type you want to generate.<br>"B" generates wide roads and "S" generates narrow/normal roads.</li>
         <li>
-          First comes a letter indicating the direction of the vehicle: left,
-          right or straight (l,r,d)
+          The following actions can be done on each vehicle:
+          <ul>
+            <li>Left mouse button: enable/disable vehicle</li>
+            <li>
+              Right mouse button: toggle between directions (left, right,
+              straight)
+            </li>
+            <li>Middle mouse button: edit vehicle title/name</li>
+          </ul>
         </li>
         <li>
-          Then a dot (".") after which follows the name, usually a number (ex.
-          r.1)
+          The following actions can be done on each corner:
+          <ul>
+            <li>
+              Right mouse button: enable/disable road between current and the following corner (clockwise)
+            </li>
+            <li>Middle mouse button: toggle priority road between current and the following corner (clockwise)</li>
+          </ul>
         </li>
         <li>
-          Then follows a comma (",") indicating we're switching to the next
-          vehicle.<br />Vehicles are left to right and at most two vehicles per
-          corner
+          To change the title/name of a Maquette, right click on the type in the middle of the Maquette.<br>The type is indicated by the letters "B" or "S".
         </li>
-        <li>
-          Then follows a semicolon (";") indicating we're switching to the next
-          corner.<br />At most four corners
-        </li>
-        <li>Vehicles, names and even corners can be omitted</li>
-      </ul>
-      <u>Complete Maquette Code example:</u><br />
-      l.1,r.2;l.3,d.4;d.5,d.6;r.7<br />
+      </ol>
+      <p>PS: Disabled vehicles (indicated by a grey color) aren't printed.</p>
       <form method="dialog">
         <button>Got it</button>
       </form>
     </dialog>
+    <a id="mce_downloader"></a>
   </body>
 </html>

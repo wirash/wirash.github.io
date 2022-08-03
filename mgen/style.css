@@ -5,11 +5,11 @@
   --color3: #888;
 
   --mborder: 1px solid var(--color3);
-  --mcinput: visible;
+  --mcinput: hidden;
   --grid-h: 3;
   --grid-v: 4;
   --pmargin: 1cm;
-  --fsize: 9pt;
+  --fsize: 7pt;
   --awidth: 0.1rem;
   --asize: 0.25rem;
 }
@@ -27,25 +27,33 @@ body {
 }
 
 page {
-  background: white;
-  display: grid;
+  background: #fff;
   margin: 0 0 0.5cm 0;
   box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
-  place-items: center;
-  padding: var(--pmargin);
-  gap: 10px;
-  transition: 0.3s;
-  overflow: hidden;
 }
 
-page[layout="portrait"] {
+page .maquettecontainer {
+  display: grid;
+  place-items: center;
+  margin: var(--pmargin);
+  --rgp: 20pt;
+  margin-top: calc(var(--pmargin) + var(--rgp) + var(--fsize));
+  row-gap: max(10px, var(--rgp) + var(--fsize));
+  column-gap: 10px;
+  transition: 0.3s;
+  /* overflow: hidden; */
+  width: calc(100% - (2 * var(--pmargin)));
+  height: calc(100% - (2 * var(--pmargin)) - var(--rgp) - var(--fsize));
+}
+
+page[layout="portrait"] .maquettecontainer {
   grid: repeat(var(--grid-v), minmax(0, 1fr)) / repeat(
       var(--grid-h),
       minmax(0, 1fr)
     );
 }
 
-page[layout="landscape"] {
+page[layout="landscape"] .maquettecontainer {
   grid: repeat(var(--grid-h), minmax(0, 1fr)) / repeat(
       var(--grid-v),
       minmax(0, 1fr)
@@ -76,24 +84,55 @@ page[size="A3"][layout="landscape"] {
     margin: 0;
     box-shadow: unset;
   }
-  body > :not(page) {
+
+  .settings_container,
+  #page-count,
+  #instructions {
     display: none !important;
   }
 
-  .maquette > input {
+  .maquette > input,
+  .maquette[default] {
+    display: none !important;
+  }
+
+  .c > div:empty {
     display: none !important;
   }
 }
 
 .maquette {
   aspect-ratio: 1;
-  font-size: var(--fsize);
   position: relative;
   outline: var(--mborder);
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.maquette > button {
+  border-radius: 5px;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.maquette > button:hover {
+  background-color: var(--color1) !important;
+  color: var(--color2) !important;
+}
+
+.maquette > button:first-child {
+  place-self: flex-end;
+}
+.maquette > button:last-child {
+  place-self: flex-start;
 }
 
 page[layout="portrait"] .maquette {
-  width: 100%;
+  /* width: 100%; */
+  height: 100%;
 }
 
 page[layout="landscape"] .maquette {
@@ -106,6 +145,27 @@ page[layout="landscape"] .maquette {
   position: relative;
   display: grid;
   place-items: center;
+  pointer-events: none;
+  font-size: calc(var(--fsize) + 2pt);
+}
+
+.content::before {
+  content: attr(type);
+  padding: 20px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.content::after {
+  content: attr(name);
+  position: absolute;
+  bottom: calc(100% + 2px);
+  text-decoration: underline;
+  font-weight: bold;
+  transform: translateZ(-1px);
+}
+
+.maquette > .content > * {
+  pointer-events: auto;
 }
 
 .maquette .c {
@@ -117,6 +177,57 @@ page[layout="landscape"] .maquette {
   position: absolute;
   border-color: var(--color0) var(--color0) transparent transparent;
   border-top-right-radius: 5px;
+  font-size: var(--fsize);
+}
+
+.maquette .c:hover {
+  z-index: 10;
+}
+
+.maquette .c.no + .c {
+  border-radius: 0;
+}
+.maquette .c.no + .c > div {
+  display: none;
+}
+.maquette .c.no {
+  border-radius: 0;
+  z-index: 9;
+}
+.maquette .c.no::before {
+  content: "";
+  background-color: var(--color2);
+  position: absolute;
+  height: calc(1.82 * 100% + 9px);
+  width: calc(100% + 3px);
+  top: calc(-1.82 * 100% - 6px);
+  left: -3px;
+  border-right: 3px solid var(--color0);
+  pointer-events: none;
+}
+
+.maquette .c.zw::before,
+.maquette .c.zw::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  --w: 8px;
+}
+.maquette .c.zw::before {
+  width: var(--w);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  border: 1px solid var(--color1);
+  top: calc(-100% - 3px);
+  left: -2px;
+}
+.maquette .c.zw::after {
+  width: 1px;
+  background-color: var(--color1);
+  --h: 25px;
+  height: var(--h);
+  top: calc(-100% - 2px - ((var(--h) - var(--w)) / 2));
+  left: calc(var(--w) / 2 + 0.5px - 2px);
 }
 
 .maquette .tl {
@@ -143,12 +254,10 @@ page[layout="landscape"] .maquette {
   --r: 0deg;
 }
 
-.maquette .c > .v {
+/* .maquette .c > .v {
   position: absolute;
   --t: var(--asize);
   --w: var(--awidth);
-  /* --t: 8px;
-  --w: 3px; */
   border-right: var(--w) solid var(--color1);
   transform: translateX(-50%);
 }
@@ -247,7 +356,293 @@ page[layout="landscape"] .maquette {
 }
 .maquette .c.br > .v.r::after {
   transform: rotate(calc(-1 * var(--r))) translateX(50%) scaleY(-1);
+} */
+
+/* ----------- */
+.v,
+.f {
+  position: absolute;
+  top: 0;
+  --l: 15px;
+  left: calc(100% + var(--l));
+  background-color: var(--bcol);
+  border: 1px solid var(--color1);
+  width: 30%;
+  --vhr: 1.5;
+  aspect-ratio: 1 / var(--vhr);
+  display: grid;
+  place-items: center;
+  --t: var(--asize);
+  --w: var(--awidth);
+  --h: 70%;
+  box-sizing: border-box;
+  cursor: pointer;
 }
+
+.f {
+  left: calc(100% + (var(--l) / 2) + (var(--w) / 2));
+  background-color: var(--color1);
+  width: var(--w);
+  height: calc(30% * var(--vhr));
+  border: unset;
+}
+
+.f a {
+  /* display: none; */
+  position: absolute;
+  /* top: calc(-1 * var(--h));
+  right: calc(var(--l) / 4); */
+  bottom: calc(-1 * var(--l));
+}
+
+.f wb,
+.f wf {
+  display: inline-block;
+  width: 5px;
+  aspect-ratio: 1;
+  border: 1px solid var(--color1);
+  transform: translateX(calc(-50% + var(--w) / 2));
+  box-sizing: border-box;
+  background-color: var(--color2);
+}
+
+.f wf {
+  place-self: flex-end;
+}
+.f wb {
+  place-self: flex-start;
+}
+
+.v::before,
+.f::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  width: calc(50% + (var(--w) / 2));
+  height: var(--h);
+  border: var(--w) solid var(--color1);
+  border-bottom-width: 0;
+  /* border-top-left-radius: 5px; */
+  box-sizing: border-box;
+  pointer-events: none;
+  cursor: default;
+}
+.f.l::before,
+.f.r::before {
+  width: 400%;
+}
+
+.v.r::before,
+.f.r::before {
+  border-right-width: 0;
+}
+.v.r::before {
+  left: calc(50% - (var(--w) / 2));
+}
+.f.r::before {
+  left: 0;
+}
+.v.d:before,
+.f.d::before {
+  border-left-width: 0;
+  border-top-width: 0;
+}
+.v.l::before,
+.f.l::before {
+  border-left-width: 0;
+}
+.v.l::before,
+.v.d:before {
+  left: 0;
+}
+.f.l::before {
+  right: 0;
+  left: unset;
+}
+.f.r + .v.l::before {
+  height: calc(var(--h) - 7px);
+}
+
+.v > *,
+.f > * {
+  pointer-events: none;
+}
+
+.tl a {
+  transform: rotate(-90deg);
+}
+.tr a {
+  transform: rotate(-180deg);
+}
+.br a {
+  transform: rotate(90deg);
+}
+
+/* .content[type="B"]  */
+.v.b > i {
+  display: inline-block;
+  position: absolute;
+  /* height: var(--w); */
+  height: 1px;
+  /* top: calc(-1 * var(--w)); */
+  top: -1px;
+  /* left: 50%;
+  width: calc(50% + var(--l) / 2); */
+  left: 100%;
+  /* width: 50%; */
+  width: calc((var(--l) / 2) + (var(--w) / 2));
+  background-color: var(--color1);
+}
+
+.v::after,
+.f::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  cursor: default;
+}
+
+.v.d::after,
+.f.d::after {
+  border-left: var(--t) solid transparent;
+  border-right: var(--t) solid transparent;
+  border-bottom: var(--t) solid var(--color1);
+  bottom: calc(100% + var(--h));
+  transform: translateX(-50%);
+  left: 50%;
+}
+
+.v.l::after,
+.f.l::after {
+  border-top: var(--t) solid transparent;
+  border-right: var(--t) solid var(--color1);
+  border-bottom: var(--t) solid transparent;
+  bottom: calc((100% + var(--h)) - var(--t) - (var(--w) / 2));
+  left: calc(-1 * var(--t));
+}
+.f.l::after {
+  right: 400%;
+  left: unset;
+}
+.v.r::after,
+.f.r::after {
+  border-top: var(--t) solid transparent;
+  border-left: var(--t) solid var(--color1);
+  border-bottom: var(--t) solid transparent;
+  bottom: calc((100% + var(--h)) - var(--t) - (var(--w) / 2));
+  left: 100%;
+}
+.f.r::after {
+  left: 400%;
+}
+
+.f.r + .v.l::after {
+  bottom: calc((100% + var(--h)) - var(--t) - (var(--w) / 2) - 7px);
+}
+
+.f ~ .v:nth-child(3):not(.b),
+:not(.f) ~ .v:nth-child(2):not(.b),
+:not(.f) ~ .v:nth-child(2):not(:last-child) {
+  left: calc(130% + (var(--l) * 2));
+}
+.v:empty + .v:nth-child(3):not(:empty, .b) {
+  left: 155%;
+}
+
+.content[type="S"] .v:not(:empty) + .v:nth-child(3) {
+  display: none;
+}
+.content[type="S"] .v:nth-child(2):not(:empty) ~ .v.b:nth-child(4) {
+  left: calc(100% + var(--l) + 5px);
+}
+
+/* .content[type="B"]  */
+.v.b {
+  top: calc(30% * var(--vhr) + 5px);
+}
+/* .content[type="B"]  */
+.v.b::before {
+  /* border-bottom-width: var(--w); */
+  height: calc(100% + 5px + 45%);
+  /* height: calc(100% + 2px + 45%); */
+  left: calc(50% + (var(--l) / 2) + (var(--w) / 2));
+  /* left: calc(100%); */
+}
+
+/* .content[type="B"]  */
+.v.r.b::before {
+  /* left: calc(100% + (var(--l) / 2)); */
+  left: calc(100% + (var(--l) / 2) + (var(--w) / 2));
+}
+
+/* .content[type="B"]  */
+.v.b.d::after {
+  left: calc(100% + (var(--l) / 2) + (var(--w) / 2));
+  bottom: calc(200% + 5px + 45%);
+  /* bottom: calc(245% + 5px - 3px); */
+}
+
+/* .content[type="B"]  */
+.v.b.l::after {
+  left: calc(100% - (var(--t) / 2) + (var(--w) / 2));
+  /* bottom: 245%; */
+  /* bottom: calc(245% - 2px); */
+  bottom: calc(245% - var(--t) + var(--w) / 2 + 3px);
+}
+
+/* .content[type="B"]  */
+.v.b.r::after {
+  left: calc(200% + var(--w));
+  /* left: calc(200% - var(--w) * 2); */
+  /* bottom: 245%; */
+  /* bottom: calc(245% - 2px); */
+  bottom: calc(245% - var(--t) + var(--w) / 2 + 3px);
+}
+
+/* for when first v is empty */
+/* .content[type="B"]  */
+.v:empty:nth-child(2) ~ .v.b i {
+  display: none;
+}
+/* .content[type="B"]  */
+.v:empty:nth-child(2) ~ .v.b.l::before {
+  left: 0;
+}
+/* .content[type="B"]  */
+.v:empty:nth-child(2) ~ .v.b.l::after {
+  left: calc(-1 * var(--t));
+}
+/* .content[type="B"]  */
+.v:empty:nth-child(2) ~ .v.b.r::before {
+  left: calc(50% - (var(--w) / 2));
+}
+/* .content[type="B"]  */
+.v:empty:nth-child(2) ~ .v.b.r::after {
+  left: 100%;
+}
+/* .content[type="B"]  */
+.v:empty:nth-child(2) ~ .v.b.d::before {
+  left: 0;
+}
+/* .content[type="B"]  */
+.v:empty:nth-child(2) ~ .v.b.d::after {
+  left: 50%;
+}
+/* --------- */
+
+.c > div:empty {
+  background-color: var(--color3);
+}
+
+.c > div:empty::before,
+.c > div:empty::after {
+  display: none;
+}
+.c > div.f:empty {
+  width: 8px;
+  left: calc(100% + 5px);
+}
+/* ----------- */
 
 .maquette > input {
   position: absolute;
@@ -283,6 +678,7 @@ page[layout="landscape"] .maquette {
   grid: min-content auto min-content / auto;
   transform: translateX(-100%);
   transition: transform 0.3s;
+  z-index: 999;
 }
 
 .settings_container[open] {
@@ -449,4 +845,8 @@ button:hover {
   background-color: var(--color2) !important;
   color: var(--color1) !important;
   border-color: var(--color1) !important;
+}
+
+#mce_downloader{
+  display: none;
 }
