@@ -5,24 +5,28 @@ maquetteB = `
             <div class="v"></div>
             <div class="v"></div>
             <div class="v b"></div>
+            <div class="sign"></div>
           </div>
           <div class="c tr">
             <div class="f"></div>
             <div class="v"></div>
             <div class="v"></div>
             <div class="v b"></div>
+            <div class="sign"></div>
           </div>
           <div class="c br">
             <div class="f"></div>
             <div class="v"></div>
             <div class="v"></div>
             <div class="v b"></div>
+            <div class="sign"></div>
           </div>
           <div class="c bl">
             <div class="f"></div>
             <div class="v"></div>
             <div class="v"></div>
             <div class="v b"></div>
+            <div class="sign"></div>
           </div>
         </div>`;
 
@@ -45,6 +49,15 @@ const bcolArr = [
 const fInnerHTML = "<a></a><wb></wb><wf></wf>";
 const vInnerHTML = "<a></a>";
 const vbInnerHTML = "<a></a><i></i>";
+
+const signClasses = [
+  "circle-tri",
+  "diam-diam",
+  "tri-flipped",
+  "tri-i",
+  "tri-plus",
+  "tri-x",
+];
 
 let r = document.querySelector(":root");
 const gsize = document.getElementById("gsize");
@@ -134,7 +147,7 @@ function getMC() {
     let strArrM = [];
     item.querySelectorAll(".c").forEach((item2) => {
       let strArrC = [];
-      item2.querySelectorAll("div").forEach((item3) => {
+      item2.querySelectorAll("div:not(.sign)").forEach((item3) => {
         if (item3.hasChildNodes()) {
           let ldr = item3
             .getAttribute("class")
@@ -146,12 +159,17 @@ function getMC() {
           strArrC.push("");
         }
       });
+
+      //for sign
+      let signclass = item2.querySelector("div.sign").classList[1];
+      if(signclass) strArrC.push(signclass);
+
       strArrM.push(strArrC.join(","));
     });
     strArr.push(
       strArrM.join(";") +
         "@" +
-        item.getAttribute("name") +
+        (item.hasAttribute("restart-c") ? "true" : "") +
         "|" +
         item.getAttribute("type")
     );
@@ -211,11 +229,11 @@ imc.onclick = () => {
             let strArrH2 = strArrH1[0].split("@");
             let strArrC = strArrH2[0].split(";");
             let c = item.querySelector(".content");
-            c.setAttribute("name", strArrH2[1] ?? "");
+            if (strArrH2[1] == "true") c.toggleAttribute("restart-c");
             c.setAttribute("type", strArrH1[1] ?? "B");
             item.querySelectorAll(".c").forEach((item2, index2) => {
               let strArrD = strArrC[index2].split(",");
-              item2.querySelectorAll("div").forEach((item3, index3) => {
+              item2.querySelectorAll("div:not(.sign)").forEach((item3, index3) => {
                 if (!strArrD[index3].includes(".")) return;
                 let strArrE = strArrD[index3].split(".");
                 if (!item3.hasChildNodes()) item3.click();
@@ -223,6 +241,10 @@ imc.onclick = () => {
                 item3.classList.add(strArrE[0]);
                 item3.querySelector("a").innerText = strArrE[1];
               });
+
+              //for sign
+              let last = strArrD.pop();
+              if(signClasses.includes(last)) item2.querySelector("div.sign").classList.add(last);
             });
           });
         })
@@ -265,6 +287,7 @@ function createPages(count) {
     let newnewpage = newpage.cloneNode(true);
     document.body.insertBefore(newnewpage, settings);
     observer.observe(newnewpage);
+    setPageEvents(newnewpage);
   }
   pages = document.querySelectorAll("page");
   pagecount_total.innerText = pages.length;
@@ -329,10 +352,11 @@ function setEvents(m) {
     event.preventDefault();
     const t = event.target;
     if (t.classList.contains("content")) {
-      let txt = prompt("Enter a name for the selected Maquette");
-      if (txt != null && txt != "") {
-        t.setAttribute("name", txt);
-      }
+      // let txt = prompt("Enter a name for the selected Maquette");
+      // if (txt != null && txt != "") {
+      //   t.setAttribute("name", txt);
+      // }
+      t.toggleAttribute("restart-c");
     }
   };
   m.querySelectorAll(".c").forEach((item) => {
@@ -355,7 +379,24 @@ function setEvents(m) {
       }
     };
   });
-  m.querySelectorAll(".c > div").forEach((item) => {
+  m.querySelectorAll(".c > div.sign").forEach((item) => {
+    item.onclick = () => {
+      const t = event.target;
+      if (t.classList.length == 1) t.classList.add(signClasses[0]);
+      else t.classList.remove(t.classList[1]);
+    };
+    item.oncontextmenu = () => {
+      event.preventDefault();
+      const t = event.target;
+      if (t.classList.length > 1) {
+        let currClass = t.classList[1];
+        t.classList.remove(currClass);
+        let ind = signClasses.indexOf(currClass) + 1;
+        t.classList.add(signClasses[ind < 6 ? ind : 0]);
+      }
+    };
+  });
+  m.querySelectorAll(".c > div:not(.sign)").forEach((item) => {
     item.onclick = () => {
       const t = event.target;
       if (t.hasChildNodes()) t.replaceChildren();
@@ -406,3 +447,36 @@ function setEvents(m) {
 Array.prototype.random = function () {
   return this[Math.floor(Math.random() * this.length)];
 };
+
+function setPageEvents(p) {
+  //document.querySelectorAll("page").forEach((item) => {
+  p.onclick = () => {
+    const t = event.target;
+    if (t.tagName == "PAGE") {
+      let h = t.clientHeight * 0.1;
+      if (event.offsetY < h) {
+        if (event.shiftKey) t.removeAttribute("name_top");
+        else {
+          let txt = prompt(
+            "Enter a text for the top of the page",
+            t.getAttribute("name_top") ?? ""
+          );
+          if (txt != null && txt != "") t.setAttribute("name_top", txt);
+        }
+      } else if (event.offsetY >= h) {
+        if (event.shiftKey) t.removeAttribute("name_middle");
+        else {
+          let txt = prompt(
+            "Enter a text for the middle of the page",
+            t.getAttribute("name_middle") ?? ""
+          );
+          if (txt != null && txt != "") t.setAttribute("name_middle", txt);
+        }
+      }
+      // console.log(event);
+    }
+  };
+  //});
+}
+
+setPageEvents(pages[0]);

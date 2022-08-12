@@ -30,6 +30,34 @@ page {
   background: #fff;
   margin: 0 0 0.5cm 0;
   box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+  counter-reset: c;
+  position: relative;
+  pointer-events: none;
+}
+
+page::before, page::after{
+  content:'';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: calc(var(--pmargin) - var(--fsize));
+  font-size: calc(var(--fsize) + 4pt);
+  line-height: calc(var(--pmargin) - var(--fsize));
+  text-align: center;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+  pointer-events: auto;
+  outline: 1px dashed var(--color3);
+}
+
+page::before{
+  content: attr(name_top);
+  top: calc(var(--pmargin) + var(--fsize) - 2pt);
+}
+page::after{
+  content: attr(name_middle);
+  top: calc(50% + var(--fsize) - 2pt);
 }
 
 page .maquettecontainer {
@@ -96,8 +124,19 @@ page[size="A3"][layout="landscape"] {
     display: none !important;
   }
 
-  .c > div:empty {
+  .c > div:not(.sign):empty {
     display: none !important;
+  }
+  .content[restart-c]::after {
+    background-color: #fff !important;
+  }
+
+  .sign{
+    background-color: transparent !important;
+  }
+
+  page::before, page::after{
+    outline: none !important;
   }
 }
 
@@ -109,6 +148,8 @@ page[size="A3"][layout="landscape"] {
   gap: 10px;
   min-width: 0;
   min-height: 0;
+  counter-increment: c;
+  pointer-events: auto;
 }
 
 .maquette > button {
@@ -155,13 +196,29 @@ page[layout="landscape"] .maquette {
   pointer-events: auto;
   cursor: pointer;
 }
+
+.content[restart-c] {
+  counter-set: c 1;
+}
+
+.content[restart-c]::after {
+  background-color: salmon;
+}
+
 .content::after {
-  content: attr(name);
+  /* content: attr(name); */
+  content: counter(c);
   position: absolute;
-  bottom: calc(100% + 2px);
-  text-decoration: underline;
   font-weight: bold;
-  transform: translateZ(-1px);
+  color: var(--color1);
+  border-radius: 999px;
+  width: max(var(--pmargin) - 15px, var(--fsize) + 10px);
+  border: 1px solid var(--color1);
+  aspect-ratio: 1;
+  top: 5px;
+  left: 5px;
+  text-align: center;
+  line-height: max(var(--pmargin) - 15px, var(--fsize) + 10px);
 }
 
 .maquette > .content > * {
@@ -630,7 +687,7 @@ page[layout="landscape"] .maquette {
 }
 /* --------- */
 
-.c > div:empty {
+.c > div:not(.sign):empty {
   background-color: var(--color3);
 }
 
@@ -644,7 +701,7 @@ page[layout="landscape"] .maquette {
 }
 /* ----------- */
 
-.maquette > input {
+/* .maquette > input {
   position: absolute;
   bottom: 10px;
   left: 50%;
@@ -659,11 +716,46 @@ page[layout="landscape"] .maquette {
   line-height: 1.5rem;
   opacity: 0.4;
   visibility: var(--mcinput);
-}
+} */
 
-.maquette > input:focus {
+/* .maquette > input:focus {
   outline: 2px solid orangered;
   opacity: 1;
+} */
+
+.sign{
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  width: 30%;
+  aspect-ratio: 0.522 / 1;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+  cursor: pointer;
+}
+
+div[class='sign']{
+  background-color: rgba(255,0,0,0.4);
+}
+
+.sign.circle-tri {
+  background-image: url("signs/circle-tri.svg");
+}
+.sign.diam-diam {
+  background-image: url("signs/diam-diam.svg");
+}
+.sign.tri-flipped {
+  background-image: url("signs/tri-flipped.svg");
+}
+.sign.tri-i {
+  background-image: url("signs/tri-i.svg");
+}
+.sign.tri-plus {
+  background-image: url("signs/tri-plus.svg");
+}
+.sign.tri-x {
+  background-image: url("signs/tri-x.svg");
 }
 
 .settings_container {
@@ -847,6 +939,6 @@ button:hover {
   border-color: var(--color1) !important;
 }
 
-#mce_downloader{
+#mce_downloader {
   display: none;
 }
