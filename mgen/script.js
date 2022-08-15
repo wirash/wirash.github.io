@@ -162,9 +162,13 @@ function getMC() {
 
       //for sign
       let signclass = item2.querySelector("div.sign").classList[1];
-      if(signclass) strArrC.push(signclass);
+      if (signclass) strArrC.push(signclass);
 
-      strArrM.push(strArrC.join(","));
+      //for no + zw
+      let no = item2.classList.contains("no") ? "1" : "0";
+      let zw = item2.classList.contains("zw") ? "1" : "0";
+
+      strArrM.push(strArrC.join(",") + "#" + no + "," + zw);
     });
     strArr.push(
       strArrM.join(";") +
@@ -232,19 +236,30 @@ imc.onclick = () => {
             if (strArrH2[1] == "true") c.toggleAttribute("restart-c");
             c.setAttribute("type", strArrH1[1] ?? "B");
             item.querySelectorAll(".c").forEach((item2, index2) => {
-              let strArrD = strArrC[index2].split(",");
-              item2.querySelectorAll("div:not(.sign)").forEach((item3, index3) => {
-                if (!strArrD[index3].includes(".")) return;
-                let strArrE = strArrD[index3].split(".");
-                if (!item3.hasChildNodes()) item3.click();
-                item3.classList.remove("d");
-                item3.classList.add(strArrE[0]);
-                item3.querySelector("a").innerText = strArrE[1];
-              });
+              let strArrD1 = strArrC[index2].split("#");
+              let strArrD = strArrD1[0].split(",");
+              item2
+                .querySelectorAll("div:not(.sign)")
+                .forEach((item3, index3) => {
+                  if (!strArrD[index3].includes(".")) return;
+                  let strArrE = strArrD[index3].split(".");
+                  if (!item3.hasChildNodes()) item3.click();
+                  item3.classList.remove("d");
+                  item3.classList.add(strArrE[0]);
+                  item3.querySelector("a").innerText = strArrE[1];
+                });
 
               //for sign
               let last = strArrD.pop();
-              if(signClasses.includes(last)) item2.querySelector("div.sign").classList.add(last);
+              if (signClasses.includes(last))
+                item2.querySelector("div.sign").classList.add(last);
+
+              //for no + zw
+              let nozw = strArrD1[1]?.split(",");
+              if (nozw) {
+                if (nozw[0] == "1") item2.classList.add("no");
+                else if (nozw[1] == "1") item2.classList.add("zw");
+              }
             });
           });
         })
