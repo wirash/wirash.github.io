@@ -188,6 +188,7 @@ page[layout="landscape"] .maquette {
   place-items: center;
   pointer-events: none;
   font-size: calc(var(--fsize) + 2pt);
+  overflow: hidden;
 }
 
 .content::before {
@@ -285,6 +286,10 @@ page[layout="landscape"] .maquette {
   height: var(--h);
   top: calc(-100% - 2px - ((var(--h) - var(--w)) / 2));
   left: calc(var(--w) / 2 + 0.5px - 2px);
+}
+
+.maquette .c.vp{
+  box-shadow: -8px -15px white, -8px -17px var(--color3);
 }
 
 .maquette .tl {

@@ -164,11 +164,12 @@ function getMC() {
       let signclass = item2.querySelector("div.sign").classList[1];
       if (signclass) strArrC.push(signclass);
 
-      //for no + zw
+      //for no + zw + vp
       let no = item2.classList.contains("no") ? "1" : "0";
       let zw = item2.classList.contains("zw") ? "1" : "0";
+      let vp = item2.classList.contains("vp") ? "1" : "0";
 
-      strArrM.push(strArrC.join(",") + "#" + no + "," + zw);
+      strArrM.push(strArrC.join(",") + "#" + no + "," + zw + "," + vp);
     });
     strArr.push(
       strArrM.join(";") +
@@ -254,11 +255,12 @@ imc.onclick = () => {
               if (signClasses.includes(last))
                 item2.querySelector("div.sign").classList.add(last);
 
-              //for no + zw
-              let nozw = strArrD1[1]?.split(",");
-              if (nozw) {
-                if (nozw[0] == "1") item2.classList.add("no");
-                else if (nozw[1] == "1") item2.classList.add("zw");
+              //for no + zw + vp
+              let nozwvp = strArrD1[1]?.split(",");
+              if (nozwvp) {
+                if (nozwvp[0] == "1") item2.classList.add("no");
+                else if (nozwvp[1] == "1") item2.classList.add("zw");
+                else if (nozwvp[2] == "1") item2.classList.add("vp");
               }
             });
           });
@@ -361,7 +363,7 @@ function setButtonEvents(m) {
   });
 }
 
-//set v,f event
+//set all other events
 function setEvents(m) {
   m.querySelector(".content").oncontextmenu = () => {
     event.preventDefault();
@@ -379,20 +381,29 @@ function setEvents(m) {
       event.preventDefault();
       const t = event.target;
       if (t.classList.contains("c")) {
-        t.classList.remove("zw");
-        t.classList.toggle("no");
-      }
-    };
-    item.onmousedown = () => {
-      if (event.button === 1) {
-        event.preventDefault();
-        const t = event.target;
-        if (t.classList.contains("c")) {
-          t.classList.remove("no");
-          t.classList.toggle("zw");
+        const currClass = t.classList[2];
+        if (currClass) t.classList.remove(currClass);
+        else t.classList.add("vp");
+        switch (currClass) {
+          case "vp":
+            t.classList.add("zw");
+            break;
+          case "zw":
+            t.classList.add("no");
+            break;
         }
       }
     };
+    // item.onmousedown = () => {
+    //   if (event.button === 1) {
+    //     event.preventDefault();
+    //     const t = event.target;
+    //     if (t.classList.contains("c")) {
+    //       t.classList.remove("no");
+    //       t.classList.toggle("zw");
+    //     }
+    //   }
+    // };
   });
   m.querySelectorAll(".c > div.sign").forEach((item) => {
     item.onclick = () => {
