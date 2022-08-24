@@ -745,22 +745,22 @@ div[class='sign']{
 }
 
 .sign.circle-tri {
-  background-image: url("signs/circle-tri.svg");
+  background-image: url("signs/circle-tri.png");
 }
 .sign.diam-diam {
-  background-image: url("signs/diam-diam.svg");
+  background-image: url("signs/diam-diam.png");
 }
 .sign.tri-flipped {
-  background-image: url("signs/tri-flipped.svg");
+  background-image: url("signs/tri-flipped.png");
 }
 .sign.tri-i {
-  background-image: url("signs/tri-i.svg");
+  background-image: url("signs/tri-i.png");
 }
 .sign.tri-plus {
-  background-image: url("signs/tri-plus.svg");
+  background-image: url("signs/tri-plus.png");
 }
 .sign.tri-x {
-  background-image: url("signs/tri-x.svg");
+  background-image: url("signs/tri-x.png");
 }
 
 .settings_container {
