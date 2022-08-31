@@ -1,8 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
 :root {
+  /* light */
   --color0: #555;
   --color1: #000;
   --color2: #fff;
-  --color3: #888;
+  --color3: #7a7a7a;
+  --color4: #ccc;
+  --bcol1: rgb(204, 204, 204);
+
+  /* dark */
+  /* --color0: #999;
+  --color1: #fff;
+  --color2: #2a2a2a;
+  --color3: #666;
+  --color4: #555;
+  --bcol1: #444; */
 
   --mborder: 1px solid var(--color3);
   --mcinput: hidden;
@@ -21,22 +34,25 @@
 body {
   display: grid;
   place-items: center;
-  background-color: rgb(204, 204, 204);
-  font-family: sans-serif;
+  background-color: var(--bcol1);
+  font-family: "Poppins", sans-serif;
   scroll-behavior: smooth;
 }
 
 page {
-  background: #fff;
+  background: var(--color2);
   margin: 0 0 0.5cm 0;
   box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
   counter-reset: c;
   position: relative;
   pointer-events: none;
+  color: var(--color1);
+  outline: 1px solid var(--color4);
 }
 
-page::before, page::after{
-  content:'';
+page::before,
+page::after {
+  content: "";
   position: absolute;
   left: 0;
   width: 100%;
@@ -44,18 +60,18 @@ page::before, page::after{
   font-size: calc(var(--fsize) + 4pt);
   line-height: calc(var(--pmargin) - var(--fsize));
   text-align: center;
-  font-weight: bold;
+  font-weight: 500;
   text-decoration: underline;
   cursor: pointer;
   pointer-events: auto;
   outline: 1px dashed var(--color3);
 }
 
-page::before{
+page::before {
   content: attr(name_top);
   top: calc(var(--pmargin) + var(--fsize) - 2pt);
 }
-page::after{
+page::after {
   content: attr(name_middle);
   top: calc(50% + var(--fsize) - 2pt);
 }
@@ -106,11 +122,15 @@ page[size="A3"][layout="landscape"] {
 }
 
 @media print {
+  :root {
+    --color1: #000 !important;
+    --color2: #fff !important;
+  }
   body,
   page {
-    background-color: #fff;
     margin: 0;
     box-shadow: unset;
+    outline: 0;
   }
 
   .settings_container,
@@ -131,11 +151,12 @@ page[size="A3"][layout="landscape"] {
     background-color: #fff !important;
   }
 
-  .sign{
+  .sign {
     background-color: transparent !important;
   }
 
-  page::before, page::after{
+  page::before,
+  page::after {
     outline: none !important;
   }
 }
@@ -148,7 +169,6 @@ page[size="A3"][layout="landscape"] {
   gap: 10px;
   min-width: 0;
   min-height: 0;
-  counter-increment: c;
   pointer-events: auto;
 }
 
@@ -157,11 +177,12 @@ page[size="A3"][layout="landscape"] {
   background-color: transparent;
   cursor: pointer;
   padding: 5px 10px;
+  color: inherit;
 }
 
 .maquette > button:hover {
-  background-color: var(--color1) !important;
-  color: var(--color2) !important;
+  background-color: var(--color3) !important;
+  /* color: var(--color1) !important; */
 }
 
 .maquette > button:first-child {
@@ -189,6 +210,7 @@ page[layout="landscape"] .maquette {
   pointer-events: none;
   font-size: calc(var(--fsize) + 2pt);
   overflow: hidden;
+  counter-increment: c;
 }
 
 .content::before {
@@ -207,19 +229,19 @@ page[layout="landscape"] .maquette {
 }
 
 .content::after {
-  /* content: attr(name); */
   content: counter(c);
   position: absolute;
-  font-weight: bold;
-  color: var(--color1);
-  border-radius: 999px;
-  width: max(var(--pmargin) - 15px, var(--fsize) + 10px);
-  border: 1px solid var(--color1);
-  aspect-ratio: 1;
   top: 5px;
   left: 5px;
-  text-align: center;
-  line-height: max(var(--pmargin) - 15px, var(--fsize) + 10px);
+  border: 1px solid var(--color1);
+  border-radius: 50%;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: max(var(--pmargin) - 15px, var(--fsize) + 10px);
+  aspect-ratio: 1;
+  color: var(--color1);
 }
 
 .maquette > .content > * {
@@ -288,8 +310,9 @@ page[layout="landscape"] .maquette {
   left: calc(var(--w) / 2 + 0.5px - 2px);
 }
 
-.maquette .c.vp{
-  box-shadow: -8px -15px white, -8px -17px var(--color3);
+.maquette .c.vp {
+  color: var(--color2);
+  box-shadow: -8px -15px, -8px -17px var(--color3);
 }
 
 .maquette .tl {
@@ -316,111 +339,6 @@ page[layout="landscape"] .maquette {
   --r: 0deg;
 }
 
-/* .maquette .c > .v {
-  position: absolute;
-  --t: var(--asize);
-  --w: var(--awidth);
-  border-right: var(--w) solid var(--color1);
-  transform: translateX(-50%);
-}
-
-.maquette .c > .v:nth-child(1) {
-  left: calc(130% - (var(--w) / 2));
-}
-
-.maquette .c > .v:nth-child(2) {
-  left: calc(170% - (var(--w) / 2));
-}
-
-.maquette .c > .v.d {
-  top: var(--t);
-  width: var(--w);
-  height: calc(50% - var(--t));
-}
-
-.maquette .c > .v.l,
-.maquette .c > .v.r {
-  top: 0;
-  width: calc(20% - var(--t));
-  height: calc(50%);
-  border-top: var(--w) solid var(--color1);
-  border-top-right-radius: var(--t);
-}
-.maquette .c > .v.r {
-  transform: scaleX(-1);
-}
-
-.maquette .c > .v::before {
-  content: "";
-  position: absolute;
-  display: inline-block;
-}
-
-.maquette .c > .v.d::before {
-  border-left: var(--t) solid transparent;
-  border-right: var(--t) solid transparent;
-  border-bottom: var(--t) solid var(--color1);
-  top: calc(-1 * var(--t));
-  left: calc(50% + (var(--w) / 2));
-  transform: translateX(-50%);
-}
-
-.maquette .c > .v.l::before,
-.maquette .c > .v.r::before {
-  border-top: var(--t) solid transparent;
-  border-right: var(--t) solid var(--color1);
-  border-bottom: var(--t) solid transparent;
-  top: calc((-1 * var(--t)) - (var(--w) / 2));
-  left: calc(-1 * var(--t));
-}
-
-.maquette .c > .v::after {
-  content: attr(value);
-  position: absolute;
-  font-weight: bold;
-  color: var(--color3);
-}
-
-.maquette .c.bl > .v::after {
-  top: calc(100% + var(--t));
-  left: 50%;
-  transform: rotate(calc(-1 * var(--r))) translateX(-50%);
-}
-
-.maquette .c.bl > .v.r::after {
-  transform: rotate(calc(-1 * var(--r))) translateX(-50%) scaleX(-1);
-}
-
-.maquette .c.tl > .v::after {
-  left: -0.25rem;
-  top: calc(100% + var(--t));
-  transform: rotate(calc(-1 * var(--r))) translateX(50%);
-}
-
-.maquette .c.tl > .v.r::after {
-  transform: rotate(calc(-1 * var(--r))) translateX(50%) scaleY(-1);
-}
-
-.maquette .c.tr > .v::after {
-  left: 0.1rem;
-  top: calc(100% + var(--t));
-  transform: rotate(calc(-1 * var(--r))) translateX(50%);
-}
-
-.maquette .c.tr > .v.r::after {
-  transform: rotate(calc(-1 * var(--r))) translateX(50%) scaleX(-1);
-}
-
-.maquette .c.br > .v::after {
-  left: -0.25rem;
-  top: calc(100%);
-  transform: rotate(calc(-1 * var(--r))) translateX(50%);
-}
-.maquette .c.br > .v.r::after {
-  transform: rotate(calc(-1 * var(--r))) translateX(50%) scaleY(-1);
-} */
-
-/* ----------- */
 .v,
 .f {
   position: absolute;
@@ -439,6 +357,7 @@ page[layout="landscape"] .maquette {
   --h: 70%;
   box-sizing: border-box;
   cursor: pointer;
+  color: var(--color1);
 }
 
 .f {
@@ -696,52 +615,52 @@ page[layout="landscape"] .maquette {
   background-color: var(--color3);
 }
 
-.c > div:empty::before,
-.c > div:empty::after {
+.c > div:not(.sign):empty::before,
+.c > div:not(.sign):empty:after {
   display: none;
 }
 .c > div.f:empty {
   width: 8px;
   left: calc(100% + 5px);
 }
-/* ----------- */
 
-/* .maquette > input {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  appearance: none;
-  display: inline-block;
-  width: 85%;
-  border-radius: 5px;
-  color: var(--color1);
-  text-align: center;
-  border: 2px solid var(--color0);
-  line-height: 1.5rem;
-  opacity: 0.4;
-  visibility: var(--mcinput);
-} */
-
-/* .maquette > input:focus {
-  outline: 2px solid orangered;
-  opacity: 1;
-} */
-
-.sign{
+.sign {
   position: absolute;
   top: 5%;
   right: 5%;
   width: 30%;
-  aspect-ratio: 0.522 / 1;
+  /* aspect-ratio: 0.522 / 1; */
+  aspect-ratio: 1;
   background-repeat: no-repeat;
-  background-size: contain;
+  /* background-size: contain; */
+  background-size: auto 100%;
   background-position: center center;
   cursor: pointer;
 }
 
-div[class='sign']{
-  background-color: rgba(255,0,0,0.4);
+.sign::before, .sign::after{
+  content: "";
+  position: absolute;
+  background-color: var(--color1);
+}
+.sign::before {
+  height: 1px;
+  width: 100%;
+  top: 200%;
+  left: 0;
+}
+.sign::after {
+  width: 1px;
+  height: 100%;
+  top: 100%;
+  left: calc(50% - 0.5px);
+}
+
+div[class="sign"] {
+  background-color: rgba(255, 0, 0, 0.4);
+}
+div[class="sign"]::before, div[class="sign"]::after{
+  display: none;
 }
 
 .sign.circle-tri {
@@ -768,14 +687,17 @@ div[class='sign']{
   top: 0;
   left: 0;
   height: 100vh;
-  width: max(200px, 15vw);
-  background-color: rgba(0, 0, 0, 0.3);
-  font-weight: bold;
+  min-width: max(200px, 15vw);
+  /* background-color: rgba(0, 0, 0, 0.3); */
+  background-color: var(--color3);
+  font-weight: 500;
   display: grid;
   grid: min-content auto min-content / auto;
   transform: translateX(-100%);
   transition: transform 0.3s;
   z-index: 999;
+  color: var(--color1);
+  overscroll-behavior: contain;
 }
 
 .settings_container[open] {
@@ -784,8 +706,10 @@ div[class='sign']{
 
 .settings_container > .title,
 .settings_container > .about {
-  background-color: rgba(119, 119, 119, 0.8);
-  color: var(--color2);
+  /* background-color: rgba(119, 119, 119, 0.8); */
+  background-color: var(--color3);
+  filter: brightness(0.75);
+  color: #fff;
   text-align: center;
   padding: 10px 0;
   box-shadow: -2px 0 0 2px #000;
@@ -805,16 +729,34 @@ settings {
 
 setting {
   display: block;
+}
+setting:not(:first-child,:last-child){
   margin-block: 10px;
+}
+setting:first-child{
+  margin-bottom: 10px;
+}
+setting:last-child{
+  margin-top: 10px;
 }
 
 setting > input,
 setting > select {
+  display: block;
   border-radius: 5px;
   line-height: 1.5;
   text-align: center;
   width: 100%;
   border: none;
+  min-height: 20px;
+  padding: 5px;
+  background-color: var(--color4);
+  border: 1px solid var(--color0);
+  color: var(--color1);
+}
+
+setting input:is([type="radio"], [type="checkbox"]) {
+  accent-color: cyan;
 }
 
 setting > button,
@@ -822,23 +764,34 @@ setting > button,
   appearance: none;
   border-radius: 5px;
   line-height: 1.5;
-  background-color: #333;
+  background-color: var(--color4);
   cursor: pointer;
-  color: var(--color2);
-  border: 1px solid #fff;
+  color: var(--color1);
+  border: 1px solid var(--color0);
+  padding: 5px;
 }
 
-setting label {
+setting > label:first-child {
   user-select: none;
 }
 
 .settings_container > .about {
+  display: grid;
+  grid: 1fr / min-content 1fr;
+  place-items: center;
   font-size: 0.9rem;
   cursor: pointer;
 }
 
 .settings_container > .about:hover {
-  background-color: rgba(100, 100, 100, 0.8);
+  filter: brightness(0.85);
+}
+
+.settings_container > .about::before {
+  content: "\0024D8";
+  font-family: inherit;
+  font-size: 18pt;
+  padding-inline: 10px;
 }
 
 .toggler {
@@ -847,7 +800,7 @@ setting label {
   aspect-ratio: 1;
   box-shadow: 0 0 25px 0 #000;
   background-color: var(--color2);
-  border: 3px solid #333;
+  border: 3px solid var(--color1);
   position: absolute;
   top: 50%;
   left: 100%;
@@ -863,7 +816,7 @@ setting label {
   content: "";
   width: 30%;
   aspect-ratio: 1;
-  border: 3px solid #000;
+  border: 3px solid var(--color1);
   border-bottom-width: 0;
   border-left-width: 0;
   transform-origin: center center;
@@ -883,8 +836,8 @@ setting label {
   position: fixed;
   width: auto;
   padding: 5px 10px;
-  background-color: #222;
-  color: var(--color2);
+  background-color: var(--color2);
+  color: var(--color1);
   bottom: 10px;
   right: 10px;
   border-radius: 5px;
@@ -899,7 +852,7 @@ setting label {
   background-color: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #666;
+  background-color: #888;
   border-radius: 999px;
 }
 
@@ -924,7 +877,7 @@ setting label {
 
 #instructions > div {
   text-align: center;
-  font-weight: bold;
+  font-weight: 500;
   font-size: 1.8rem;
   margin-bottom: 20px;
 }

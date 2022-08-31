@@ -57,8 +57,16 @@
         /></setting>
         <hr />
         <setting
-          ><button id="cmc" title="Copy to clipboard">
-            Copy Maquette Codes
+          ><button id="draw_empty_maquettes">Fill with placeholders</button>
+        </setting>
+        <setting
+          ><button id="insert_blank_page">Insert Blank Page</button>
+        </setting>
+        <setting><button id="mprint">Print to PDF</button></setting>
+        <hr />
+        <setting
+          ><button id="cmc" title="Copy Maquette Codes to clipboard">
+            Copy to Clipboard
           </button></setting
         >
         <setting
@@ -66,31 +74,40 @@
             id="emc"
             title="Download text file containing Maquette Codes"
           >
-            Export Maquette Codes
-          </button></setting
-        >
+            Export as Text (.txt) File
+          </button>
+        </setting>
+        <setting
+          ><button
+            id="emcj"
+            title="Download JSON file containing Maquette Codes"
+          >
+            <s>Export as JSON File</s>
+          </button>
+        </setting>
+        <hr />
         <setting
           ><button
             id="imc"
             title="Import from clipboard: Codes should be separated by newline"
           >
-            Import Maquette Codes
-          </button></setting
-        >
+            Import from Clipboard
+          </button>
+        </setting>
         <setting
-          ><button id="draw_empty_maquettes">
-            Fill with placeholders
-          </button></setting
-        >
-        <setting><button id="mprint">Print Maquettes</button></setting>
+          ><button id="imct"><s>Import from Text (.txt) File</s></button>
+        </setting>
         <setting
-          ><button id="insert_blank_page">Insert Blank Page</button></setting
+          ><button id="imcj"><s>Import from JSON File</s></button></setting
         >
+        <hr>
+        <setting>
+          <label>Theme:</label><br>
+          <label><input type="radio" name="theme" value="light" checked/>Light</label>
+          <label><input type="radio" name="theme" value="dark"/>Dark</label>
+        </setting>
       </settings>
-      <div class="about">
-        Maquette Generator
-        <div>By Ganesh W.</div>
-      </div>
+      <div class="about">Maquette Generator<br />By Ganesh W.</div>
       <div class="toggler"></div>
     </div>
     <div id="page-count">
@@ -101,7 +118,11 @@
       <b>To use the Maquette Generator, please follow these instructions:</b>
       <ol>
         <li>Fill with placeholders or Import codes from clipboard to start.</li>
-        <li>When filled with placeholders, click on one of the two buttons in each Maquette to specify which type you want to generate.<br>"B" generates wide roads and "S" generates narrow/normal roads.</li>
+        <li>
+          When filled with placeholders, click on one of the two buttons in each
+          Maquette to specify which type you want to generate.<br />"B"
+          generates wide roads and "S" generates narrow/normal roads.
+        </li>
         <li>
           The following actions can be done on each vehicle:
           <ul>
@@ -117,22 +138,31 @@
           The following actions can be done on each corner:
           <ul>
             <li>
-              Right mouse button: toggle between footpath, priority road<br>
-              or toggle the road between the current and the following corner (clockwise)
+              Right mouse button: toggle between footpath, priority road<br />
+              or toggle the road between the current and the following corner
+              (clockwise)
             </li>
-            <li>Left mouse button on signs to toggle them and right mouse button to toggle between different signs.</li>
+            <li>
+              Left mouse button on signs to toggle them and right mouse button
+              to toggle between different signs.
+            </li>
           </ul>
         </li>
         <li>
-          Every Maquette has a number associated with it as the title/name.<br>
-          Normally it starts at 1 and counts upwards for each Maquette, but the counter can be restarted.<br>
-          To restart the title/name counter of a Maquette, right click on the type in the middle of the Maquette.<br>
-          The type is indicated by the letters "B" or "S".<br>
-          The restarting counter is highlighted with a color for ease (the color won't be printed).
+          Every Maquette has a number associated with it as the title/name.<br />
+          Normally it starts at 1 and counts upwards for each Maquette, but the
+          counter can be restarted.<br />
+          To restart the title/name counter of a Maquette, right click on the
+          type in the middle of the Maquette.<br />
+          The type is indicated by the letters "B" or "S".<br />
+          The restarting counter is highlighted with a color for ease (the color
+          won't be printed).
         </li>
         <li>
-          Every page has a top text and middle text indicated/enclosed by dashed lines.<br>
-          Left mouse button to change the text and shift + left mouse button to remove corresponding text.
+          Every page has a top text and middle text indicated/enclosed by dashed
+          lines.<br />
+          Left mouse button to change the text and shift + left mouse button to
+          remove corresponding text.
         </li>
       </ol>
       <p>PS: Disabled vehicles (indicated by a grey color) aren't printed.</p>

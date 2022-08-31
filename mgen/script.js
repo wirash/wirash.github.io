@@ -37,7 +37,7 @@ maquette.innerHTML = "<button>+ B</button><button>+ S</button>";
 
 const bcolArr = [
   "lightblue",
-  "lightgoldenrodyellow",
+  "orange",
   "lightgreen",
   "lightsalmon",
   "lightcoral",
@@ -506,3 +506,30 @@ function setPageEvents(p) {
 }
 
 setPageEvents(pages[0]);
+
+//light / dark mode toggle
+document.querySelectorAll("input[type=radio][name=theme]").forEach((item) => {
+  item.onchange = () => {
+    let t = event.target;
+    if (t.checked) {
+      switch (t.value) {
+        case "light":
+          r.style.setProperty("--color0", "#555");
+          r.style.setProperty("--color1", "#000");
+          r.style.setProperty("--color2", "#fff");
+          r.style.setProperty("--color3", "#7a7a7a");
+          r.style.setProperty("--color4", "#ccc");
+          r.style.setProperty("--bcol1", "rgb(204, 204, 204)");
+          break;
+        case "dark":
+          r.style.setProperty("--color0", "#999");
+          r.style.setProperty("--color1", "#fff");
+          r.style.setProperty("--color2", "#2a2a2a");
+          r.style.setProperty("--color3", "#666");
+          r.style.setProperty("--color4", "#555");
+          r.style.setProperty("--bcol1", "#444");
+          break;
+      }
+    }
+  };
+});
