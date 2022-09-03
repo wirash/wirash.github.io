@@ -82,7 +82,15 @@
             id="emcj"
             title="Download JSON file containing Maquette Codes"
           >
-            <s>Export as JSON File</s>
+            Export as JSON File
+          </button>
+        </setting>
+        <setting
+          ><button
+            id="emch"
+            title="Download HTML file containing Maquette Codes"
+          >
+            Export as HTML File
           </button>
         </setting>
         <hr />
@@ -94,17 +102,14 @@
             Import from Clipboard
           </button>
         </setting>
-        <setting
-          ><button id="imct"><s>Import from Text (.txt) File</s></button>
-        </setting>
-        <setting
-          ><button id="imcj"><s>Import from JSON File</s></button></setting
-        >
-        <hr>
+        <setting><button id="imct">Import from Text File</button> </setting>
+        <setting><button id="imcj">Import from JSON File</button></setting>
+        <setting><button id="imch">Import from HTML File</button></setting>
+        <hr />
         <setting>
-          <label>Theme:</label><br>
-          <label><input type="radio" name="theme" value="light" checked/>Light</label>
-          <label><input type="radio" name="theme" value="dark"/>Dark</label>
+          <label>Theme:</label><br />
+          <label><input type="radio" name="theme" value="light" />Light</label>
+          <label><input type="radio" name="theme" value="dark" />Dark</label>
         </setting>
       </settings>
       <div class="about">Maquette Generator<br />By Ganesh W.</div>
@@ -117,7 +122,43 @@
       <div>Instructions</div>
       <b>To use the Maquette Generator, please follow these instructions:</b>
       <ol>
-        <li>Fill with placeholders or Import codes from clipboard to start.</li>
+        <li>
+          Fill with placeholders or Import codes to start.
+          <ul>
+            <li>
+              Importing and exporting can be done using different file types.<br />
+              Here are some key differences between them:<br />
+              <table border="1" cellpadding="5px" cellspacing="0">
+                <tr>
+                  <th>Difference in</th>
+                  <th>Text</th>
+                  <th>JSON</th>
+                  <th>HTML</th>
+                </tr>
+                <tr>
+                  <th>Readability</th>
+                  <td bgcolor="#ffabab">Bad</td>
+                  <td bgcolor="#abffb5">Best</td>
+                  <td>Good</td>
+                </tr>
+                <tr>
+                  <th>File size</th>
+                  <td bgcolor="#abffb5">Tiny</td>
+                  <td>Medium</td>
+                  <td bgcolor="#ffabab">Big</td>
+                </tr>
+                <tr>
+                  <th>Error chance</th>
+                  <td bgcolor="#ffabab">High</td>
+                  <td>Medium</td>
+                  <td bgcolor="#abffb5">None</td>
+                </tr>
+              </table>
+              <br />
+            </li>
+            <li>It is recommended to use the JSON file format, but you are free to choose another.</li>
+          </ul>
+        </li>
         <li>
           When filled with placeholders, click on one of the two buttons in each
           Maquette to specify which type you want to generate.<br />"B"

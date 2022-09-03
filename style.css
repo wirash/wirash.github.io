@@ -1,12 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #2a2a2a;
+  }
+
+  .app {
+    background: linear-gradient(225deg, #0f0f0f, #2f2f2f);
+    box-shadow: -5px 5px 10px #000, 5px -5px 10px #343434;
+  }
+
+  .app:hover {
+    box-shadow: -5px 5px 10px #000 inset, 5px -5px 10px #3a3a3a inset;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #ededed;
+  }
+
+  .app {
+    background: linear-gradient(225deg, #d5d5d5, #fefefe);
+    box-shadow: -5px 5px 10px #c0c0c0, 5px -5px 10px #fff;
+  }
+
+  .app:hover {
+    box-shadow: -5px 5px 10px #c0c0c0 inset, 5px -5px 10px #fff inset;
+  }
+}
 
 body {
   margin: 0;
-  background-color: #000;
   display: grid;
   place-items: center;
   height: 100vh;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 1.5rem;
   user-select: none;
   font-weight: 300;
@@ -31,26 +60,20 @@ body {
   --w: 150px;
   width: var(--w);
   aspect-ratio: 1 / 1.6;
-  border-radius: 10px;
-  background: var(--bcolor);
-  color: var(--color3);
+  border-radius: 15px;
   line-height: calc(var(--w) * 1.6);
   text-align: center;
   text-decoration: none;
   transition: 0.3s;
   letter-spacing: 0.05rem;
-  background: linear-gradient(
+  /* background: linear-gradient(
     to bottom right,
     #222 25%,
     #000,
     hsla(var(--accent), 0.25),
     hsl(var(--accent)) 110%
-  );
-}
-
-.app:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 0 1px hsl(var(--accent));
+  ); */
+  cursor: pointer;
   color: hsl(var(--accent));
   font-weight: 600;
 }
@@ -60,5 +83,5 @@ body {
 }
 
 .app:nth-child(2) {
-  --accent: 180, 100%, 50%;
+  --accent: 195, 100%, 50%;
 }

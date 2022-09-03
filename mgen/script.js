@@ -59,6 +59,8 @@ const signClasses = [
   "tri-x",
 ];
 
+const cornersArr = ["tl", "tr", "br", "bl"];
+
 let r = document.querySelector(":root");
 const gsize = document.getElementById("gsize");
 const pmargin = document.getElementById("pmargin");
@@ -83,6 +85,12 @@ const toggler = document.querySelector(".toggler");
 const instructions = document.getElementById("instructions");
 const about = document.querySelector(".about");
 const mce_downloader = document.getElementById("mce_downloader");
+const imct = document.getElementById("imct");
+const imcj = document.getElementById("imcj");
+const emcj = document.getElementById("emcj");
+const imch = document.getElementById("imch");
+const emch = document.getElementById("emch");
+
 var observer = new IntersectionObserver(
   function (entries) {
     if (entries[0].isIntersecting === true) {
@@ -100,7 +108,6 @@ gsize.onkeypress = () => {
     if (!isNaN(counts[0])) {
       r.style.setProperty("--grid-h", counts[1]);
       r.style.setProperty("--grid-v", counts[2]);
-      //generateGridItems(counts[0], counts[0]);
     }
   }
 };
@@ -141,7 +148,7 @@ asize.onkeypress = () => {
   }
 };
 
-function getMC() {
+function maquettesToText() {
   let strArr = [];
   document.querySelectorAll(".content").forEach((item) => {
     let strArrM = [];
@@ -182,8 +189,63 @@ function getMC() {
   return strArr.join("\r\n");
 }
 
+function maquettesToJSON() {
+  let main = {
+    pages: [],
+  };
+  pages.forEach((page) => {
+    let tmp_page = {
+      text_top: page.getAttribute("text_top") ?? null,
+      text_middle: page.getAttribute("text_middle") ?? null,
+      maquettes: [],
+    };
+    page.querySelectorAll(".content").forEach((content) => {
+      let tmp_maquette = {
+        type: content.getAttribute("type") ?? "S",
+        restart_count: content.hasAttribute("restart-c"),
+        corners: {},
+      };
+      content.querySelectorAll(".c").forEach((corner, index) => {
+        let tmp_corner = {
+          has_zw: corner.classList.contains("zw"),
+          has_no: corner.classList.contains("no"),
+          has_vp: corner.classList.contains("vp"),
+          sign: corner.querySelector("div.sign").classList[1] ?? null,
+          vehicles: [],
+        };
+        corner.querySelectorAll("div:not(.sign)").forEach((vehicle) => {
+          let tmp_vehicle = null;
+          if (vehicle.hasChildNodes())
+            tmp_vehicle = {
+              direction: vehicle
+                .getAttribute("class")
+                .replace("v ", "")
+                .replace("f ", "")
+                .replace("b ", ""),
+              text: vehicle.querySelector("a").innerText,
+            };
+          tmp_corner.vehicles.push(tmp_vehicle);
+        });
+        //tmp_maquette.corners.push(tmp_corner);
+        tmp_maquette.corners[cornersArr[index]] = tmp_corner;
+      });
+      tmp_page.maquettes.push(tmp_maquette);
+    });
+    main.pages.push(tmp_page);
+  });
+  return main;
+}
+
+function maquettesToHTML() {
+  let html = "";
+  pages.forEach((page) => {
+    html += page.outerHTML;
+  });
+  return html;
+}
+
 cmc.onclick = () => {
-  let str = getMC();
+  let str = maquettesToText();
   if (str != "") {
     navigator.clipboard.writeText(str).then(() => {
       alert("Maquette Codes copied to clipboard");
@@ -200,11 +262,120 @@ function download(content, mimeType, filename) {
 }
 
 emc.onclick = () => {
-  let str = getMC();
+  let str = maquettesToText();
   if (str != "") {
     download(str, "text/plain", "Maquette Codes Export");
   }
 };
+
+emcj.onclick = () => {
+  let json = maquettesToJSON();
+  if (json) {
+    download(JSON.stringify(json), "json/plain", "Maquette Codes Export.json");
+  }
+};
+
+emch.onclick = () => {
+  let html = maquettesToHTML();
+  if (html != "") {
+    download(html, "html/plain", "Maquette Codes Export.html");
+  }
+};
+
+function textToMaquettes(text) {
+  let strArr = text.split("\r\n");
+  generateGridItems(strArr.length);
+  document.querySelectorAll(".maquette").forEach((item, index) => {
+    if (!strArr[index]) return;
+    const b = item.querySelector("button");
+    if (b) b.click();
+    let strArrH1 = strArr[index].split("|");
+    let strArrH2 = strArrH1[0].split("@");
+    let strArrC = strArrH2[0].split(";");
+    let c = item.querySelector(".content");
+    if (strArrH2[1] == "true") c.toggleAttribute("restart-c");
+    c.setAttribute("type", strArrH1[1] ?? "B");
+    item.querySelectorAll(".c").forEach((item2, index2) => {
+      let strArrD1 = strArrC[index2].split("#");
+      let strArrD = strArrD1[0].split(",");
+      item2.querySelectorAll("div:not(.sign)").forEach((item3, index3) => {
+        if (!strArrD[index3].includes(".")) return;
+        let strArrE = strArrD[index3].split(".");
+        if (!item3.hasChildNodes()) item3.click();
+        item3.classList.remove("d");
+        item3.classList.add(strArrE[0]);
+        item3.querySelector("a").innerText = strArrE[1];
+      });
+
+      //for sign
+      let last = strArrD.pop();
+      if (signClasses.includes(last))
+        item2.querySelector("div.sign").classList.add(last);
+
+      //for no + zw + vp
+      let nozwvp = strArrD1[1]?.split(",");
+      if (nozwvp) {
+        if (nozwvp[0] == "1") item2.classList.add("no");
+        else if (nozwvp[1] == "1") item2.classList.add("zw");
+        else if (nozwvp[2] == "1") item2.classList.add("vp");
+      }
+    });
+  });
+}
+
+function jsonToMaquettes(text) {
+  let main = JSON.parse(text);
+
+  let maquette_count = Object.values(main.pages).reduce(
+    (acc, { maquettes }) => acc + maquettes.length,
+    0
+  );
+  generateGridItems(maquette_count);
+
+  main.pages.forEach((page, index0) => {
+    let maquettes = page.maquettes;
+    let cp = pages[index0]; //current page
+    if (page.text_top) cp.setAttribute("text_top", page.text_top);
+    if (page.text_middle) cp.setAttribute("text_middle", page.text_middle);
+    let acm = cp.querySelectorAll(".maquette"); //all current page maquettes
+    maquettes.forEach((maquette, index) => {
+      let cm = acm[index]; //current maquette
+      let acmb = cm.querySelectorAll("button"); //all current maquette buttons
+      if (maquette.type == "B") acmb[0].click();
+      else acmb[1].click();
+      let content = cm.querySelector(".content");
+      if (maquette.restart_count == "true")
+        content.toggleAttribute("restart-c");
+      let ccs = Object.values(maquette.corners); //current corners
+      cm.querySelectorAll(".c").forEach((c, index2) => {
+        let cc = ccs[index2]; //current corner
+        c.querySelectorAll("div:not(.sign)").forEach((v, index3) => {
+          let cv = cc.vehicles[index3]; //current vehicle
+          if (!cv) return;
+          if (!v.hasChildNodes()) v.click();
+          v.classList.remove("d");
+          v.classList.add(cv.direction);
+          v.querySelector("a").innerText = cv.text;
+        });
+
+        //for sign
+        if (cc.sign) c.querySelector("div.sign").classList.add(cc.sign);
+
+        //for no + zw + vp
+        if (cc.has_no) c.classList.add("no");
+        else if (cc.has_zw) c.classList.add("zw");
+        else if (cc.has_vp) c.classList.add("vp");
+      });
+    });
+  });
+}
+
+function htmlToMaquettes(text) {
+  pages.forEach((item) => {
+    item.remove();
+  });
+  document.body.insertAdjacentHTML("afterbegin", text);
+}
 
 imc.onclick = () => {
   if (confirm("Overwrite current Maquette Codes?")) {
@@ -212,58 +383,7 @@ imc.onclick = () => {
       navigator.clipboard
         .readText()
         .then((text) => {
-          let strArr = text.split("\r\n");
-          generateGridItems(strArr.length);
-          // let inputs = document.querySelectorAll("page input");
-          // if (inputs.length > 0) {
-          //   strArr.forEach((item, index) => {
-          //     inputs[index].value = item;
-          //     inputs[index].dispatchEvent(
-          //       new KeyboardEvent("keypress", {
-          //         key: "Enter",
-          //       })
-          //     );
-          //   });
-          //   console.log("Maquette Codes imported from clipboard");
-          // }
-          document.querySelectorAll(".maquette").forEach((item, index) => {
-            if (!strArr[index]) return;
-            const b = item.querySelector("button");
-            if (b) b.click();
-            let strArrH1 = strArr[index].split("|");
-            let strArrH2 = strArrH1[0].split("@");
-            let strArrC = strArrH2[0].split(";");
-            let c = item.querySelector(".content");
-            if (strArrH2[1] == "true") c.toggleAttribute("restart-c");
-            c.setAttribute("type", strArrH1[1] ?? "B");
-            item.querySelectorAll(".c").forEach((item2, index2) => {
-              let strArrD1 = strArrC[index2].split("#");
-              let strArrD = strArrD1[0].split(",");
-              item2
-                .querySelectorAll("div:not(.sign)")
-                .forEach((item3, index3) => {
-                  if (!strArrD[index3].includes(".")) return;
-                  let strArrE = strArrD[index3].split(".");
-                  if (!item3.hasChildNodes()) item3.click();
-                  item3.classList.remove("d");
-                  item3.classList.add(strArrE[0]);
-                  item3.querySelector("a").innerText = strArrE[1];
-                });
-
-              //for sign
-              let last = strArrD.pop();
-              if (signClasses.includes(last))
-                item2.querySelector("div.sign").classList.add(last);
-
-              //for no + zw + vp
-              let nozwvp = strArrD1[1]?.split(",");
-              if (nozwvp) {
-                if (nozwvp[0] == "1") item2.classList.add("no");
-                else if (nozwvp[1] == "1") item2.classList.add("zw");
-                else if (nozwvp[2] == "1") item2.classList.add("vp");
-              }
-            });
-          });
+          textToMaquettes(text);
         })
         .catch((err) => {
           alert("Failed to read Maquette Codes from clipboard");
@@ -321,23 +441,26 @@ draw_empty_maquettes.onclick = () => {
   let r_new = window.getComputedStyle(document.documentElement);
   let v = parseInt(r_new.getPropertyValue("--grid-v"));
   let h = parseInt(r_new.getPropertyValue("--grid-h"));
-  generateGridItems(v * h * pages.length, v * h);
+  generateGridItems(v * h * pages.length, v * h, true);
 };
 
 insert_blank_page.onclick = () => {
   createPages(1);
 };
 
-function generateGridItems(count, gic) {
+function generateGridItems(count, gic, keep = false) {
   gic = gic ?? getGridItemCount()[0];
   pages = document.querySelectorAll("page");
   let newpages = Math.ceil(count / gic) - pages.length;
   if (newpages >= 0) {
     createPages(newpages);
     pages.forEach((page) => {
-      let l = page.querySelectorAll(".maquette").length;
-      // page.innerHTML = "";
       let mc = page.querySelector(".maquettecontainer");
+      let l = 0;
+      if (keep)
+        l = page.querySelectorAll(".maquette").length; //keep old maquettes
+      else mc.replaceChildren(); //remove old maquettes first
+
       for (let i = 1; i <= gic - l; i++) {
         let m2 = maquette.cloneNode(true);
         setButtonEvents(m2);
@@ -481,22 +604,22 @@ function setPageEvents(p) {
     if (t.tagName == "PAGE") {
       let h = t.clientHeight * 0.1;
       if (event.offsetY < h) {
-        if (event.shiftKey) t.removeAttribute("name_top");
+        if (event.shiftKey) t.removeAttribute("text_top");
         else {
           let txt = prompt(
             "Enter a text for the top of the page",
-            t.getAttribute("name_top") ?? ""
+            t.getAttribute("text_top") ?? ""
           );
-          if (txt != null && txt != "") t.setAttribute("name_top", txt);
+          if (txt != null && txt != "") t.setAttribute("text_top", txt);
         }
       } else if (event.offsetY >= h) {
-        if (event.shiftKey) t.removeAttribute("name_middle");
+        if (event.shiftKey) t.removeAttribute("text_middle");
         else {
           let txt = prompt(
             "Enter a text for the middle of the page",
-            t.getAttribute("name_middle") ?? ""
+            t.getAttribute("text_middle") ?? ""
           );
-          if (txt != null && txt != "") t.setAttribute("name_middle", txt);
+          if (txt != null && txt != "") t.setAttribute("text_middle", txt);
         }
       }
       // console.log(event);
@@ -508,6 +631,8 @@ function setPageEvents(p) {
 setPageEvents(pages[0]);
 
 //light / dark mode toggle
+document.querySelector("input[type=radio][name=theme][value=dark]").checked =
+  window.matchMedia("(prefers-color-scheme:dark)").matches;
 document.querySelectorAll("input[type=radio][name=theme]").forEach((item) => {
   item.onchange = () => {
     let t = event.target;
@@ -532,4 +657,53 @@ document.querySelectorAll("input[type=radio][name=theme]").forEach((item) => {
       }
     }
   };
+});
+
+async function importFromFile(type = "txt") {
+  let description = "Text files";
+  let accept = { "text/plain": [".txt"] };
+  if (type == "json") {
+    description = "JSON files";
+    accept = { "json/plain": [".json"] };
+  } else if (type == "html") {
+    description = "HTML files";
+    accept = { "html/plain": [".html"] };
+  }
+
+  let [fileHandle] = await window.showOpenFilePicker({
+    types: [
+      {
+        description,
+        accept,
+      },
+    ],
+  });
+  const file = await fileHandle.getFile();
+  const contents = await file.text();
+  if (confirm("Overwrite current Maquette Codes?")) {
+    setTimeout(() => {
+      try {
+        if (type == "txt") textToMaquettes(contents);
+        else if (type == "json") jsonToMaquettes(contents);
+        else if (type == "html") htmlToMaquettes(contents);
+      } catch (err) {
+        alert(
+          "Failed to read Maquette Codes from the selected file, please check the file and try again."
+        );
+        console.error(err);
+      }
+    }, 1000);
+  }
+}
+
+imct.addEventListener("click", async () => {
+  await importFromFile();
+});
+
+imcj.addEventListener("click", async () => {
+  await importFromFile("json");
+});
+
+imch.addEventListener("click", async () => {
+  await importFromFile("html");
 });
