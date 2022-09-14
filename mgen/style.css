@@ -53,6 +53,7 @@ page {
   pointer-events: none;
   color: var(--color1);
   outline: 1px solid var(--color4);
+  user-select: none;
 }
 
 page::before,
@@ -322,6 +323,34 @@ page[layout="landscape"] .maquette {
 .maquette .c.vp {
   color: var(--color2);
   box-shadow: -8px -15px, -8px -17px var(--color3);
+}
+
+.maquette .c.inrit-s::before, .maquette .c.inrit-b::before {
+    position: absolute;
+    top: -3px;
+    font-size: 1.1rem;
+    font-style: italic;
+    transform-origin: 0 0;
+    text-align: center;
+    transform: rotate(-90deg);
+    width: calc(163.63% + 4 * 3px);
+    color: var(--color0);
+}
+
+.maquette .c.inrit-b::before {
+    content: 'Inrit B';
+}
+
+.maquette .c.inrit-s::before {
+    content: 'Inrit S';
+}
+
+.maquette .c.inrit-s, .maquette .c.inrit-b {
+    z-index: 999;
+}
+
+.maquette .c::before, .maquette .c::after{
+  pointer-events: none;
 }
 
 .maquette .tl {

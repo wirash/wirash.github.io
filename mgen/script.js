@@ -210,6 +210,8 @@ function maquettesToJSON() {
           has_zw: corner.classList.contains("zw"),
           has_no: corner.classList.contains("no"),
           has_vp: corner.classList.contains("vp"),
+          has_inrit_s: corner.classList.contains("inrit-s"),
+          has_inrit_b: corner.classList.contains("inrit-b"),
           sign: corner.querySelector("div.sign").classList[1] ?? null,
           vehicles: [],
         };
@@ -344,8 +346,7 @@ function jsonToMaquettes(text) {
       if (maquette.type == "B") acmb[0].click();
       else acmb[1].click();
       let content = cm.querySelector(".content");
-      if (maquette.restart_count == "true")
-        content.toggleAttribute("restart-c");
+      if (maquette.restart_count == true) content.toggleAttribute("restart-c");
       let ccs = Object.values(maquette.corners); //current corners
       cm.querySelectorAll(".c").forEach((c, index2) => {
         let cc = ccs[index2]; //current corner
@@ -365,6 +366,8 @@ function jsonToMaquettes(text) {
         if (cc.has_no) c.classList.add("no");
         else if (cc.has_zw) c.classList.add("zw");
         else if (cc.has_vp) c.classList.add("vp");
+        else if (cc.has_inrit_s) c.classList.add("inrit-s");
+        else if (cc.has_inrit_b) c.classList.add("inrit-b");
       });
     });
   });
@@ -499,6 +502,20 @@ function setEvents(m) {
       t.toggleAttribute("restart-c");
     }
   };
+  m.querySelector(".content").ondblclick = () => {
+    event.preventDefault();
+    const t = event.target;
+    if (t.classList.contains("content")) {
+      let type = t.getAttribute("type");
+      let other_type = type == "B" ? "S" : "B";
+      let toggle = confirm(
+        `Switch '${type}' type maquette for '${other_type}' type?`
+      );
+      if (toggle) {
+        t.setAttribute("type", other_type);
+      }
+    }
+  };
   m.querySelectorAll(".c").forEach((item) => {
     item.oncontextmenu = () => {
       event.preventDefault();
@@ -513,6 +530,12 @@ function setEvents(m) {
             break;
           case "zw":
             t.classList.add("no");
+            break;
+          case "no":
+            t.classList.add("inrit-s");
+            break;
+          case "inrit-s":
+            t.classList.add("inrit-b");
             break;
         }
       }
@@ -580,10 +603,16 @@ function setEvents(m) {
         event.preventDefault();
         const t = event.target;
         if (t.hasChildNodes()) {
-          let txt = prompt("Enter a name for the selected vehicle");
+          let a_txt_item = t.querySelector("a");
+          let txt = prompt(
+            "Enter a name for the selected vehicle",
+            a_txt_item.innerText
+          );
           if (txt != null && txt != "") {
-            if (txt.length <= 3) t.querySelector("a").innerText = txt;
-            else alert("Name cannot be longer than 3 characters");
+            if (txt.length <= 2) {
+              if (t.classList.contains("f")) a_txt_item.innerText = "F" + txt;
+              else a_txt_item.innerText = txt;
+            } else alert("Name cannot be longer than 2 characters");
           }
         }
       }
@@ -706,4 +735,12 @@ imcj.addEventListener("click", async () => {
 
 imch.addEventListener("click", async () => {
   await importFromFile("html");
+});
+
+// prevent reload or navigating away if non default maquettes exist
+window.addEventListener("beforeunload", (event) => {
+  if (pages[0].querySelectorAll(".maquette:not([default])").length >= 1) {
+    event.preventDefault();
+    event.returnValue = "";
+  }
 });
