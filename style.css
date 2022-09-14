@@ -1,35 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #2a2a2a;
-  }
-
-  .app {
-    background: linear-gradient(225deg, #0f0f0f, #2f2f2f);
-    box-shadow: -5px 5px 10px #000, 5px -5px 10px #343434;
-  }
-
-  .app:hover {
-    box-shadow: -5px 5px 10px #000 inset, 5px -5px 10px #3a3a3a inset;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  body {
-    background-color: #ededed;
-  }
-
-  .app {
-    background: linear-gradient(225deg, #d5d5d5, #fefefe);
-    box-shadow: -5px 5px 10px #c0c0c0, 5px -5px 10px #fff;
-  }
-
-  .app:hover {
-    box-shadow: -5px 5px 10px #c0c0c0 inset, 5px -5px 10px #fff inset;
-  }
-}
-
 body {
   margin: 0;
   display: grid;
@@ -52,36 +22,75 @@ body {
   display: grid;
   place-items: center;
   grid-auto-flow: column;
-  gap: 25px;
+  gap: 35px;
 }
 
 .app {
-  display: inline-block;
+  all: unset;
   --w: 150px;
   width: var(--w);
-  aspect-ratio: 1 / 1.6;
+  aspect-ratio: 1 / 1.5;
   border-radius: 15px;
-  line-height: calc(var(--w) * 1.6);
+  line-height: calc(var(--w) * 1.5);
   text-align: center;
   text-decoration: none;
-  transition: 0.3s;
-  letter-spacing: 0.05rem;
-  /* background: linear-gradient(
-    to bottom right,
-    #222 25%,
-    #000,
-    hsla(var(--accent), 0.25),
-    hsl(var(--accent)) 110%
-  ); */
+  letter-spacing: 0.3rem;
   cursor: pointer;
-  color: hsl(var(--accent));
-  font-weight: 600;
+  font-weight: 300;
+  transition: .3s;
+
+  /* box shadow vars */
+  --offset: 4px;
+  --spread: 10px;
 }
 
 .app:nth-child(1) {
-  --accent: 349, 88%, 61%;
+  color: hsl(349, 88%, 61%);
 }
 
 .app:nth-child(2) {
-  --accent: 195, 100%, 50%;
+  color: hsl(195, 100%, 50%);
 }
+
+/* themes */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #2a2a2a;
+  }
+
+  .app {
+    box-shadow: calc(-1 * var(--offset)) var(--offset) var(--spread) #111,
+      var(--offset) calc(-1 * var(--offset)) var(--spread) #343434,
+      calc(-1 * var(--offset)) var(--offset) var(--spread) transparent inset,
+      var(--offset) calc(-1 * var(--offset)) var(--spread) transparent inset;
+  }
+
+  .app:hover {
+    box-shadow: calc(-1 * var(--offset)) var(--offset) var(--spread) transparent,
+      var(--offset) calc(-1 * var(--offset)) var(--spread) transparent,
+      calc(-1 * var(--offset)) var(--offset) var(--spread) #111 inset,
+      var(--offset) calc(-1 * var(--offset)) var(--spread) #3a3a3a inset;
+    /* cant transition to inset because it is a keyword and not numeric value so using transparent color instead*/
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #ededed;
+  }
+
+  .app {
+    box-shadow: calc(-1 * var(--offset)) var(--offset) var(--spread) #c0c0c0,
+      var(--offset) calc(-1 * var(--offset)) var(--spread) #fff,
+      calc(-1 * var(--offset)) var(--offset) var(--spread) transparent inset,
+      var(--offset) calc(-1 * var(--offset)) var(--spread) transparent inset;
+  }
+
+  .app:hover {
+    box-shadow: calc(-1 * var(--offset)) var(--offset) var(--spread) transparent,
+      var(--offset) calc(-1 * var(--offset)) var(--spread) transparent,
+      calc(-1 * var(--offset)) var(--offset) var(--spread) #c0c0c0 inset,
+      var(--offset) calc(-1 * var(--offset)) var(--spread) #fff inset;
+  }
+}
+/*  */
