@@ -4,6 +4,7 @@ maquetteB = `
             <div class="f"></div>
             <div class="v"></div>
             <div class="v"></div>
+            <div class="f b"></div>
             <div class="v b"></div>
             <div class="sign"></div>
           </div>
@@ -11,6 +12,7 @@ maquetteB = `
             <div class="f"></div>
             <div class="v"></div>
             <div class="v"></div>
+            <div class="f b"></div>
             <div class="v b"></div>
             <div class="sign"></div>
           </div>
@@ -18,6 +20,7 @@ maquetteB = `
             <div class="f"></div>
             <div class="v"></div>
             <div class="v"></div>
+            <div class="f b"></div>
             <div class="v b"></div>
             <div class="sign"></div>
           </div>
@@ -25,6 +28,7 @@ maquetteB = `
             <div class="f"></div>
             <div class="v"></div>
             <div class="v"></div>
+            <div class="f b"></div>
             <div class="v b"></div>
             <div class="sign"></div>
           </div>
@@ -90,6 +94,7 @@ const imcj = document.getElementById("imcj");
 const emcj = document.getElementById("emcj");
 const imch = document.getElementById("imch");
 const emch = document.getElementById("emch");
+const watermark = document.getElementById("watermark");
 
 var observer = new IntersectionObserver(
   function (entries) {
@@ -212,6 +217,7 @@ function maquettesToJSON() {
           has_vp: corner.classList.contains("vp"),
           has_inrit_s: corner.classList.contains("inrit-s"),
           has_inrit_b: corner.classList.contains("inrit-b"),
+          has_fp: corner.classList.contains("fp"),
           sign: corner.querySelector("div.sign").classList[1] ?? null,
           vehicles: [],
         };
@@ -221,10 +227,16 @@ function maquettesToJSON() {
             tmp_vehicle = {
               direction: vehicle
                 .getAttribute("class")
-                .replace("v ", "")
-                .replace("f ", "")
-                .replace("b ", ""),
+                // .replace("v ", "")
+                // .replace("f ", "")
+                // .replace("b ", "")
+                // .replace("fb ", ""),
+                .replaceAll(" ", "")
+                .replace("v", "")
+                .replace("f", "")
+                .replaceAll("b", ""),
               text: vehicle.querySelector("a").innerText,
+              is_fb: vehicle.classList.contains("fb"),
             };
           tmp_corner.vehicles.push(tmp_vehicle);
         });
@@ -356,6 +368,7 @@ function jsonToMaquettes(text) {
           if (!v.hasChildNodes()) v.click();
           v.classList.remove("d");
           v.classList.add(cv.direction);
+          if (cv.is_fb) v.classList.add("fb");
           v.querySelector("a").innerText = cv.text;
         });
 
@@ -368,6 +381,7 @@ function jsonToMaquettes(text) {
         else if (cc.has_vp) c.classList.add("vp");
         else if (cc.has_inrit_s) c.classList.add("inrit-s");
         else if (cc.has_inrit_b) c.classList.add("inrit-b");
+        else if (cc.has_fp) c.classList.add("fp");
       });
     });
   });
@@ -435,9 +449,18 @@ function createPages(count) {
 }
 
 mprint.onclick = () => {
-  if (pages[0].querySelectorAll(".maquette:not([default])").length >= 1)
+  if (pages[0].querySelectorAll(".maquette:not([default])").length >= 1) {
+    if (watermark.checked) {
+      pages.forEach((page) => {
+        page.classList.add("watermark");
+      });
+    } else {
+      pages.forEach((page) => {
+        page.classList.remove("watermark");
+      });
+    }
     window.print();
-  else alert("No maquettes available to print");
+  } else alert("No maquettes available to print");
 };
 
 draw_empty_maquettes.onclick = () => {
@@ -532,6 +555,9 @@ function setEvents(m) {
             t.classList.add("no");
             break;
           case "no":
+            t.classList.add("fp");
+            break;
+          case "fp":
             t.classList.add("inrit-s");
             break;
           case "inrit-s":
@@ -571,8 +597,15 @@ function setEvents(m) {
   m.querySelectorAll(".c > div:not(.sign)").forEach((item) => {
     item.onclick = () => {
       const t = event.target;
-      if (t.hasChildNodes()) t.replaceChildren();
-      else {
+      if (t.hasChildNodes()) {
+        if (
+          event.shiftKey &&
+          t.classList.contains("v") &&
+          t.classList.contains("b")
+        )
+          t.classList.toggle("fb");
+        else t.replaceChildren();
+      } else {
         t.classList.remove("l", "r");
         if (t.classList.contains("f")) t.innerHTML = fInnerHTML;
         else if (t.classList.contains("v")) {
@@ -588,7 +621,10 @@ function setEvents(m) {
       if (t.hasChildNodes()) {
         if (t.classList.contains("d")) {
           t.classList.toggle("d");
-          t.classList.add("l");
+          const p = t.parentElement;
+          if (p.classList.contains("fp") || p.classList.contains("no"))
+            t.classList.add("r"); //if parent has fietspad or no, cannot go left
+          else t.classList.add("l");
         } else if (t.classList.contains("l")) {
           t.classList.toggle("l");
           t.classList.add("r");
@@ -610,7 +646,8 @@ function setEvents(m) {
           );
           if (txt != null && txt != "") {
             if (txt.length <= 2) {
-              if (t.classList.contains("f")) a_txt_item.innerText = "F" + txt;
+              if (t.classList.contains("f") || t.classList.contains("fb"))
+                a_txt_item.innerText = "F" + txt;
               else a_txt_item.innerText = txt;
             } else alert("Name cannot be longer than 2 characters");
           }
@@ -674,6 +711,8 @@ document.querySelectorAll("input[type=radio][name=theme]").forEach((item) => {
           r.style.setProperty("--color3", "#7a7a7a");
           r.style.setProperty("--color4", "#ccc");
           r.style.setProperty("--bcol1", "rgb(204, 204, 204)");
+          r.style.setProperty("--bcol2", "rgb(200, 200, 200)");
+          r.style.setProperty("--invert", "0");
           break;
         case "dark":
           r.style.setProperty("--color0", "#999");
@@ -682,6 +721,8 @@ document.querySelectorAll("input[type=radio][name=theme]").forEach((item) => {
           r.style.setProperty("--color3", "#666");
           r.style.setProperty("--color4", "#555");
           r.style.setProperty("--bcol1", "#444");
+          r.style.setProperty("--bcol2", "rgb(70, 70, 70)");
+          r.style.setProperty("--invert", "1");
           break;
       }
     }

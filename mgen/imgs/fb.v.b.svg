@@ -1,0 +1,12 @@
+<svg width="17" height="25" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <g>
+      <!-- <line stroke-width="1.5937" stroke="#000" id="tlr" x2="17" x1="9" y1="0.7" y2="0.7" fill="none"/> -->
+      <!-- <rect stroke-width="0" id="background" height="25" width="17" y="0" x="0" fill="#fff"/> -->
+      <line stroke-width="1.5937" stroke="#000" id="tl" y2="3.6" x2="8.5" x1="8.5" fill="none"/>
+      <rect stroke="#000" id="wf" height="4.5" width="4.5" y="4.09011" x="6.25" fill="none"/>
+      <line stroke="#000" stroke-width="1.5937" id="ml" y2="17.09" x2="8.52679" y1="9" x1="8.52679" fill="none"/>
+      <rect stroke="#000" id="wb" height="4.5" width="4.5" y="17.09" x="6.25" fill="none"/>
+    </g>
+  </g>
+</svg>

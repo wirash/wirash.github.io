@@ -62,7 +62,23 @@
         <setting
           ><button id="insert_blank_page">Insert Blank Page</button>
         </setting>
-        <setting><button id="mprint">Print to PDF</button></setting>
+        <hr />
+        <setting><button id="mprint">Print</button></setting>
+        <setting>
+          <label> <input type="checkbox" id="watermark" />Print concept </label>
+        </setting>
+        <hr />
+        <setting
+          ><button
+            id="imc"
+            title="Import from clipboard: Codes should be separated by newline"
+          >
+            Import from Clipboard
+          </button>
+        </setting>
+        <setting><button id="imct">Import from Text File</button> </setting>
+        <setting><button id="imcj">Import from JSON File</button></setting>
+        <setting><button id="imch">Import from HTML File</button></setting>
         <hr />
         <setting
           ><button id="cmc" title="Copy Maquette Codes to clipboard">
@@ -93,18 +109,6 @@
             Export as HTML File
           </button>
         </setting>
-        <hr />
-        <setting
-          ><button
-            id="imc"
-            title="Import from clipboard: Codes should be separated by newline"
-          >
-            Import from Clipboard
-          </button>
-        </setting>
-        <setting><button id="imct">Import from Text File</button> </setting>
-        <setting><button id="imcj">Import from JSON File</button></setting>
-        <setting><button id="imch">Import from HTML File</button></setting>
         <hr />
         <setting>
           <label>Theme:</label><br />
@@ -206,8 +210,8 @@
           The type is indicated by the letters "B" or "S".<br />
           The restarting counter is highlighted with a color for ease (the color
           won't be printed).<br />
-          You can also double click on the type to switch between the "B" and "S"
-          types.<br />
+          You can also double click on the type to switch between the "B" and
+          "S" types.<br />
         </li>
         <li>
           Every page has a top text and middle text indicated/enclosed by dashed
