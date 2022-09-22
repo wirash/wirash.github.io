@@ -65,10 +65,28 @@
         <hr />
         <setting><button id="mprint">Print</button></setting>
         <setting>
-          <label> <input type="checkbox" id="watermark" />Print concept </label>
+          <label>
+            <input type="checkbox" id="watermark" />Print with watermark</label
+          >
         </setting>
+        <fieldset>
+          <setting>
+            <label>Watermark text:</label>
+            <input type="text" id="wmtext" value="CONCEPT" />
+          </setting>
+          <setting>
+            <label>Watermark font size:</label>
+            <input type="text" id="wmtextfs" value="5" />
+          </setting>
+          <setting>
+            <label>
+              <input type="checkbox" id="show_watermark" />Show watermark
+              here</label
+            >
+          </setting>
+        </fieldset>
         <hr />
-        <setting
+        <setting disabled
           ><button
             id="imc"
             title="Import from clipboard: Codes should be separated by newline"
@@ -76,16 +94,16 @@
             Import from Clipboard
           </button>
         </setting>
-        <setting><button id="imct">Import from Text File</button> </setting>
+        <setting disabled><button id="imct">Import from Text File</button> </setting>
         <setting><button id="imcj">Import from JSON File</button></setting>
         <setting><button id="imch">Import from HTML File</button></setting>
         <hr />
-        <setting
+        <setting disabled
           ><button id="cmc" title="Copy Maquette Codes to clipboard">
             Copy to Clipboard
           </button></setting
         >
-        <setting
+        <setting disabled
           ><button
             id="emc"
             title="Download text file containing Maquette Codes"

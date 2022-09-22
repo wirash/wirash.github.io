@@ -95,6 +95,9 @@ const emcj = document.getElementById("emcj");
 const imch = document.getElementById("imch");
 const emch = document.getElementById("emch");
 const watermark = document.getElementById("watermark");
+const watermark_text = document.getElementById("wmtext");
+const watermark_text_fontsize = document.getElementById("wmtextfs");
+const show_watermark = document.getElementById("show_watermark");
 
 var observer = new IntersectionObserver(
   function (entries) {
@@ -448,17 +451,36 @@ function createPages(count) {
   //return pages;
 }
 
+function update_watermark() {
+  if (watermark.checked) {
+    let pagesize = {};
+    if (porientation.value == "landscape") {
+      pagesize.width = 29.7;
+      pagesize.height = 21;
+      pagesize.centerx = 14.5;
+      pagesize.centery = 10.5;
+      pagesize.rotation = -35;
+    } else {
+      pagesize.width = 21;
+      pagesize.height = 29.7;
+      pagesize.centerx = 10.5;
+      pagesize.centery = 14.5;
+      pagesize.rotation = -55;
+    }
+    r.style.setProperty(
+      "--biurl",
+      `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='${pagesize.height}' width='${pagesize.width}'><text x='50%' y='50%' fill='%2355555560' font-size='${watermark_text_fontsize.value}' text-anchor='middle' dominant-baseline='central' transform='rotate(${pagesize.rotation}, ${pagesize.centerx}, ${pagesize.centery})' font-family='sans-serif'>${watermark_text.value}</text></svg>")`
+    );
+  }
+  // else {
+  //   r.style.removeProperty("--biurl");
+  // }
+  return watermark.checked;
+}
+
 mprint.onclick = () => {
   if (pages[0].querySelectorAll(".maquette:not([default])").length >= 1) {
-    if (watermark.checked) {
-      pages.forEach((page) => {
-        page.classList.add("watermark");
-      });
-    } else {
-      pages.forEach((page) => {
-        page.classList.remove("watermark");
-      });
-    }
+    update_watermark();
     window.print();
   } else alert("No maquettes available to print");
 };
@@ -785,3 +807,13 @@ window.addEventListener("beforeunload", (event) => {
     event.returnValue = "";
   }
 });
+
+show_watermark.onchange = ()=>{
+  let t = event.target;
+  if(t.checked){
+    if(update_watermark()) r.style.setProperty("--default-biurl", "var(--biurl)");
+  }
+  else{
+    r.style.setProperty("--default-biurl", "none");
+  }
+}
