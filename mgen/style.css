@@ -154,14 +154,6 @@ page[size="A3"][layout="landscape"] {
     background-image: var(--biurl, none);
   }
 
-  /* page.watermark[layout="portrait"] {
-    --biurl: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='29.7' width='21'><text x='50%' y='50%' fill='%2355555560' font-size='5' text-anchor='middle' dominant-baseline='central' transform='rotate(-55, 10.5, 14.5)' font-family='sans-serif'>CONCEPT</text></svg>");
-  }
-
-  page.watermark[layout="landscape"] {
-    --biurl: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='21' width='29.7'><text x='50%' y='50%' fill='%2355555560' font-size='5' text-anchor='middle' dominant-baseline='central' transform='rotate(-35, 14.5, 10.5)' font-family='sans-serif'>CONCEPT</text></svg>");
-  } */
-
   page:not(:first-child) {
     margin-top: 0.5px;
     /* this prevents some kind of bug */
@@ -175,7 +167,8 @@ page[size="A3"][layout="landscape"] {
 
   .maquette>input,
   .maquette[default] {
-    display: none !important;
+    /* display: none !important; */
+    visibility: hidden !important;
   }
 
   .c>div:not(.sign):empty {
@@ -194,12 +187,17 @@ page[size="A3"][layout="landscape"] {
   page::after {
     outline: none !important;
   }
+
+  .text-content{
+    resize: none !important;
+    overflow: hidden !important;
+  }
 }
 
 .maquette {
   aspect-ratio: 1;
   position: relative;
-  outline: var(--mborder);
+  outline: var(--no-border, var(--mborder));
   justify-content: center;
   gap: 10px;
   min-width: 0;
@@ -213,6 +211,7 @@ page[size="A3"][layout="landscape"] {
   cursor: pointer;
   padding: 5px 10px;
   color: inherit;
+  place-self: center;
 }
 
 .maquette>button:hover {
@@ -221,11 +220,11 @@ page[size="A3"][layout="landscape"] {
 }
 
 .maquette>button:first-child {
-  place-self: flex-end;
+  margin-top: auto;
 }
 
 .maquette>button:last-child {
-  place-self: flex-start;
+  margin-bottom: auto;
 }
 
 page[layout="portrait"] .maquette {
@@ -246,6 +245,9 @@ page[layout="landscape"] .maquette {
   pointer-events: none;
   font-size: calc(var(--fsize) + 2pt);
   overflow: hidden;
+}
+
+.maquette>.content:not([no-c]) {
   counter-increment: c;
 }
 
@@ -256,7 +258,7 @@ page[layout="landscape"] .maquette {
   cursor: pointer;
 }
 
-.content[restart-c] {
+.content[restart-c]:not([no-c]) {
   counter-set: c 1;
 }
 
@@ -264,7 +266,7 @@ page[layout="landscape"] .maquette {
   background-color: salmon;
 }
 
-.content::after {
+.content:not([no-c]):after {
   content: counter(c);
   position: absolute;
   top: 5px;
@@ -282,6 +284,27 @@ page[layout="landscape"] .maquette {
 
 .maquette>.content>* {
   pointer-events: auto;
+}
+
+.maquette>.text-content {
+  all: unset;
+  height: calc(100% + 1px);
+  max-width: calc(var(--grid-h) * (100% + 12px));
+  min-width: 100%;
+  font-size: calc(var(--fsize) + 3pt);
+  box-sizing: border-box;
+  resize: horizontal;
+}
+
+.maquette>.text-content:focus-visible,
+.maquette>.text-content:hover {
+  outline: none;
+  background-color: #88888866;
+}
+
+.maquette:has(.text-content) {
+  outline: none;
+  z-index: 100;
 }
 
 .maquette .c {
@@ -302,7 +325,8 @@ page[layout="landscape"] .maquette {
 .maquette .c.fp+.c,
 .maquette:has(.no:last-child,
   .fp:last-child) .c:first-child {
-  display: none;
+  /* display: none; */
+  visibility: hidden;
 }
 
 .maquette .c.no::before,
@@ -350,6 +374,7 @@ page[layout="landscape"] .maquette {
   position: absolute;
   pointer-events: none;
   --w: 8px;
+  visibility: visible;
 }
 
 .maquette .c.zw::before {
@@ -1121,7 +1146,8 @@ button:hover {
   display: none;
 }
 
-setting:has(#watermark:not(:checked)) + fieldset, *[disabled]{
+setting:has(#watermark:not(:checked))+fieldset,
+*[disabled] {
   pointer-events: none;
   user-select: none;
   filter: opacity(.5);

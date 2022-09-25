@@ -1,4 +1,4 @@
-maquetteB = `
+const maquetteB = `
         <div class="content" type="B">
           <div class="c tl">
             <div class="f"></div>
@@ -36,8 +36,9 @@ maquetteB = `
 
 const maquette = document.createElement("div");
 maquette.classList.add("maquette");
-maquette.style = "display:grid";
-maquette.innerHTML = "<button>+ B</button><button>+ S</button>";
+maquette.style = "display:flex;flex-direction:column";
+maquette.innerHTML =
+  "<button>+ B</button><button>+ S</button><button>+ T</button>";
 
 const bcolArr = [
   "lightblue",
@@ -207,10 +208,23 @@ function maquettesToJSON() {
       text_middle: page.getAttribute("text_middle") ?? null,
       maquettes: [],
     };
-    page.querySelectorAll(".content").forEach((content) => {
+    page.querySelectorAll(".maquette").forEach((maquette) => {
+      let content = maquette.querySelector(".content");
+      if (!content) {
+        let tc = maquette.querySelector(".text-content");
+        if (tc) {
+          tmp_page.maquettes.push({
+            type: "T",
+            text_content: tc.value,
+            text_content_width: tc.style.width,
+          });
+        } else tmp_page.maquettes.push({});
+        return;
+      }
       let tmp_maquette = {
         type: content.getAttribute("type") ?? "S",
         restart_count: content.hasAttribute("restart-c"),
+        no_count: content.hasAttribute("no-c"),
         corners: {},
       };
       content.querySelectorAll(".c").forEach((corner, index) => {
@@ -356,12 +370,21 @@ function jsonToMaquettes(text) {
     if (page.text_middle) cp.setAttribute("text_middle", page.text_middle);
     let acm = cp.querySelectorAll(".maquette"); //all current page maquettes
     maquettes.forEach((maquette, index) => {
+      if (maquette.type == null) return;
       let cm = acm[index]; //current maquette
       let acmb = cm.querySelectorAll("button"); //all current maquette buttons
       if (maquette.type == "B") acmb[0].click();
-      else acmb[1].click();
+      else if (maquette.type == "S") acmb[1].click();
+      else if (maquette.type == "T") {
+        acmb[2].click();
+        let tc = cm.querySelector(".text-content");
+        tc.value = maquette.text_content;
+        tc.style.width = maquette.text_content_width;
+        return;
+      }
       let content = cm.querySelector(".content");
       if (maquette.restart_count == true) content.toggleAttribute("restart-c");
+      if (maquette.no_count == true) content.toggleAttribute("no-c");
       let ccs = Object.values(maquette.corners); //current corners
       cm.querySelectorAll(".c").forEach((c, index2) => {
         let cc = ccs[index2]; //current corner
@@ -521,17 +544,28 @@ function generateGridItems(count, gic, keep = false) {
 
 // set button events
 function setButtonEvents(m) {
-  m.querySelectorAll("button").forEach((item) => {
+  m.querySelectorAll("button").forEach((item, index) => {
     item.addEventListener("click", () => {
       m.removeAttribute("style");
       m.removeAttribute("default");
-      m.innerHTML = maquetteB;
-      setEvents(m);
+      if (index == 2) {
+        m.innerHTML = `<textarea class="text-content"></textarea>`;
+        m.querySelector(".text-content").onkeydown = () => {
+          if (event.key == "Tab") {
+            event.preventDefault();
+            document.execCommand("insertHTML", false, "&#009");
+          }
+        };
+      } else {
+        m.innerHTML = maquetteB;
+        if (index == 1) m.querySelector(".content").setAttribute("type", "S");
+        setEvents(m);
+      }
     });
   });
-  m.querySelector("button:last-child").addEventListener("click", () => {
-    m.querySelector(".content").setAttribute("type", "S");
-  });
+  // m.querySelector("button:nth-child(2)").addEventListener("click", () => {
+  //   m.querySelector(".content").setAttribute("type", "S");
+  // });
 }
 
 //set all other events
@@ -540,11 +574,8 @@ function setEvents(m) {
     event.preventDefault();
     const t = event.target;
     if (t.classList.contains("content")) {
-      // let txt = prompt("Enter a name for the selected Maquette");
-      // if (txt != null && txt != "") {
-      //   t.setAttribute("name", txt);
-      // }
-      t.toggleAttribute("restart-c");
+      if (event.shiftKey) t.toggleAttribute("no-c");
+      else t.toggleAttribute("restart-c");
     }
   };
   m.querySelector(".content").ondblclick = () => {
@@ -808,12 +839,12 @@ window.addEventListener("beforeunload", (event) => {
   }
 });
 
-show_watermark.onchange = ()=>{
+show_watermark.onchange = () => {
   let t = event.target;
-  if(t.checked){
-    if(update_watermark()) r.style.setProperty("--default-biurl", "var(--biurl)");
-  }
-  else{
+  if (t.checked) {
+    if (update_watermark())
+      r.style.setProperty("--default-biurl", "var(--biurl)");
+  } else {
     r.style.setProperty("--default-biurl", "none");
   }
-}
+};
