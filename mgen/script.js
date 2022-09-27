@@ -223,6 +223,7 @@ function maquettesToJSON() {
       }
       let tmp_maquette = {
         type: content.getAttribute("type") ?? "S",
+        custom_type: content.style.getPropertyValue("--custom-type"),
         restart_count: content.hasAttribute("restart-c"),
         no_count: content.hasAttribute("no-c"),
         corners: {},
@@ -238,9 +239,9 @@ function maquettesToJSON() {
           sign: corner.querySelector("div.sign").classList[1] ?? null,
           vehicles: [],
         };
-        corner.querySelectorAll("div:not(.sign)").forEach((vehicle) => {
+        corner.querySelectorAll("div:not(.sign)").forEach((vehicle, index) => {
           let tmp_vehicle = null;
-          if (vehicle.hasChildNodes())
+          if (vehicle.hasChildNodes()) {
             tmp_vehicle = {
               direction: vehicle
                 .getAttribute("class")
@@ -255,6 +256,8 @@ function maquettesToJSON() {
               text: vehicle.querySelector("a").innerText,
               is_fb: vehicle.classList.contains("fb"),
             };
+            if (index == 0) tmp_vehicle["is_fbf"] = vehicle.hasAttribute("fbf");
+          }
           tmp_corner.vehicles.push(tmp_vehicle);
         });
         //tmp_maquette.corners.push(tmp_corner);
@@ -385,6 +388,8 @@ function jsonToMaquettes(text) {
       let content = cm.querySelector(".content");
       if (maquette.restart_count == true) content.toggleAttribute("restart-c");
       if (maquette.no_count == true) content.toggleAttribute("no-c");
+      if (maquette.custom_type && maquette.custom_type != "")
+        content.style.setProperty("--custom-type", maquette.custom_type);
       let ccs = Object.values(maquette.corners); //current corners
       cm.querySelectorAll(".c").forEach((c, index2) => {
         let cc = ccs[index2]; //current corner
@@ -396,6 +401,7 @@ function jsonToMaquettes(text) {
           v.classList.add(cv.direction);
           if (cv.is_fb) v.classList.add("fb");
           v.querySelector("a").innerText = cv.text;
+          if (index3 == 0 && cv.is_fbf) v.setAttribute("fbf", null);
         });
 
         //for sign
@@ -582,13 +588,23 @@ function setEvents(m) {
     event.preventDefault();
     const t = event.target;
     if (t.classList.contains("content")) {
-      let type = t.getAttribute("type");
-      let other_type = type == "B" ? "S" : "B";
-      let toggle = confirm(
-        `Switch '${type}' type maquette for '${other_type}' type?`
-      );
-      if (toggle) {
-        t.setAttribute("type", other_type);
+      if (event.shiftKey) {
+        let txt = prompt(
+          "Enter a custom type for the selected maquette",
+          t.style.getPropertyValue("--custom-type")
+        );
+        if (txt != null && txt != "")
+          t.style.setProperty("--custom-type", `'${txt}'`);
+      } else {
+        let type = t.getAttribute("type");
+        let other_type = type == "B" ? "S" : "B";
+        let toggle = confirm(
+          `Switch '${type}' type maquette for '${other_type}' type?\n(this will reset the custom type)`
+        );
+        if (toggle) {
+          t.style.removeProperty("--custom-type");
+          t.setAttribute("type", other_type);
+        }
       }
     }
   };
@@ -698,10 +714,14 @@ function setEvents(m) {
             a_txt_item.innerText
           );
           if (txt != null && txt != "") {
-            if (txt.length <= 2) {
-              if (t.classList.contains("f") || t.classList.contains("fb"))
+            if (txt.startsWith("F/BF") && t.classList.contains("f")) {
+              t.setAttribute("fbf", null);
+              a_txt_item.innerText = txt;
+            } else if (txt.length <= 2) {
+              if (t.classList.contains("f") || t.classList.contains("fb")) {
+                t.removeAttribute("fbf");
                 a_txt_item.innerText = "F" + txt;
-              else a_txt_item.innerText = txt;
+              } else a_txt_item.innerText = txt;
             } else alert("Name cannot be longer than 2 characters");
           }
         }

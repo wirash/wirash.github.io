@@ -252,7 +252,7 @@ page[layout="landscape"] .maquette {
 }
 
 .content::before {
-  content: attr(type);
+  content: var(--custom-type, attr(type));
   padding: 10px;
   pointer-events: auto;
   cursor: pointer;
@@ -506,12 +506,14 @@ page[layout="landscape"] .maquette {
 }
 
 .f a {
-  /* display: none; */
   position: absolute;
-  /* top: calc(-1 * var(--h));
-  right: calc(var(--l) / 4); */
-
   bottom: calc(-1 * var(--l));
+}
+
+.f[fbf] a {
+  bottom: unset;
+  top: calc(-100% - 1px);
+  right: 12px;
 }
 
 .c.fp .f:not(.b) a {
