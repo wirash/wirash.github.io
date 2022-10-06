@@ -11,6 +11,11 @@
   --asize: 0.25rem;
 
   --default-biurl: none;
+  --bfsize: calc(var(--fsize) + 4pt);
+  --spacer: 10px;
+
+  --vehicle-spacer: 5px;
+  --vehicle-width: calc(var(--fsize) + 5pt);
 }
 
 * {
@@ -67,55 +72,81 @@ page {
   background-size: contain;
 }
 
-page::before,
-page::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: calc(var(--pmargin) - var(--fsize));
-  font-size: calc(var(--fsize) + 4pt);
-  line-height: calc(var(--pmargin) - var(--fsize));
-  text-align: center;
-  font-weight: 500;
-  text-decoration: underline;
-  cursor: pointer;
-  pointer-events: auto;
-  outline: 1px dashed var(--color3);
-}
-
-page::before {
-  content: attr(text_top);
-  top: calc(var(--pmargin) + var(--fsize) - 2pt);
-}
-
-page::after {
-  content: attr(text_middle);
-  top: calc(50% + var(--fsize) - 2pt);
-}
-
 page .maquettecontainer {
   display: grid;
   place-items: center;
   margin: var(--pmargin);
-  --rgp: 20pt;
-  margin-top: calc(var(--pmargin) + var(--rgp) + var(--fsize));
-  row-gap: max(10px, var(--rgp) + var(--fsize));
   column-gap: 10px;
   transition: 0.3s;
-  /* overflow: hidden; */
   width: calc(100% - (2 * var(--pmargin)));
-  height: calc(100% - (2 * var(--pmargin)) - var(--rgp) - var(--fsize));
+  /* --rgp: 20pt;
+  margin-top: calc(var(--pmargin) + var(--rgp) + var(--fsize));
+  row-gap: max(10px, var(--rgp) + var(--fsize));
+  height: calc(100% - (2 * var(--pmargin)) - var(--rgp) - var(--fsize)); */
+
+  /* margin-top: calc(var(--pmargin) + var(--bfsize) + var(--spacer)); */
+  /* row-gap: max(10px, var(--bfsize) + var(--spacer)); */
+  /* height: calc(100% - (2 * var(--pmargin)) - var(--bfsize) - var(--spacer)); */
+  height: calc(100% - 2 * var(--pmargin));
+  row-gap: 5px;
+
 }
 
 page[layout="portrait"] .maquettecontainer {
-  grid: repeat(var(--grid-v), minmax(0, 1fr)) / repeat(var(--grid-h),
-      minmax(0, 1fr));
+  /* grid: repeat(var(--grid-v), minmax(0, 1fr)) / repeat(var(--grid-h),
+      minmax(0, 1fr)); */
+  /* grid: repeat(calc(2 * var(--grid-v)), minmax(0, max-content)) / repeat(var(--grid-h), minmax(0, 1fr)); */
+  grid: repeat(var(--grid-v), min-content 1fr) / repeat(var(--grid-h), 1fr);
 }
 
 page[layout="landscape"] .maquettecontainer {
-  grid: repeat(var(--grid-h), minmax(0, 1fr)) / repeat(var(--grid-v),
-      minmax(0, 1fr));
+  /* grid: repeat(var(--grid-h), minmax(0, 1fr)) / repeat(var(--grid-v),
+      minmax(0, 1fr)); */
+  grid: repeat(var(--grid-h), min-content 1fr) / repeat(var(--grid-v), 1fr);
+}
+
+.maquettecontainer .row_separator {
+  cursor: pointer;
+  pointer-events: auto;
+  display: grid;
+  /* grid: 1fr / repeat(3, minmax(auto, 100%)); */
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(auto, 1fr);
+  width: 100%;
+  outline: 1px dashed var(--color3);
+  margin: unset;
+  white-space: nowrap;
+  text-overflow: clip;
+  overflow: hidden;
+}
+
+/* .maquettecontainer .row_separator:has(:nth-child(2):last-child) {
+  grid: 1fr / repeat(2, 1fr);
+} */
+
+.maquettecontainer .row_separator>* {
+  text-align: center;
+  font-size: var(--bfsize);
+  font-weight: 500;
+  text-decoration: underline;
+  height: calc(var(--bfsize) + var(--spacer));
+  line-height: calc(var(--bfsize) + var(--spacer));
+  outline: 1px dashed var(--color3);
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+.maquettecontainer .row_separator>*:focus-visible {
+  outline: none;
+  background-color: #88888850;
+}
+
+page[layout="portrait"] .maquettecontainer .row_separator {
+  grid-column: 1 / max(var(--grid-h), var(--grid-v));
+}
+
+page[layout="landscape"] .maquettecontainer .row_separator {
+  grid-column: 1 / max(var(--grid-h) + 1, var(--grid-v) + 1);
 }
 
 page[size="A4"][layout="portrait"] {
@@ -156,7 +187,6 @@ page[size="A3"][layout="landscape"] {
 
   page:not(:first-child) {
     margin-top: 0.5px;
-    /* this prevents some kind of bug */
   }
 
   .settings_container,
@@ -167,7 +197,6 @@ page[size="A3"][layout="landscape"] {
 
   .maquette>input,
   .maquette[default] {
-    /* display: none !important; */
     visibility: hidden !important;
   }
 
@@ -183,14 +212,15 @@ page[size="A3"][layout="landscape"] {
     background-color: transparent !important;
   }
 
-  page::before,
-  page::after {
+  .row_separator,
+  .row_separator>* {
     outline: none !important;
   }
 
-  .text-content{
+  .text-content {
     resize: none !important;
     overflow: hidden !important;
+    background-color: unset !important;
   }
 }
 
@@ -256,6 +286,7 @@ page[layout="landscape"] .maquette {
   padding: 10px;
   pointer-events: auto;
   cursor: pointer;
+  font-size: calc(var(--fsize) + 3pt);
 }
 
 .content[restart-c]:not([no-c]) {
@@ -266,13 +297,13 @@ page[layout="landscape"] .maquette {
   background-color: salmon;
 }
 
-.content:not([no-c]):after {
+.content:not([no-c])::after {
   content: counter(c);
   position: absolute;
   top: 5px;
   left: 5px;
   border: 1px solid var(--color1);
-  border-radius: 50%;
+  border-radius: 999px;
   font-weight: 500;
   display: flex;
   justify-content: center;
@@ -280,6 +311,7 @@ page[layout="landscape"] .maquette {
   width: max(var(--pmargin) - 15px, var(--fsize) + 10px);
   aspect-ratio: 1;
   color: var(--color1);
+  overflow: hidden;
 }
 
 .maquette>.content>* {
@@ -289,17 +321,18 @@ page[layout="landscape"] .maquette {
 .maquette>.text-content {
   all: unset;
   height: calc(100% + 1px);
-  max-width: calc(var(--grid-h) * (100% + 12px));
+  max-width: calc(var(--grid-h) * (100% + var(--spacer)));
   min-width: 100%;
   font-size: calc(var(--fsize) + 3pt);
   box-sizing: border-box;
   resize: horizontal;
+  background-color: #88888850;
 }
 
 .maquette>.text-content:focus-visible,
 .maquette>.text-content:hover {
   outline: none;
-  background-color: #88888866;
+  background-color: #88888877;
 }
 
 .maquette:has(.text-content) {
@@ -382,7 +415,7 @@ page[layout="landscape"] .maquette {
   aspect-ratio: 1;
   border-radius: 999px;
   border: 1px solid var(--color1);
-  top: calc(-100% - 3px);
+  top: -100%;
   left: -2px;
 }
 
@@ -391,7 +424,9 @@ page[layout="landscape"] .maquette {
   background-color: var(--color1);
   --h: 25px;
   height: var(--h);
-  top: calc(-100% - 2px - ((var(--h) - var(--w)) / 2));
+  /* top: calc(-100% - 2px - ((var(--h) - var(--w)) / 2)); */
+  top: -100%;
+  translate: 0 calc(-50% + (var(--w) + 2px) / 2);
   left: calc(var(--w) / 2 + 0.5px - 2px);
 }
 
@@ -403,13 +438,13 @@ page[layout="landscape"] .maquette {
 .maquette .c.inrit-s::before,
 .maquette .c.inrit-b::before {
   position: absolute;
-  top: -3px;
-  font-size: 1.1rem;
+  top: -2px;
+  font-size: calc(var(--fsize) + 3pt);
   font-style: italic;
   transform-origin: 0 0;
   text-align: center;
   transform: rotate(-90deg);
-  width: calc(163.63% + 4 * 3px);
+  width: calc(163.62% + 4 * 3px);
   color: var(--color0);
 }
 
@@ -465,11 +500,11 @@ page[layout="landscape"] .maquette {
 .f {
   position: absolute;
   top: 0;
-  --l: 15px;
-  left: calc(100% + var(--l));
+  left: calc(100% + var(--vehicle-spacer) * 3);
   background-color: var(--bcol);
   border: 1px solid var(--color1);
-  width: 30%;
+  /* width: 30%; */
+  width: var(--vehicle-width);
   --vhr: 1.5;
   aspect-ratio: 1 / var(--vhr);
   display: grid;
@@ -483,18 +518,21 @@ page[layout="landscape"] .maquette {
 }
 
 .f {
-  left: calc(100% + (var(--l) / 2) + (var(--w) / 2));
+  left: calc(100% + (var(--vehicle-spacer) * 3) / 2 + (var(--w) / 2));
   background-color: var(--color1);
   width: var(--w);
   /* height: calc(30% * var(--vhr)); */
-  height: 30%;
+  /* height: 30%; */
+  height: var(--vehicle-width);
   border: unset;
-  --hf: calc(var(--h) - 4px);
+  /* --hf: calc(var(--h) - 4px); */
+  --h: 60%;
 }
 
 .f.b {
   display: none;
-  top: calc(5px + 45%);
+  /* top: calc(5px + 45%); */
+  top: calc((2 * 1.5 * var(--vehicle-width)) + var(--vehicle-spacer) - var(--vehicle-width));
 }
 
 .c.fp .f.b {
@@ -507,13 +545,19 @@ page[layout="landscape"] .maquette {
 
 .f a {
   position: absolute;
-  bottom: calc(-1 * var(--l));
+  /* bottom: calc(-1 * var(--l)); */
+  top: 100%;
 }
 
 .f[fbf] a {
   bottom: unset;
-  top: calc(-100% - 1px);
-  right: 12px;
+  top: calc(-100% - var(--vehicle-spacer) * 2);
+  right: calc(var(--vehicle-spacer) + 3px);
+}
+
+.f.r[fbf] a,
+.f.d[fbf] a {
+  top: calc(-100% - var(--vehicle-spacer) / 2);
 }
 
 .c.fp .f:not(.b) a {
@@ -559,8 +603,12 @@ page[layout="landscape"] .maquette {
   cursor: default;
 }
 
-.f::before {
-  height: var(--hf);
+.f.r {
+  --h: 50%;
+}
+
+.f.r+.v.l {
+  --h: 80%;
 }
 
 .f.l::before,
@@ -637,7 +685,8 @@ page[layout="landscape"] .maquette {
   filter: invert(var(--invert));
 }
 
-.v.b>i {
+.v.b>i,
+.v.bc>i {
   display: inline-block;
   position: absolute;
   /* height: var(--w); */
@@ -647,11 +696,20 @@ page[layout="landscape"] .maquette {
   /* left: 50%;
   width: calc(50% + var(--l) / 2); */
   /* left: 100%; */
-  left: 50%;
+  left: 100%;
   /* width: 50%; */
   /* width: calc((var(--l) / 2) + (var(--w) / 2)); */
-  width: calc((var(--l) / 2) + (var(--w) / 2) + 50%);
+  width: calc(var(--vehicle-spacer) + (var(--w) / 2));
   background-color: var(--color1);
+}
+
+.v.bc.l>i {
+  width: calc(50% + var(--vehicle-spacer) + (var(--w) / 2));
+}
+
+.v.b.fb>i {
+  left: 50%;
+  width: calc(50% + var(--vehicle-spacer) + (var(--w) / 2));
 }
 
 .v.b.fb a {
@@ -679,7 +737,7 @@ page[layout="landscape"] .maquette {
 }
 
 .f.d::after {
-  bottom: calc(100% + var(--hf));
+  bottom: calc(100% + var(--h));
 }
 
 .v.l::after,
@@ -711,115 +769,154 @@ page[layout="landscape"] .maquette {
 
 .f.l::after,
 .f.r::after {
-  bottom: calc((100% + var(--hf)) - var(--t) - (var(--w) / 2));
+  bottom: calc((100% + var(--h)) - var(--t) - (var(--w) / 2));
 }
 
 /* .f.r+.v.l::after {
   bottom: calc((100% + var(--h)) - var(--t) - (var(--w) / 2) - 7px);
 } */
 
-.f~.v:nth-child(3)
-
-/*:not(.b),
-:not(.f)~.v:nth-child(2):not(.b),
-:not(.f)~.v:nth-child(2):not(:last-child)*/
-  {
-  left: calc(130% + (var(--l) * 2));
+.f~.v:nth-child(3) {
+  /* left: calc(130% + (var(--l) * 2)); */
+  left: calc(100% + var(--vehicle-width) + var(--vehicle-spacer) * 5);
 }
 
 .v:empty+.v:nth-child(3):not(:empty, .b) {
-  left: 155%;
+  /* left: 155%; */
+  left: calc(100% + var(--vehicle-width) + var(--vehicle-spacer) * 3);
 }
 
 .content[type="S"] .v:not(:empty)+.v:nth-child(3) {
   display: none;
 }
 
-.content[type="S"] .v:nth-child(2):not(:empty)~.v.b:nth-child(4) {
+/* .content[type="S"] .v:nth-child(2):not(:empty)~.v.b:nth-child(4) {
   left: calc(100% + var(--l) + 5px);
-}
+} */
 
-/* .content[type="B"]  */
 .v.b {
-  top: calc(30% * var(--vhr) + 5px);
+  top: calc(1.5 * var(--vehicle-width) + var(--vehicle-spacer));
 }
 
-/* .content[type="B"]  */
+.v.bc {
+  top: calc(2 * (1.5* var(--vehicle-width) + var(--vehicle-spacer)));
+}
+
 .v.b::before {
-  /* border-bottom-width: var(--w); */
   height: calc(100% + 5px + 45%);
-  /* height: calc(100% + 2px + 45%); */
-  left: calc(50% + (var(--l) / 2) + (var(--w) / 2));
-  /* left: calc(100%); */
+  /* left: calc(50% + (var(--l) / 2) + (var(--w) / 2)); */
+  /* left: calc(50% + var(--vehicle-spacer) + (var(--w) / 2)); */
+  left: calc(100% - (var(--w) / 2));
 }
 
-/* .content[type="B"]  */
-.v.r.b::before {
-  /* left: calc(100% + (var(--l) / 2)); */
-  left: calc(100% + (var(--l) / 2));
+.v.bc::before {
+  height: 90%;
+  left: calc(100% - (var(--w) / 2));
 }
 
-/* .content[type="B"]  */
+.v.bc.l::before {
+  left: calc(150% - (var(--w) / 2));
+}
+
+.v.b.r::before,
+.v.bc.r::before {
+  left: calc(150% - var(--w));
+}
+
 .v.b.d::after {
-  left: calc(100% + (var(--l) / 2) + (var(--w) / 2));
+  left: calc(100% + var(--vehicle-spacer) + (var(--w) / 2));
   bottom: calc(200% + 5px + 45%);
   /* bottom: calc(245% + 5px - 3px); */
 }
 
-/* .content[type="B"]  */
+.v.bc.d::after {
+  left: calc(100% + var(--vehicle-spacer) + (var(--w) / 2));
+  bottom: 190%;
+}
+
 .v.b.l::after {
-  left: calc(100% - (var(--t) / 2) - (var(--w) / 2));
-  /* bottom: 245%; */
-  /* bottom: calc(245% - 2px); */
+  /* left: calc(100% - (var(--t) / 2) - (var(--w) / 2)); */
+  left: calc(100% - var(--t) - (var(--w) / 2));
   bottom: calc(245% - var(--t) + var(--w) / 2 + 3px);
 }
 
-/* .content[type="B"]  */
+.v.bc.l::after {
+  /* left: calc(100% - (var(--t) / 2) - (var(--w) / 2)); */
+  left: calc(170% - var(--t) - (var(--w) / 2));
+  bottom: calc(190% - var(--t) - var(--w) / 2);
+}
+
 .v.b.r::after {
-  left: calc(200% + var(--w) / 2);
-  /* left: calc(200% - var(--w) * 2); */
-  /* bottom: 245%; */
-  /* bottom: calc(245% - 2px); */
+  /* left: calc(200% + var(--w) / 2); */
+  left: calc(150% + var(--vehicle-spacer));
   bottom: calc(245% - var(--t) + var(--w) / 2 + 3px);
+}
+
+.v.bc.r::after {
+  left: calc(150% + var(--vehicle-spacer));
+  bottom: calc(190% - var(--t) - var(--w) / 2);
 }
 
 /* for when first v is empty */
-/* .content[type="B"]  */
 .v:empty:nth-child(2)~.v.b i {
   display: none;
 }
 
-/* .content[type="B"]  */
 .v:empty:nth-child(2)~.v.b.l::before {
   left: 0;
-  height: calc(100% + 6px + 73%);
+  height: calc(70% + 6px + 73%);
 }
 
-/* .content[type="B"]  */
+.f.r+.v:empty:nth-child(2)~.v.b.l::before {
+  left: 0;
+  height: calc(40% + 6px + 73%);
+}
+
 .v:empty:nth-child(2)~.v.b.l::after {
-  /* left: calc(-1 * var(--t)); */
   left: calc(-1 * var(--t) + 2px);
-  bottom: calc(278% - var(--t) + var(--w) / 2 + 3px);
+  bottom: calc(248% - var(--t) + var(--w) / 2 + 3px);
 }
 
-/* .content[type="B"]  */
+.f.r+.v:empty:nth-child(2)~.v.b.l::after {
+  bottom: calc(218% - var(--t) + var(--w) / 2 + 3px);
+}
+
 .v:empty:nth-child(2)~.v.b.r::before {
   left: calc(50% - (var(--w) / 2));
 }
 
-/* .content[type="B"]  */
 .v:empty:nth-child(2)~.v.b.r::after {
   left: 100%;
 }
 
-/* .content[type="B"]  */
 .v:empty:nth-child(2)~.v.b.d::before {
   left: 0;
+  height: calc(50% + 6px + 73%);
 }
 
-/* .content[type="B"]  */
 .v:empty:nth-child(2)~.v.b.d::after {
   left: 50%;
+  bottom: calc(248% - var(--t) + var(--w) / 2 + 3px);
+}
+
+.v:empty:nth-child(2)~.v.b.d a::before {
+  content: "\01F807";
+  position: absolute;
+  left: calc(var(--vehicle-width) * -1.7 + 50%);
+  font-size: calc(var(--fsize) + 4pt);
+  transform-origin: center 25%;
+  visibility: hidden;
+  top: 50%;
+}
+
+.v:empty:nth-child(2)~.v.b.d.al a::before {
+  transform: translate(-50%, -25%) scale(1);
+  visibility: visible;
+}
+
+.v:empty:nth-child(2)~.v.b.d.ar a::before {
+  transform: translate(-50%, -25%) scale(-1);
+  visibility: visible;
 }
 
 /* --------- */
@@ -842,7 +939,8 @@ page[layout="landscape"] .maquette {
   position: absolute;
   top: 5%;
   right: 5%;
-  width: 30%;
+  /* width: 30%; */
+  width: calc(var(--vehicle-width) + 1pt);
   aspect-ratio: 1;
   background-repeat: no-repeat;
   cursor: pointer;

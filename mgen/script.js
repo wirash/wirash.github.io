@@ -6,6 +6,7 @@ const maquetteB = `
             <div class="v"></div>
             <div class="f b"></div>
             <div class="v b"></div>
+            <div class="v bc"></div>
             <div class="sign"></div>
           </div>
           <div class="c tr">
@@ -14,6 +15,7 @@ const maquetteB = `
             <div class="v"></div>
             <div class="f b"></div>
             <div class="v b"></div>
+            <div class="v bc"></div>
             <div class="sign"></div>
           </div>
           <div class="c br">
@@ -22,6 +24,7 @@ const maquetteB = `
             <div class="v"></div>
             <div class="f b"></div>
             <div class="v b"></div>
+            <div class="v bc"></div>
             <div class="sign"></div>
           </div>
           <div class="c bl">
@@ -30,6 +33,7 @@ const maquetteB = `
             <div class="v"></div>
             <div class="f b"></div>
             <div class="v b"></div>
+            <div class="v bc"></div>
             <div class="sign"></div>
           </div>
         </div>`;
@@ -66,6 +70,11 @@ const signClasses = [
 
 const cornersArr = ["tl", "tr", "br", "bl"];
 
+const row_separator = document.createElement("p");
+// row_separator.innerHTML =
+//   "<div contenteditable></div><div contenteditable></div><div contenteditable></div>";
+row_separator.classList.add("row_separator");
+
 let r = document.querySelector(":root");
 const gsize = document.getElementById("gsize");
 const pmargin = document.getElementById("pmargin");
@@ -77,7 +86,7 @@ const cmc = document.getElementById("cmc");
 const emc = document.getElementById("emc");
 const imc = document.getElementById("imc");
 const mprint = document.getElementById("mprint");
-const settings = document.querySelector(".settings");
+const settings = document.querySelector(".settings_container");
 let pages = document.querySelectorAll("page");
 const draw_empty_maquettes = document.getElementById("draw_empty_maquettes");
 const pagecount_current = document.querySelector("#page-count > .current");
@@ -204,10 +213,16 @@ function maquettesToJSON() {
   };
   pages.forEach((page) => {
     let tmp_page = {
-      text_top: page.getAttribute("text_top") ?? null,
-      text_middle: page.getAttribute("text_middle") ?? null,
+      texts: [],
       maquettes: [],
     };
+    page.querySelectorAll(".row_separator").forEach((rs) => {
+      let rsdt = [];
+      rs.querySelectorAll("div").forEach((rsd) => {
+        rsdt.push(rsd.innerText);
+      });
+      tmp_page.texts.push(rsdt);
+    });
     page.querySelectorAll(".maquette").forEach((maquette) => {
       let content = maquette.querySelector(".content");
       if (!content) {
@@ -243,18 +258,25 @@ function maquettesToJSON() {
           let tmp_vehicle = null;
           if (vehicle.hasChildNodes()) {
             tmp_vehicle = {
-              direction: vehicle
-                .getAttribute("class")
-                // .replace("v ", "")
-                // .replace("f ", "")
-                // .replace("b ", "")
-                // .replace("fb ", ""),
-                .replaceAll(" ", "")
-                .replace("v", "")
-                .replace("f", "")
-                .replaceAll("b", ""),
+              // direction: vehicle
+              //   .getAttribute("class")
+              //   .replaceAll(" ", "")
+              //   .replace("v", "")
+              //   .replace("f", "")
+              //   .replaceAll("bc", "")
+              //   .replaceAll("b", ""),
+              direction: vehicle.classList.contains("r")
+                ? "r"
+                : vehicle.classList.contains("l")
+                ? "l"
+                : "d",
               text: vehicle.querySelector("a").innerText,
               is_fb: vehicle.classList.contains("fb"),
+              has_side_arrow: vehicle.classList.contains("al")
+                ? "al"
+                : vehicle.classList.contains("ar")
+                ? "ar"
+                : null,
             };
             if (index == 0) tmp_vehicle["is_fbf"] = vehicle.hasAttribute("fbf");
           }
@@ -369,8 +391,17 @@ function jsonToMaquettes(text) {
   main.pages.forEach((page, index0) => {
     let maquettes = page.maquettes;
     let cp = pages[index0]; //current page
-    if (page.text_top) cp.setAttribute("text_top", page.text_top);
-    if (page.text_middle) cp.setAttribute("text_middle", page.text_middle);
+
+    if (page.texts) {
+      let rss = cp.querySelectorAll(".row_separator");
+      rss.forEach((rs, index) => {
+        // rs.value = page.texts[index] ?? "";
+        rs.querySelectorAll("div").forEach((rsd, index2) => {
+          rsd.innerText = page.texts[index][index2] ?? "";
+        });
+      });
+    }
+
     let acm = cp.querySelectorAll(".maquette"); //all current page maquettes
     maquettes.forEach((maquette, index) => {
       if (maquette.type == null) return;
@@ -402,6 +433,7 @@ function jsonToMaquettes(text) {
           if (cv.is_fb) v.classList.add("fb");
           v.querySelector("a").innerText = cv.text;
           if (index3 == 0 && cv.is_fbf) v.setAttribute("fbf", null);
+          if (cv.has_side_arrow) v.classList.add(cv.has_side_arrow);
         });
 
         //for sign
@@ -450,6 +482,33 @@ psize.onchange = () => {
 porientation.onchange = () => {
   pages.forEach((page) => {
     page.setAttribute("layout", porientation.value);
+    let mc = page.querySelector(".maquettecontainer");
+
+    let git = getGridItemCount();
+    mc.querySelectorAll(".row_separator").forEach((item) => {
+      item.remove();
+    });
+    if (porientation.value == "landscape") {
+      for (let i = 0; i <= git[1] - 1; i++) {
+        let rs = row_separator.cloneNode(true);
+        rs.innerHTML = "<div contenteditable></div>".repeat(git[2]);
+        //rs.onkeydown = makeTabWork;
+        mc.insertBefore(
+          rs,
+          mc.querySelector(":scope > div:nth-of-type(" + (git[2] * i + 1) + ")")
+        );
+      }
+    } else {
+      for (let i = 0; i <= git[2] - 1; i++) {
+        let rs = row_separator.cloneNode(true);
+        rs.innerHTML = "<div contenteditable></div>".repeat(git[1]);
+        //rs.onkeydown = makeTabWork;
+        mc.insertBefore(
+          rs,
+          mc.querySelector(":scope > div:nth-of-type(" + (git[1] * i + 1) + ")")
+        );
+      }
+    }
   });
 };
 
@@ -473,7 +532,7 @@ function createPages(count) {
     let newnewpage = newpage.cloneNode(true);
     document.body.insertBefore(newnewpage, settings);
     observer.observe(newnewpage);
-    setPageEvents(newnewpage);
+    // setPageEvents(newnewpage);
   }
   pages = document.querySelectorAll("page");
   pagecount_total.innerText = pages.length;
@@ -500,10 +559,9 @@ function update_watermark() {
       "--biurl",
       `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='${pagesize.height}' width='${pagesize.width}'><text x='50%' y='50%' fill='%2355555560' font-size='${watermark_text_fontsize.value}' text-anchor='middle' dominant-baseline='central' transform='rotate(${pagesize.rotation}, ${pagesize.centerx}, ${pagesize.centery})' font-family='sans-serif'>${watermark_text.value}</text></svg>")`
     );
+  } else {
+    r.style.removeProperty("--biurl");
   }
-  // else {
-  //   r.style.removeProperty("--biurl");
-  // }
   return watermark.checked;
 }
 
@@ -518,7 +576,8 @@ draw_empty_maquettes.onclick = () => {
   let r_new = window.getComputedStyle(document.documentElement);
   let v = parseInt(r_new.getPropertyValue("--grid-v"));
   let h = parseInt(r_new.getPropertyValue("--grid-h"));
-  generateGridItems(v * h * pages.length, v * h, true);
+  // generateGridItems(v * h * pages.length, v * h, true);
+  generateGridItems(v * h * pages.length, null, true);
 };
 
 insert_blank_page.onclick = () => {
@@ -526,7 +585,11 @@ insert_blank_page.onclick = () => {
 };
 
 function generateGridItems(count, gic, keep = false) {
-  gic = gic ?? getGridItemCount()[0];
+  let gic_array;
+  if (!gic) {
+    gic_array = getGridItemCount();
+    gic = gic_array[0];
+  }
   pages = document.querySelectorAll("page");
   let newpages = Math.ceil(count / gic) - pages.length;
   if (newpages >= 0) {
@@ -544,7 +607,21 @@ function generateGridItems(count, gic, keep = false) {
         m2.toggleAttribute("default");
         mc.appendChild(m2);
       }
+
+      for (let i = 0; i < gic_array[2]; i++) {
+        let rs = row_separator.cloneNode(true);
+        rs.innerHTML = "<div contenteditable></div>".repeat(gic_array[1]);
+        //rs.onkeydown = makeTabWork;
+        mc.insertBefore(rs, mc.childNodes[i * gic_array[2]]); // 0 - 3 - 6 (2x3); 0 - 4 - 8 - 12 (3x4)
+      }
     });
+  }
+}
+
+function makeTabWork() {
+  if (event.key == "Tab") {
+    event.preventDefault();
+    document.execCommand("insertHTML", false, "&#009");
   }
 }
 
@@ -556,12 +633,7 @@ function setButtonEvents(m) {
       m.removeAttribute("default");
       if (index == 2) {
         m.innerHTML = `<textarea class="text-content"></textarea>`;
-        m.querySelector(".text-content").onkeydown = () => {
-          if (event.key == "Tab") {
-            event.preventDefault();
-            document.execCommand("insertHTML", false, "&#009");
-          }
-        };
+        m.querySelector(".text-content").onkeydown = makeTabWork;
       } else {
         m.innerHTML = maquetteB;
         if (index == 1) m.querySelector(".content").setAttribute("type", "S");
@@ -678,7 +750,8 @@ function setEvents(m) {
         t.classList.remove("l", "r");
         if (t.classList.contains("f")) t.innerHTML = fInnerHTML;
         else if (t.classList.contains("v")) {
-          if (t.classList.contains("b")) t.innerHTML = vbInnerHTML;
+          if (t.classList.contains("b") || t.classList.contains("bc"))
+            t.innerHTML = vbInnerHTML;
           else t.innerHTML = vInnerHTML;
         }
         t.classList.add("d");
@@ -689,11 +762,27 @@ function setEvents(m) {
       const t = event.target;
       if (t.hasChildNodes()) {
         if (t.classList.contains("d")) {
-          t.classList.toggle("d");
-          const p = t.parentElement;
-          if (p.classList.contains("fp") || p.classList.contains("no"))
-            t.classList.add("r"); //if parent has fietspad or no, cannot go left
-          else t.classList.add("l");
+          if (event.shiftKey) {
+            if (
+              t == t.parentElement.querySelector(".v:empty:nth-child(2)~.v.b.d")
+            ) {
+              if (t.classList.contains("al")) {
+                t.classList.remove("al");
+                t.classList.add("ar");
+              } else if (t.classList.contains("ar")) {
+                t.classList.remove("ar");
+              } else {
+                t.classList.add("al");
+              }
+            }
+          } else {
+            t.classList.toggle("d");
+            const p = t.parentElement;
+            if (p.classList.contains("fp") || p.classList.contains("no"))
+              t.classList.add("r");
+            //if parent has fietspad or no, cannot go left
+            else t.classList.add("l");
+          }
         } else if (t.classList.contains("l")) {
           t.classList.toggle("l");
           t.classList.add("r");
@@ -736,38 +825,34 @@ Array.prototype.random = function () {
   return this[Math.floor(Math.random() * this.length)];
 };
 
-function setPageEvents(p) {
-  //document.querySelectorAll("page").forEach((item) => {
-  p.onclick = () => {
-    const t = event.target;
-    if (t.tagName == "PAGE") {
-      let h = t.clientHeight * 0.1;
-      if (event.offsetY < h) {
-        if (event.shiftKey) t.removeAttribute("text_top");
-        else {
-          let txt = prompt(
-            "Enter a text for the top of the page",
-            t.getAttribute("text_top") ?? ""
-          );
-          if (txt != null && txt != "") t.setAttribute("text_top", txt);
-        }
-      } else if (event.offsetY >= h) {
-        if (event.shiftKey) t.removeAttribute("text_middle");
-        else {
-          let txt = prompt(
-            "Enter a text for the middle of the page",
-            t.getAttribute("text_middle") ?? ""
-          );
-          if (txt != null && txt != "") t.setAttribute("text_middle", txt);
-        }
-      }
-      // console.log(event);
-    }
-  };
-  //});
-}
-
-setPageEvents(pages[0]);
+// function setPageEvents(p) {
+//   p.onclick = () => {
+//     const t = event.target;
+//     if (t.tagName == "PAGE") {
+//       let h = t.clientHeight * 0.1;
+//       if (event.offsetY < h) {
+//         if (event.shiftKey) t.removeAttribute("text_top");
+//         else {
+//           let txt = prompt(
+//             "Enter a text for the top of the page",
+//             t.getAttribute("text_top") ?? ""
+//           );
+//           if (txt != null && txt != "") t.setAttribute("text_top", txt);
+//         }
+//       } else if (event.offsetY >= h) {
+//         if (event.shiftKey) t.removeAttribute("text_middle");
+//         else {
+//           let txt = prompt(
+//             "Enter a text for the middle of the page",
+//             t.getAttribute("text_middle") ?? ""
+//           );
+//           if (txt != null && txt != "") t.setAttribute("text_middle", txt);
+//         }
+//       }
+//     }
+//   };
+// }
+// setPageEvents(pages[0]);
 
 //light / dark mode toggle
 document.querySelector("input[type=radio][name=theme][value=dark]").checked =
