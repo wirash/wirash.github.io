@@ -109,15 +109,17 @@ page[layout="landscape"] .maquettecontainer {
   cursor: pointer;
   pointer-events: auto;
   display: grid;
-  /* grid: 1fr / repeat(3, minmax(auto, 100%)); */
   grid-auto-flow: column;
   grid-auto-columns: minmax(auto, 1fr);
   width: 100%;
+  max-width: 100%;
   outline: 1px dashed var(--color3);
   margin: unset;
   white-space: nowrap;
   text-overflow: clip;
   overflow: hidden;
+  --lh: calc(var(--bfsize) + var(--spacer));
+  column-gap: calc(var(--spacer) / 2);
 }
 
 /* .maquettecontainer .row_separator:has(:nth-child(2):last-child) {
@@ -129,11 +131,14 @@ page[layout="landscape"] .maquettecontainer {
   font-size: var(--bfsize);
   font-weight: 500;
   text-decoration: underline;
-  height: calc(var(--bfsize) + var(--spacer));
-  line-height: calc(var(--bfsize) + var(--spacer));
+  /* height: calc(var(--bfsize) + var(--spacer)); */
+  min-height: var(--lh);
+  line-height: var(--lh);
   outline: 1px dashed var(--color3);
+  max-height: calc(2 * var(--lh));
   white-space: nowrap;
   text-overflow: clip;
+  overflow-y: clip;
 }
 
 .maquettecontainer .row_separator>*:focus-visible {
