@@ -94,7 +94,9 @@
             Import from Clipboard
           </button>
         </setting>
-        <setting disabled><button id="imct">Import from Text File</button> </setting>
+        <setting disabled
+          ><button id="imct">Import from Text File</button>
+        </setting>
         <setting><button id="imcj">Import from JSON File</button></setting>
         <setting><button id="imch">Import from HTML File</button></setting>
         <hr />
@@ -145,97 +147,90 @@
       <b>To use the Maquette Generator, please follow these instructions:</b>
       <ol>
         <li>
-          Fill with placeholders or Import codes to start.
+          Fill with placeholders or Import codes to start.<br />
+          Importing and exporting can be done using different file types.<br />
+          Please use the HTML type only if JSON is not working.
+        </li>
+        <li>
+          When filled with placeholders, click on one of the two buttons in each maquette to specify which type you want to generate.<br />
+          <ul>
+            <li>"B": generates wide roads</li>
+            <li>"S": generates narrow/normal roads</li>
+            <li>"T": generates a special maquette for text input only</li>
+          </ul>
+        </li>
+        <li>
+          Here are the various controls for each maquette.<br />
+          <u>Maquette type</u>
           <ul>
             <li>
-              Importing and exporting can be done using different file types.<br />
-              Here are some key differences between them:<br />
-              <table border="1" cellpadding="5px" cellspacing="0">
-                <tr>
-                  <th>Difference in</th>
-                  <th>Text</th>
-                  <th>JSON</th>
-                  <th>HTML</th>
-                </tr>
-                <tr>
-                  <th>Readability</th>
-                  <td bgcolor="#ffabab">Bad</td>
-                  <td bgcolor="#abffb5">Best</td>
-                  <td>Good</td>
-                </tr>
-                <tr>
-                  <th>File size</th>
-                  <td bgcolor="#abffb5">Tiny</td>
-                  <td>Medium</td>
-                  <td bgcolor="#ffabab">Big</td>
-                </tr>
-                <tr>
-                  <th>Error chance</th>
-                  <td bgcolor="#ffabab">High</td>
-                  <td>Medium</td>
-                  <td bgcolor="#abffb5">None</td>
-                </tr>
-              </table>
-              <br />
+              <a class="mcontrol">RMB</a>Toggle if the maquette number restarts
+              from 1.<br />
+              Restarting counts are highlighted with a light red background
+              color, which will not be printed.
             </li>
             <li>
-              It is recommended to use the JSON file format, but you are free to
-              choose any.
+              <a class="mcontrol">Double Click</a>Switch between "B" or "S"
+              type.
+            </li>
+            <li>
+              <a class="mcontrol">Shift + Double Click</a>Specify custom type
+              (maintains the old type styling)
+            </li>
+            <li>
+              <a class="mcontrol">Shift + RMB</a>Enable/Disable maquette number
+              count
+            </li>
+          </ul>
+          <u>Corner</u>
+          <ul>
+            <li>
+              <a class="mcontrol">RMB</a>Toggle between:
+              <ul>
+                <li>Voetpad</li>
+                <li>Zandweg</li>
+                <li>T-kruising</li>
+                <li>T-kruising met fietspad</li>
+                <li>Inrit S</li>
+                <li>Inrit B</li>
+              </ul>
+            </li>
+          </ul>
+          <u>Sign</u>
+          <ul>
+            <li><a class="mcontrol">LMB</a>Enable/Disable sign</li>
+            <li>
+              <a class="mcontrol">RMB</a>While enabled: switch between various
+              signs
+            </li>
+          </ul>
+          <u>Vehicle</u>
+          <ul>
+            <li><a class="mcontrol">LMB</a>Enable/Disable vehicle</li>
+            <li>
+              <a class="mcontrol">RMB</a>While enabled: switch between various
+              directions
+            </li>
+            <li>
+              <a class="mcontrol">MMB</a>Enter vehicle text.<br />
+              For bicycle the letter "F" is auto appended at the beginning and
+              the text is placed outside.<br />
+              If the specified text starts with "F/BF", the placement
+              automatically changes and nothing is appended.
+            </li>
+            <li>
+              For the vehicle behind, <a class="mcontrol">Shift + LMB</a> will
+              toggle bicycle mode.
             </li>
           </ul>
         </li>
         <li>
-          When filled with placeholders, click on one of the two buttons in each
-          Maquette to specify which type you want to generate.<br />"B"
-          generates wide roads and "S" generates narrow/normal roads.
-        </li>
-        <li>
-          The following actions can be done on each vehicle:
-          <ul>
-            <li>Left mouse button: enable/disable vehicle</li>
-            <li>
-              Right mouse button: toggle between directions (left, right,
-              straight)
-            </li>
-            <li>
-              Middle mouse button: edit vehicle title/name.<br />
-              PS: for bicycles the letter "F" will be auto concatenated before
-              whatever you specify.
-            </li>
-          </ul>
-        </li>
-        <li>
-          The following actions can be done on each corner:
-          <ul>
-            <li>
-              Right mouse button: toggle between footpath, priority road<br />
-              or toggle the road between the current and the following corner
-              (clockwise) <br />
-              or even toggle between the two types of "inrit" ("B" or "S").
-            </li>
-            <li>
-              Left mouse button on signs to toggle them and right mouse button
-              to toggle between different signs.
-            </li>
-          </ul>
-        </li>
-        <li>
-          Every Maquette has a number associated with it as the title/name.<br />
-          Normally it starts at 1 and counts upwards for each Maquette, but the
-          counter can be restarted.<br />
-          To restart the title/name counter of a Maquette, right click on the
-          type in the middle of the Maquette.<br />
-          The type is indicated by the letters "B" or "S".<br />
-          The restarting counter is highlighted with a color for ease (the color
-          won't be printed).<br />
-          You can also double click on the type to switch between the "B" and
-          "S" types.<br />
-        </li>
-        <li>
-          Every page has a top text and middle text indicated/enclosed by dashed
-          lines.<br />
-          Left mouse button to change the text and shift + left mouse button to
-          remove corresponding text.
+          The "text boxes" above the maquettes allow text to be added for each
+          maquette separately.<br />
+          Depending on the grid/layout there will be 2/3/4 of these.<br />
+          Keep in mind that the text will be deleted when changing layout.<br />
+          The "text boxes" can contain a max of 2 lines, allowing for page titles to be added while the maquettes resize
+          automatically.
         </li>
       </ol>
       <p>PS: Disabled vehicles (indicated by a grey color) aren't printed.</p>

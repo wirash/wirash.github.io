@@ -1,2 +1,0 @@
-- fix export import using text file and clipboard
-- update instructions

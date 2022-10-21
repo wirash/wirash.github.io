@@ -1209,7 +1209,10 @@ setting>label:first-child {
 }
 
 #instructions {
+  background-color: var(--color2);
   animation: zoom_in 0.3s;
+  color: var(--color0);
+  max-width: 70vw;
 }
 
 @keyframes zoom_in {
@@ -1229,6 +1232,19 @@ setting>label:first-child {
   font-weight: 500;
   font-size: 1.8rem;
   margin-bottom: 20px;
+  color: var(--color1);
+}
+
+#instructions li:has(a.mcontrol) {
+  margin-block: 10px;
+}
+
+#instructions a.mcontrol {
+  padding: 3px 6px;
+  background-color: #555;
+  color: #fff;
+  margin-right: 5px;
+  border-radius: 5px;
 }
 
 #instructions form {
