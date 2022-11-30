@@ -6,6 +6,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="assets/styles/normalize.css" />
 		<link rel="stylesheet" href="assets/styles/main-style.css" />
+		<script src="assets/scripts/set-dynamic-height.js" defer></script>
+		<script src="assets/scripts/main-script.js" defer></script>
 		<title>Ariana's Muscle 4 Mula</title>
 	</head>
 	<body>
@@ -28,63 +30,84 @@
 				</svg>
 			</div>
 			<div class="main">
-				<div class="post">
+				<div class="profile-container" id="profile-container">
 					<img
-						src="assets/imgs/anish.jpg"
+						src="assets/imgs/dp.jpg"
 						alt="profile-picture"
-						class="post-profile-pic" />
-					<a class="post-profile-name">Anish Rambaran Mishre</a>
-					<a class="post-time">5 uren geleden</a>
-					<label class="post-description"
-						>Welkom bij onze gym app. Hier kunt u uw QR-code bezichtigen die u
-						nodig zal hebben om aan te melden bij ons. Verder kunt u uw
-						afgelopen activiteiten/ excercises bekijken zodat u alles makkelijk
-						bij kan houden. Ten slotte zal ik af en toe tips/videos/links m.b.t.
-						gym activiteiten posten, deze zullen allemaal hier op de home scherm
-						te vinden zijn. Wij hopen dat u gretig van gebruik zal maken. See
-						you at the gym! <input type="checkbox"
-					/></label>
-					<div class="post-attachment" type="video">
-						<video src="assets/videos/sample.mp4" loop></video>
-					</div>
+						class="profile-pic" />
+					<a class="profile-name">Wirash Ganesh</a>
+					<a class="profile-join-time">Joined 12 November 2022</a>
+					<button class="logout-btn">Log out</button>
+					<img
+						src="assets/imgs/qr-code-sample.jpg"
+						alt="profile-qr-code"
+						class="profile-qr-code" />
+					<span class="profile-qr-code-info">
+						Om uwzelf fysiek aan te melden laat u deze QR-code scannen door de
+						bali.
+					</span>
 				</div>
-				<div class="post">
-					<img
-						src="assets/imgs/anish.jpg"
-						alt="profile-picture"
-						class="post-profile-pic" />
-					<a class="post-profile-name">Anish Rambaran Mishre</a>
-					<a class="post-time">2 dagen geleden</a>
-					<label class="post-description"
-						>Welkom bij onze gym app. Hier kunt u uw QR-code bezichtigen die u
-						nodig zal hebben om aan te melden bij ons. Verder kunt u uw
-						afgelopen activiteiten/ excercises bekijken zodat u alles makkelijk
-						bij kan houden. Ten slotte zal ik af en toe tips/videos/links m.b.t.
-						gym activiteiten posten, deze zullen allemaal hier op de home scherm
-						te vinden zijn. Wij hopen dat u gretig van gebruik zal maken. See
-						you at the gym! <input type="checkbox"
-					/></label>
-					<div class="post-attachment" type="video">
-						<video src="assets/videos/sample.mp4" loop></video>
+				<div class="post-container" id="post-container">
+					<div class="post">
+						<img
+							src="assets/imgs/anish.jpg"
+							alt="profile-picture"
+							class="post-profile-pic" />
+						<a class="post-profile-name">Anish Rambaran Mishre</a>
+						<a class="post-time">5 uren geleden</a>
+						<label class="post-description"
+							>Welkom bij onze gym app. Hier kunt u uw QR-code bezichtigen die u
+							nodig zal hebben om aan te melden bij ons. Verder kunt u uw
+							afgelopen activiteiten/ excercises bekijken zodat u alles
+							makkelijk bij kan houden. Ten slotte zal ik af en toe
+							tips/videos/links m.b.t. gym activiteiten posten, deze zullen
+							allemaal hier op de home scherm te vinden zijn. Wij hopen dat u
+							gretig van gebruik zal maken. See you at the gym!
+							<input type="checkbox"
+						/></label>
+						<div class="post-attachment" type="video">
+							<video src="assets/videos/sample.mp4" loop></video>
+						</div>
+					</div>
+					<div class="post">
+						<img
+							src="assets/imgs/anish.jpg"
+							alt="profile-picture"
+							class="post-profile-pic" />
+						<a class="post-profile-name">Anish Rambaran Mishre</a>
+						<a class="post-time">2 dagen geleden</a>
+						<label class="post-description"
+							>Welkom bij onze gym app. Hier kunt u uw QR-code bezichtigen die u
+							nodig zal hebben om aan te melden bij ons. Verder kunt u uw
+							afgelopen activiteiten/ excercises bekijken zodat u alles
+							makkelijk bij kan houden. Ten slotte zal ik af en toe
+							tips/videos/links m.b.t. gym activiteiten posten, deze zullen
+							allemaal hier op de home scherm te vinden zijn. Wij hopen dat u
+							gretig van gebruik zal maken. See you at the gym!
+							<input type="checkbox"
+						/></label>
+						<div class="post-attachment" type="video">
+							<video src="assets/videos/sample.mp4" loop></video>
+						</div>
 					</div>
 				</div>
 			</div>
 			<div class="tab-container">
-				<label class="tab">
+				<label class="tab" data-href="profile-container">
 					<input type="radio" name="tab" />
 					<svg class="icon">
 						<use href="assets/svgs/profile-qr-code.svg#svg"></use>
 					</svg>
 					<a>Profile</a>
 				</label>
-				<label class="tab">
+				<label class="tab" data-href="post-container">
 					<input type="radio" name="tab" checked />
 					<svg class="icon">
 						<use href="assets/svgs/home.svg#svg"></use>
 					</svg>
 					<a>Home</a>
 				</label>
-				<label class="tab">
+				<label class="tab" data-href="stats-container">
 					<input type="radio" name="tab" />
 					<svg class="icon">
 						<use href="assets/svgs/stats.svg#svg"></use>
