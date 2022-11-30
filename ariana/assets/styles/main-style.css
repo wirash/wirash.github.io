@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+:root {
+    --accent-color: #fd0202;
+    --icon-color: #666;
+    --background-color-main: #fff;
+    --text-color-main: #000;
+    --text-color-light: #777;
+    --icon-active-color: #ccc;
+    --doc-height: 100vh;
+}
+
+html {
+    font-family: "Poppins", sans-serif;
+    user-select: none;
+    box-sizing: border-box;
+    overscroll-behavior-y: contain;
+}
+
+body {
+    display: block;
+    width: 100vw;
+    height: var(--doc-height);
+    overflow: hidden;
+}
+
+.main-container {
+    display: grid;
+    grid-template-rows: min-content 1fr min-content;
+    min-height: 100%;
+    max-height: 100%;
+    height: 100%;
+}
+
+.title-container {
+    display: grid;
+    grid-template-columns: 1fr min-content min-content;
+    padding: 10px;
+    place-items: center;
+    gap: 20px;
+    /* background-color: #332d2b; */
+}
+
+.logo {
+    height: 70px;
+    aspect-ratio: 2.273 / 1;
+    justify-self: left;
+    border-radius: 10px;
+    color: #eff0f0;
+    color: #e6232a;
+}
+
+.theme {
+    display: contents;
+}
+
+/* .theme svg {
+    color: var(--background-color-main) !important;
+} */
+
+.theme>input:not(:checked)~svg:nth-child(3) {
+    display: none;
+}
+
+.theme>input:checked+svg {
+    display: none;
+}
+
+.tab-container {
+    display: grid;
+    grid: repeat(2, min-content) / repeat(3, 1fr);
+    place-items: center;
+    padding-block: 10px;
+    row-gap: 10px;
+}
+
+.tab-container::before {
+    content: '';
+    width: 20%;
+    height: 5px;
+    background-color: var(--accent-color);
+    border-radius: 999px;
+    transition: margin .2s;
+    z-index: 10;
+}
+
+@keyframes rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.tab-container:has(.tab:nth-child(1) > input:checked)::before {
+    margin-left: 0;
+}
+
+.tab-container:has(.tab:nth-child(2) > input:checked)::before {
+    margin-left: 200%;
+}
+
+.tab-container:has(.tab:nth-child(3) > input:checked)::before {
+    margin-left: 400%;
+}
+
+.tab-container input,
+.theme>input {
+    display: none;
+}
+
+.tab {
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    color: var(--icon-color);
+    gap: 5px;
+    grid-row: 2;
+}
+
+.tab:has(input:checked) {
+    border-top-color: var(--accent-color);
+}
+
+.tab>input:checked+svg {
+    color: var(--accent-color);
+}
+
+svg.icon {
+    color: var(--icon-color);
+    width: 30px;
+    aspect-ratio: 1;
+    border-radius: 999px;
+}
+
+svg.icon:active {
+    background-color: var(--icon-active-color);
+    outline: 15px solid var(--icon-active-color);
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px;
+    overflow-x: overlay;
+}
+
+.post {
+    display: grid;
+    grid: repeat(4, min-content) / min-content 1fr;
+    box-shadow: 0 5px 5px 0 #aaa;
+    border-radius: 10px;
+    column-gap: 15px;
+    padding: 10px;
+    place-items: center;
+}
+
+.post-profile-pic {
+    width: 50px;
+    aspect-ratio: 1 / 1;
+    border-radius: 999px;
+    grid-row: 1 / 3;
+}
+
+.post-profile-name,
+.post-time {
+    grid-column: 2 / 3;
+    justify-self: flex-start;
+}
+
+.post-profile-name {
+    align-self: end;
+    font-weight: bold;
+}
+
+.post-time {
+    align-self: start;
+    color: var(--text-color-light);
+}
+
+.post-description,
+.post-attachment {
+    grid-column: 1 / 3;
+    margin-top: 15px;
+}
+
+.post-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    position: relative;
+}
+
+.post-description::after {
+    content: 'meer lezen...';
+    display: block;
+    color: dodgerblue;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-weight: bold;
+    background: linear-gradient(to top, var(--background-color-main), transparent);
+    padding-top: calc(1rem * 1.4);
+    width: 100%;
+}
+
+.post-description input {
+    display: none;
+}
+
+.post-description:has(input:checked)::after {
+    /* content: "minder";
+    position: static; */
+    content: unset;
+}
+
+.post-description:has(input:checked) {
+    display: block;
+}
+
+.post-attachment video {
+    border-radius: 10px;
+}
