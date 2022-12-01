@@ -6,7 +6,7 @@
     --background-color-main: #fff;
     --text-color-main: #000;
     --text-color-light: #777;
-    --icon-active-color: rgba(221, 221, 221, 0.5);
+    --active-color: rgba(221, 221, 221, 0.5);
     --doc-height: 100%;
 }
 
@@ -280,13 +280,12 @@ svg.icon {
 }
 
 .post-description::after {
-    content: 'see more...';
+    content: 'Read more...';
     display: block;
-    color: dodgerblue;
+    color: var(--accent-color);
     position: absolute;
     bottom: 0;
     left: 0;
-    font-weight: bold;
     background: linear-gradient(to top, var(--background-color-main), transparent);
     padding-top: calc(1rem * 1.4 * 2);
     width: 100%;
@@ -307,14 +306,14 @@ svg.icon {
 }
 
 .post-attachment {
-    min-height: 30vh;
+    min-height: 25vh;
     max-height: 40vh;
     display: flex;
     flex-direction: row;
     overflow-x: overlay;
     /* overflow-y: hidden; */
     scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth; */
     -webkit-overflow-scrolling: touch;
     background-color: #000;
     position: relative;
@@ -322,12 +321,15 @@ svg.icon {
 }
 
 .post-attachment::-webkit-scrollbar {
-    height: 5px;
+    /* height: 5px; */
+    opacity: .5;
 }
 
 .post-attachment::-webkit-scrollbar-thumb {
     background-color: var(--accent-color);
     border-radius: 999px;
+    background-clip: content-box;
+    border: 5px solid transparent;
 }
 
 .post-attachment>* {
@@ -368,4 +370,44 @@ svg.icon {
     content: counter(child);
     bottom: 100%;
     left: calc(100% - 5px - 5ch);
+}
+
+.toggle:focus {
+    outline: none;
+}
+
+.options:focus+.overlay {
+    display: flex;
+}
+
+.overlay {
+    position: fixed;
+    z-index: 1000;
+}
+
+.options-overlay {
+    padding: unset;
+    margin: unset;
+    background-color: var(--background-color-main);
+    border-radius: 5px;
+    top: 50px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 5px 0 var(--text-color-light);
+    padding: 10px;
+    display: none;
+}
+
+.options-overlay>* {
+    display: inline-block;
+    padding: 10px 40px;
+}
+
+.options-overlay>*:active {
+    background-color: var(--active-color);
+}
+
+.options-overlay>*:not(:last-child) {
+    border-bottom: 1px solid var(--text-color-light);
 }

@@ -25,9 +25,14 @@
 						<use href="assets/svgs/dark-mode.svg#svg"></use>
 					</svg>
 				</label>
-				<svg class="icon">
+				<svg class="icon options toggle" tabindex="-1">
 					<use href="assets/svgs/menu-three-dot.svg#svg"></use>
 				</svg>
+				<ul class="options-overlay overlay">
+					<li>Sign out</li>
+					<li>Settings</li>
+					<li>About us</li>
+				</ul>
 			</div>
 			<div class="main">
 				<div class="profile-container" id="profile-container">
@@ -37,7 +42,7 @@
 						class="profile-pic" />
 					<a class="profile-name">Wirash Ganesh</a>
 					<a class="profile-join-time">Joined 12 November 2022</a>
-					<button class="logout-btn">Log out</button>
+					<button class="logout-btn">Sign out</button>
 					<img
 						src="assets/imgs/qr-code-sample.jpg"
 						alt="profile-qr-code"
@@ -151,5 +156,7 @@
 				</label>
 			</div>
 		</div>
+		<!-- <div class="overlay-container">
+		</div> -->
 	</body>
 </html>
