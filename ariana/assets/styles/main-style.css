@@ -49,8 +49,8 @@ body {
     aspect-ratio: 2.273 / 1;
     justify-self: left;
     border-radius: 10px;
-    color: #eff0f0;
-    color: #e6232a;
+    /* color: #eff0f0;
+    color: #e6232a; */
 }
 
 .theme {
@@ -170,13 +170,14 @@ svg.icon {
     scroll-snap-align: start;
     flex-shrink: 0;
     box-sizing: border-box;
-    padding-block: var(--padding);
+    padding-bottom: var(--padding);
 }
 
 .profile-container {
     display: grid;
     height: 100%;
-    grid-template-rows: repeat(4, min-content) 1fr min-content;
+    /* grid-template-rows: repeat(4, min-content) 1fr min-content; */
+    grid-auto-rows: min-content;
     /* gap: 10px; */
     place-items: center;
     padding-inline: 20px;
@@ -186,6 +187,7 @@ svg.icon {
     border-radius: 999px;
     width: 35%;
     aspect-ratio: 1 / 1;
+    border: 5px solid #fff;
 }
 
 .profile-name {
@@ -202,7 +204,7 @@ svg.icon {
 .logout-btn {
     border-radius: 999px;
     appearance: none;
-    padding: 5px 20px;
+    padding: 10px 30px;
     margin-top: 10px;
     border: none;
     background-color: var(--accent-color);
@@ -211,10 +213,10 @@ svg.icon {
 
 .profile-qr-code {
     padding: 10px;
-    max-width: calc(100% - 2 * 20px);
+    max-width: calc(80% - 2 * 20px);
     border-radius: 20px;
     outline: 2px solid var(--accent-color);
-    margin-block: 10px;
+    margin-block: 20px 10px;
 }
 
 .post-container {
@@ -304,8 +306,66 @@ svg.icon {
     display: block;
 }
 
-.post-attachment video {
+.post-attachment {
+    min-height: 30vh;
+    max-height: 40vh;
+    display: flex;
+    flex-direction: row;
+    overflow-x: overlay;
+    /* overflow-y: hidden; */
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    background-color: #000;
+    position: relative;
+    transform: translate3d(0, 0, 0);
+}
+
+.post-attachment::-webkit-scrollbar {
+    height: 5px;
+}
+
+.post-attachment::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 999px;
+}
+
+.post-attachment>* {
     width: 100%;
-    /* width: calc(100% + (2 * var(--padding))); */
-    /* transform: translateX(calc(-1 * var(--padding))); */
+    max-height: 100%;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    counter-increment: child;
+    overflow: hidden;
+}
+
+.post-attachment>*>* {
+    height: 100%;
+    width: 100%;
+}
+
+.post-attachment img {
+    object-fit: contain;
+    object-position: center;
+}
+
+.post-attachment::after,
+.post-attachment>*::after {
+    color: #fff;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    position: sticky;
+    opacity: 0.7;
+}
+
+.post-attachment:has(div:not(:only-child))::after {
+    content: "/" counter(child);
+    right: 0;
+}
+
+.post-attachment:has(:nth-child(2))>*::after {
+    content: counter(child);
+    bottom: 100%;
+    left: calc(100% - 5px - 5ch);
 }
