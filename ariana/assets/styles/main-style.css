@@ -7,6 +7,7 @@
     --text-color-main: #000;
     --text-color-light: #777;
     --active-color: rgba(221, 221, 221, 0.5);
+    --light-green: rgb(94, 211, 94);
     --doc-height: 100%;
 }
 
@@ -394,7 +395,7 @@ svg.icon {
     right: 10px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 2px 5px 0 var(--text-color-light);
+    box-shadow: 0 2px 10px -5px var(--text-color-light);
     padding: 10px;
     display: none;
 }
@@ -410,4 +411,74 @@ svg.icon {
 
 .options-overlay>*:not(:last-child) {
     border-bottom: 1px solid var(--text-color-light);
+}
+
+.current-gym-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* background-color: var(--active-color); */
+    background: linear-gradient(to bottom right, var(--active-color), transparent);
+    margin-inline: 30px;
+    border-radius: 10px;
+    padding: 20px;
+    place-items: center;
+    position: relative;
+}
+
+.current-gym-stat::before {
+    content: 'i';
+    --fs: 15px;
+    font-size: calc(var(--fs) - 2px);
+    font-weight: bold;
+    position: absolute;
+    width: var(--fs);
+    aspect-ratio: 1 / 1;
+    top: 10px;
+    left: 10px;
+    border-radius: 999px;
+    opacity: .3;
+    border: 1px solid;
+    overflow: hidden;
+    text-align: center;
+    line-height: var(--fs);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.gym-open-close {
+    padding: 5px 10px;
+    background-color: var(--light-green);
+    font-weight: bold;
+    border-radius: 5px;
+    color: green;
+}
+
+.member-count {
+    font-size: 3rem;
+    font-weight: bold;
+    position: relative;
+    /* background: linear-gradient(to top, white, black);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; */
+}
+
+.member-count::before,
+.member-count::after {
+    font-size: 1rem;
+    opacity: .5;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    /* width: max-content; */
+
+}
+
+.member-count::before {
+    content: 'Currently';
+    right: calc(10px + 100%);
+}
+
+.member-count::after {
+    content: 'members present';
+    left: calc(10px + 100%);
 }
