@@ -11,6 +11,15 @@
     --doc-height: 100%;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+}
+
+*:focus {
+    outline: none;
+}
+
 html {
     font-family: "Poppins", sans-serif;
     user-select: none;
@@ -227,6 +236,8 @@ svg.icon {
     height: 100%;
     overflow-x: overlay;
     overflow-y: overlay;
+    position: relative;
+    transform: translate3d(0, 0, 0);
 }
 
 .post {
@@ -373,15 +384,16 @@ svg.icon {
     left: calc(100% - 5px - 5ch);
 }
 
-.toggle:focus {
-    outline: none;
+.toggle {
+    display: flex;
+    place-items: center;
 }
 
-.options:focus+.overlay {
+.toggle:focus>.context-menu {
     display: flex;
 }
 
-.overlay {
+.context-menu {
     position: fixed;
     z-index: 1000;
 }
@@ -416,12 +428,12 @@ svg.icon {
 .current-gym-stat {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    /* gap: 5px; */
     /* background-color: var(--active-color); */
     background: linear-gradient(to bottom right, var(--active-color), transparent);
-    margin-inline: 30px;
+    margin-inline: 20px;
     border-radius: 10px;
-    padding: 20px;
+    padding: 10px;
     place-items: center;
     position: relative;
 }
@@ -446,15 +458,16 @@ svg.icon {
 }
 
 .gym-open-close {
-    padding: 5px 10px;
+    padding: 3px 8px;
     background-color: var(--light-green);
     font-weight: bold;
+    font-size: 0.8rem;
     border-radius: 5px;
     color: green;
 }
 
 .member-count {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: bold;
     position: relative;
     /* background: linear-gradient(to top, white, black);
@@ -470,7 +483,7 @@ svg.icon {
     top: 50%;
     transform: translateY(-50%);
     /* width: max-content; */
-
+    font-size: 0.9rem;
 }
 
 .member-count::before {
@@ -479,6 +492,151 @@ svg.icon {
 }
 
 .member-count::after {
-    content: 'members present';
+    content: 'members';
     left: calc(10px + 100%);
+}
+
+.countdown-hours,
+.countdown-minutes {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.countdown {
+    /* background: linear-gradient(to right, var(--active-color), transparent); */
+    background-color: var(--active-color);
+    padding: 3px;
+    border-radius: 3px;
+}
+
+.countdown-hours::after,
+.countdown-minutes::after {
+    color: var(--text-color-main);
+    font-weight: normal;
+}
+
+.countdown-hours::after {
+    content: ' hours, ';
+}
+
+.countdown-minutes::after {
+    content: ' minutes';
+}
+
+/* .test {
+    position: fixed;
+    top: 0;
+    left: 0;
+} */
+
+.overlay-container {
+    display: contents;
+    font-size: 1rem;
+}
+
+.overlay {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    min-height: var(--doc-height);
+    max-height: var(--doc-height);
+    z-index: 1000;
+}
+
+.overlay:not([open]) {
+    display: none;
+}
+
+.overlay::-webkit-scrollbar {
+    display: none;
+}
+
+.settings-container {
+    /* background-color: rgb(0, 0, 0, 0.3); */
+    display: flex;
+    flex-direction: column;
+    overflow-y: overlay;
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+}
+
+.settings-container>.padding {
+    scroll-snap-align: start;
+}
+
+.padding.padding-top {
+    min-height: 100vh;
+}
+
+.padding.padding-middle {
+    min-height: 40vh;
+}
+
+.settings {
+    min-height: var(--doc-height);
+    background-color: var(--background-color-main);
+    border-radius: 20px 20px 0 0;
+    scroll-snap-align: start;
+    overscroll-behavior: contain;
+    transform: translateY(100%);
+    animation: slide-to-top .3s forwards;
+    box-shadow: 0 0 5px 0 #666;
+}
+
+.settings::before {
+    content: '';
+    background-color: var(--active-color);
+    border-radius: 999px;
+    display: inline-block;
+    width: 10%;
+    height: 5px;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@keyframes slide-to-top {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: none;
+    }
+}
+
+.settings-title-container {
+    display: grid;
+    grid: 1fr / 1fr min-content;
+    place-items: center;
+    margin-inline: 10px;
+    border-bottom: 1px solid var(--active-color);
+    padding-block: 15px 10px;
+    padding-left: 30px;
+}
+
+.settings-main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+.setting {
+    display: flex;
+    gap: 20px;
+    align-items: center
+}
+
+.setting.toggle input[type=checkbox] {
+    accent-color: var(--accent-color);
+}
+
+.setting.options select {
+    border-radius: 5px;
+    padding: 5px;
+    margin-left: auto;
+    background-color: var(--active-color);
+    border: none;
 }

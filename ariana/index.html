@@ -25,17 +25,19 @@
 						<use href="assets/svgs/dark-mode.svg#svg"></use>
 					</svg>
 				</label>
-				<svg class="icon options toggle" tabindex="-1">
-					<use href="assets/svgs/menu-three-dot.svg#svg"></use>
-				</svg>
-				<ul class="options-overlay overlay">
-					<li>Sign out</li>
-					<li>Settings</li>
-					<li>About us</li>
-				</ul>
+				<label class="toggle" tabindex="-1">
+					<svg class="icon">
+						<use href="assets/svgs/menu-three-dot.svg#svg"></use>
+					</svg>
+					<ul class="options-overlay context-menu">
+						<li>Sign out</li>
+						<li id="settings-toggle">Settings</li>
+						<li>About us</li>
+					</ul>
+				</label>
 			</div>
 			<div class="main">
-				<div class="profile-container" id="profile-container">
+				<div class="profile-container" id="profile-container" nthchild="1">
 					<img
 						src="assets/imgs/dp.jpg"
 						alt="profile-picture"
@@ -54,10 +56,20 @@
 						Om aan te melden bij de gym laat u deze QR-code scannen bij de bali.
 					</span>
 				</div>
-				<div class="post-container" id="post-container">
+				<div
+					class="post-container"
+					id="post-container"
+					autofocus
+					tabindex="-1"
+					nthchild="2">
 					<div class="current-gym-stat">
 						<a class="gym-open-close">NOW OPEN</a>
 						<a class="member-count">5</a>
+						<p class="countdown">
+							Closing in:
+							<a class="countdown-hours">5</a
+							><a class="countdown-minutes">30</a>
+						</p>
 					</div>
 					<div class="post">
 						<img
@@ -160,7 +172,45 @@
 				</label>
 			</div>
 		</div>
-		<!-- <div class="overlay-container">
-		</div> -->
+		<div class="overlay-container">
+			<div class="settings-container overlay">
+				<div class="padding padding-top"></div>
+				<div class="padding padding-middle" autofocus tabindex="-1"></div>
+				<div class="settings">
+					<div class="settings-title-container">
+						<a>Settings</a>
+						<svg class="icon close-overlay-btn">
+							<use href="assets/svgs/close.svg#svg"></use>
+						</svg>
+					</div>
+					<div class="settings-main-container">
+						<label class="setting toggle">
+							<input type="checkbox" />
+							Autoplay videos
+						</label>
+						<label class="setting toggle">
+							<input type="checkbox" />
+							Loop videos
+						</label>
+						<label class="setting toggle">
+							<input type="checkbox" />
+							Picture in picture on minimize
+						</label>
+						<label class="setting toggle">
+							<input type="checkbox" />
+							Don't loop in PiP mode
+						</label>
+						<label class="setting options">
+							Default screen
+							<select>
+								<option value="profile">Profile</option>
+								<option value="home">Home</option>
+								<option value="workouts">Workouts</option>
+							</select>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
