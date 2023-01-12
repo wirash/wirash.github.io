@@ -1,13 +1,18 @@
 const main = document.querySelector(".main");
 const profileContainer = document.getElementById("profile-container");
 const postContainer = document.getElementById("post-container");
+const workoutsContainer = document.getElementById("workouts-container");
 const settingsToggle = document.getElementById("settings-toggle");
 const settingsContainer = document.querySelector(".settings-container");
 const settings = document.querySelector(".settings");
 const settingsPaddingTop = document.querySelector(".padding.padding-top");
 const tabContainer = document.querySelector(".tab-container");
+const currentGymStatCountdown = document.querySelector(
+	".current-gym-stat .countdown"
+);
+const currentGymStatMin = document.querySelector(".current-gym-stat-min");
 
-let fully_displayed_observer = new IntersectionObserver(
+let observer = new IntersectionObserver(
 	(entries) => {
 		entries.forEach((entry) => {
 			if (entry.isIntersecting) {
@@ -17,40 +22,60 @@ let fully_displayed_observer = new IntersectionObserver(
 						break;
 					case profileContainer:
 					case postContainer:
-						tabContainer
-							.querySelector(
-								`.tab:nth-child(${entry.target.getAttribute("nthchild")})`
-							)
-							.querySelector("input").checked = true;
+					case workoutsContainer:
+						tabContainer.querySelector(
+							`.tab:nth-child(${entry.target.getAttribute("nthchild")}) input`
+						).checked = true;
+						break;
+					case currentGymStatCountdown:
+						currentGymStatMin.setAttribute("hidden", "");
 						break;
 				}
-				// if (entry.target == settingsPaddingTop)
-				// 	settingsContainer.toggleAttribute("open");
+			} else {
+				switch (entry.target) {
+					case currentGymStatCountdown:
+						currentGymStatMin.removeAttribute("hidden");
+						break;
+				}
 			}
 		});
 	},
 	{
 		root: null,
 		rootMargin: "0px",
-		threshold: 1.0,
+		threshold: 1,
 	}
 );
 
-fully_displayed_observer.observe(settingsPaddingTop);
-fully_displayed_observer.observe(profileContainer);
-fully_displayed_observer.observe(postContainer);
+// let fully_hidden_observer = new IntersectionObserver(
+// 	(entries) => {
+// 		entries.forEach((entry) => {
+// 		});
+// 	},
+// 	{
+// 		root: null,
+// 		rootMargin: "0px",
+// 		threshold: 1,
+// 	}
+// );
+
+observer.observe(settingsPaddingTop);
+observer.observe(currentGymStatCountdown);
 
 document.querySelectorAll(".tab").forEach((tab) => {
 	tab.addEventListener(
 		"click",
 		() => {
-			let el = event.target.classList.contains("tab")
-				? event.target
-				: event.target.closest(".tab");
-			document.getElementById(el.dataset.href)?.scrollIntoView();
+			document
+				.getElementById(event.currentTarget.dataset.href)
+				?.scrollIntoView();
 		},
 		{ passive: true }
 	);
+});
+
+document.querySelectorAll(".main>div").forEach((container) => {
+	observer.observe(container);
 });
 
 // postContainer.scrollIntoView();

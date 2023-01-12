@@ -16,6 +16,15 @@
 				<svg class="logo">
 					<use href="assets/logo/logo.svg#svg"></use>
 				</svg>
+				<div class="current-gym-stat-min" hidden>
+					<a class="gym-open-close">NOW OPEN</a>
+					<div class="member-count flex-row">
+						<svg class="icon">
+							<use href="assets/svgs/users.svg#svg"></use>
+						</svg>
+						5
+					</div>
+				</div>
 				<label class="theme">
 					<input type="checkbox" />
 					<svg class="icon">
@@ -44,16 +53,17 @@
 						class="profile-pic" />
 					<a class="profile-name">Wirash Ganesh</a>
 					<a class="profile-join-time">Joined 12 November 2022</a>
+					<a class="profile-last-payment">Last Payment: 18 December 2022</a>
+					<a class="profile-expires">Account Expires January 2023</a>
 					<button class="logout-btn">Sign out</button>
 					<img
 						src="assets/imgs/qr-code-sample.jpg"
 						alt="profile-qr-code"
 						class="profile-qr-code" />
 					<span class="profile-qr-code-info">
-						Dit is uw QR-code. Eenieder heeft een unieke, geeft u het dus aan
-						niemand.
+						Your QR code is unique. Do not give it to anyone.
 						<br />
-						Om aan te melden bij de gym laat u deze QR-code scannen bij de bali.
+						Have it scanned at the counter when attending the gym.
 					</span>
 				</div>
 				<div
@@ -89,15 +99,9 @@
 							<input type="checkbox"
 						/></label>
 						<div class="post-attachment">
-							<div>
-								<img src="assets/imgs/workout1.jpg" />
-							</div>
-							<div>
-								<img src="assets/imgs/workout2.jpg" />
-							</div>
-							<div>
-								<img src="assets/imgs/workout3.webp" />
-							</div>
+							<img src="assets/imgs/workout1.jpg" />
+							<img src="assets/imgs/workout2.jpg" />
+							<img src="assets/imgs/workout3.webp" />
 						</div>
 					</div>
 					<div class="post">
@@ -119,10 +123,18 @@
 						/></label>
 						<div class="post-attachment" type="video">
 							<iframe
-								src="https://www.youtube.com/embed/Y_UXRDNHR2g"
+								src="https://www.youtube.com/embed/Y_UXRDNHR2g?enablejsapi=1&color=white&controls=0&disablekb=1&iv_load_policy=3&modestbranding
+=1&playsinline=1&rel=0"
 								frameborder="0"
-								allowfullscreen>
+								allowfullscreen
+								allow="autoplay"
+								seamless>
 							</iframe>
+							<!-- <iframe
+								sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+								src="https://drive.google.com/file/d/1HkVUe0onkN-D17I0OsbE-yvgigLA5Yqg/preview?autoplay=1"
+								frameborder="0"
+								allowfullscreen></iframe> -->
 						</div>
 					</div>
 					<div class="post">
@@ -147,6 +159,10 @@
 						</div>
 					</div>
 				</div>
+				<div
+					class="workouts-container"
+					id="workouts-container"
+					nthchild="3"></div>
 			</div>
 			<div class="tab-container">
 				<label class="tab" data-href="profile-container">
@@ -163,12 +179,12 @@
 					</svg>
 					<a>Home</a>
 				</label>
-				<label class="tab" data-href="stats-container">
+				<label class="tab" data-href="workouts-container">
 					<input type="radio" name="tab" />
 					<svg class="icon">
-						<use href="assets/svgs/stats.svg#svg"></use>
+						<use href="assets/svgs/workouts.svg#svg"></use>
 					</svg>
-					<a>Stats</a>
+					<a>Workouts</a>
 				</label>
 			</div>
 		</div>
@@ -192,19 +208,19 @@
 							<input type="checkbox" />
 							Loop videos
 						</label>
-						<label class="setting toggle">
+						<!-- <label class="setting toggle">
 							<input type="checkbox" />
 							Picture in picture on minimize
 						</label>
 						<label class="setting toggle">
 							<input type="checkbox" />
 							Don't loop in PiP mode
-						</label>
+						</label> -->
 						<label class="setting options">
 							Default screen
 							<select>
 								<option value="profile">Profile</option>
-								<option value="home">Home</option>
+								<option value="home" selected>Home</option>
 								<option value="workouts">Workouts</option>
 							</select>
 						</label>
