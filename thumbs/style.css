@@ -144,6 +144,10 @@ input[type="checkbox"] {
 	overflow-x: auto;
 }
 
+.file-list::-webkit-scrollbar{
+	display: none;
+}
+
 .file {
 	background-color: rgba(128, 128, 128, 0.3);
 	border-radius: 5px;
@@ -156,6 +160,8 @@ input[type="checkbox"] {
 	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
 	border: 5px solid transparent;
+	min-width: 80px;
+	word-wrap: break-word;
 }
 
 .file > input {
