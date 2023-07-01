@@ -52,6 +52,10 @@ body {
   color: hsl(195, 100%, 50%);
 }
 
+.app:nth-child(3) {
+  color: hsl(84, 100%, 50%);
+}
+
 /* themes */
 @media (prefers-color-scheme: dark) {
   body {
